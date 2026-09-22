@@ -13,6 +13,8 @@ Route::get('/', function () {
     if(Auth::check()){
         return view('dashboard');
     }
+
+    return view('auth.login');
 });
 
 Route::middleware(['auth', 'role:owner, admin'])->group(function () {
