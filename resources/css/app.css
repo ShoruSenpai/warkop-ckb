@@ -1,3 +1,5 @@
+/*@import "@fortawesome/fontawesome-svg-core";*/
+
 @import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -6,4 +8,12 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-ckb-primary: #271310;
+    --color-ckb-secondary: #75584d;
+    --color-ckb-accent: #75584D;
+    --color-ckb-bg: #FFFBF6;
+    --color-ckb-card: #FFFFFF;
+    --color-ckb-warning: #ED6C02;
+    --color-ckb-error: #BA1A1A;
 }

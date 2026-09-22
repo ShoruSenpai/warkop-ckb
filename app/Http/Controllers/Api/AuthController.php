@@ -76,24 +76,4 @@ class AuthController extends Controller
         ], 200);
     }
 
-//    public function logout(Request $request)
-//    {
-//        $token = $request->user()->currentAccessToken();
-//
-//        $tokenId = $token?->id;
-//
-//        $deleted = $token?->delete();
-//
-//        $stillExists = \DB::table('personal_access_tokens')
-//            ->where('id', $tokenId)
-//            ->exists();
-//
-//        return response()->json([
-//            'success' => true,
-//            'token' => $tokenId,
-//            'deleted' => $deleted,
-//            'still_exists' => $stillExists,
-//            'message' => 'Logout success.',
-//        ], 200);
-//    }
 }
