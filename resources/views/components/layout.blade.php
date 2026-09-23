@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'Dashboard' }} - Warkop Cak Kebo</title>
 
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite([
+    'resources/css/app.css',
+    'resources/js/app.js'
+])
 </head>
 <body class="bg-ckb-bg flex h-screen overflow-hidden font-sans">
 

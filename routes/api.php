@@ -20,8 +20,32 @@ Route::middleware(['auth:sanctum', ExtendTokenActivity::class])->group(function 
 
     // master product & raw materials
     Route::post('/products', [ProductController::class, 'store']);
-    Route::post('/raw-materials', [RawMaterialController::class, 'store']);
+
     Route::get('/raw-materials', [RawMaterialController::class, 'index']);
+    Route::post('/raw-materials', [RawMaterialController::class, 'store']);
+    Route::put('/raw-materials/{rawMaterial}', [RawMaterialController::class, 'update']);
+    Route::delete('/raw-materials/{rawMaterial}', [RawMaterialController::class, 'destroy']);
+
+    // raw material packaging
+    Route::get(
+        '/raw-materials/{rawMaterial}/packagings',
+        [RawMaterialController::class, 'packagingIndex']
+    );
+
+    Route::post(
+        '/raw-materials/{rawMaterial}/packagings',
+        [RawMaterialController::class, 'packagingStore']
+    );
+
+    Route::put(
+        '/raw-materials/{rawMaterial}/packagings/{packaging}',
+        [RawMaterialController::class, 'packagingUpdate']
+    );
+
+    Route::delete(
+        '/raw-materials/{rawMaterial}/packagings/{packaging}',
+        [RawMaterialController::class, 'packagingDestroy']
+    );
 
     // supplier purchases
     Route::get('/inventory-items', [SupplierPurchaseController::class, 'getInventoryItems']);

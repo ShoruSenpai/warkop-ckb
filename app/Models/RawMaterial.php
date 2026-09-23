@@ -13,4 +13,20 @@ class RawMaterial extends Model
         'unit_measurement',
         'current_stock',
     ];
+
+    protected $casts = [
+        'current_stock' => 'decimal:2'
+    ];
+
+    public function packagings()
+    {
+        return $this->hasMany(RawMaterialPackaging::class, 'raw_material_id'
+        );
+    }
+
+    public function recipes()
+    {
+        return $this->hasMany(ProductRecipe::class, 'raw_material_id'
+        );
+    }
 }
