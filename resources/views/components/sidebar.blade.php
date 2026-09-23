@@ -3,17 +3,16 @@
     $userRole = $user->role ?? 'employee';
 
     $menus = [
-        'MENU UTAMA' => [
+        'MAIN MENU' => [
             ['name' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'fas fa-chart-pie', 'badge' => 0, 'roles' => ['owner', 'admin']],
-            ['name' => 'Master Produk', 'route' => 'product.index', 'icon' => 'fas fa-box-open', 'badge' => 0, 'roles' => ['owner', 'admin']],
-            ['name' => 'Master Bahan Baku', 'route' => 'raw-material.index', 'icon' => 'fas fa-cubes', 'badge' => 3, 'roles' => ['owner', 'admin']],
-            ['name' => 'Pembelian Supplier', 'route' => 'supplier.index', 'icon' => 'fas fa-truck-loading', 'badge' => 0, 'roles' => ['owner', 'admin']],
+            ['name' => 'Product Management', 'route' => 'product.index', 'icon' => 'fas fa-box-open', 'badge' => 0, 'roles' => ['owner', 'admin']],
+            ['name' => 'Raw Materials', 'route' => 'raw-material.index', 'icon' => 'fas fa-cubes', 'badge' => 3, 'roles' => ['owner', 'admin']],
+            ['name' => 'Purchases', 'route' => 'supplier.index', 'icon' => 'fas fa-truck-loading', 'badge' => 0, 'roles' => ['owner', 'admin']],
             ['name' => 'Laporan', 'route' => 'report.index', 'icon' => 'fas fa-file-invoice-dollar', 'badge' => 0, 'roles' => ['owner', 'admin']],
         ],
-        'SISTEM' => [
-            ['name' => 'Pengaturan', 'route' => 'settings', 'icon' => 'fas fa-cog', 'badge' => 0, 'roles' => ['owner', 'admin']],
-            // Manajemen User eksklusif untuk Owner
-            ['name' => 'Manajemen User', 'route' => 'users.index', 'icon' => 'fas fa-users-cog', 'badge' => 0, 'roles' => ['owner']],
+        'SYSTEM' => [
+            ['name' => 'Settings', 'route' => 'settings', 'icon' => 'fas fa-cog', 'badge' => 0, 'roles' => ['owner', 'admin']],
+            ['name' => 'User Management', 'route' => 'users.index', 'icon' => 'fas fa-users-cog', 'badge' => 0, 'roles' => ['owner']],
         ]
     ];
 @endphp
@@ -28,7 +27,6 @@
     </div>
 
     <div class="px-6 py-4 flex items-center border-b border-white/10">
-        <!-- Menggunakan Auth::user() untuk memanggil relasi employee -->
         <img src="https://ui-avatars.com/api/?name={{ urlencode($user->username ?? 'User') }}&background=75584D&color=fff" class="w-10 h-10 rounded-full mr-3">
         <div>
             <p class="text-sm font-semibold">{{ $user->employee->full_name ?? $user->username ?? 'Admin' }}</p>
@@ -39,7 +37,6 @@
     <nav class="flex-1 overflow-y-auto py-4">
         @foreach($menus as $category => $items)
             @php
-                // Filter menu sesuai role
                 $visibleItems = array_filter($items, function($item) use ($userRole) {
                     return in_array($userRole, $item['roles']);
                 });

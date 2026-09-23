@@ -89,9 +89,9 @@
         </div>
     </form>
 
-    <p class="text-center text-[11px] font-mono text-[#8C766C] mt-7">
-        Demo: admin@ckb.id · ckb2026
-    </p>
+{{--    <p class="text-center text-[11px] font-mono text-[#8C766C] mt-7">--}}
+{{--        Demo: admin@ckb.id · ckb2026--}}
+{{--    </p>--}}
 </div>
 
 <script>

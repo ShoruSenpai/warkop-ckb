@@ -14,8 +14,8 @@ class ExtendTokenActivity
 
         $token = $request->user()?->currentAccessToken();
 
-        if($token && $token->exists) {
-            $token->ForceFill([
+        if($token && ! $token instanceof \Laravel\Sanctum\TransientToken && $token->exists) {
+            $token->forceFill([
                 'last_used_at' => now(),
             ])->save();
         }
