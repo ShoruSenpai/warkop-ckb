@@ -6,10 +6,12 @@ class FaceVerificationPage extends StatefulWidget {
   const FaceVerificationPage({super.key});
 
   @override
-  State<FaceVerificationPage> createState() => _FaceVerificationPageState();
+  State<FaceVerificationPage> createState() =>
+      _FaceVerificationPageState();
 }
 
-class _FaceVerificationPageState extends State<FaceVerificationPage> {
+class _FaceVerificationPageState
+    extends State<FaceVerificationPage> {
   Timer? timer;
 
   String currentTime = '';
@@ -20,9 +22,12 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
 
     updateTime();
 
-    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      updateTime();
-    });
+    timer = Timer.periodic(
+      const Duration(seconds: 1),
+      (timer) {
+        updateTime();
+      },
+    );
   }
 
   void updateTime() {
@@ -43,20 +48,25 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
       'Des',
     ];
 
-    final day = now.day.toString().padLeft(2, '0');
+    final day =
+        now.day.toString().padLeft(2, '0');
 
     final month = months[now.month - 1];
 
     final year = now.year;
 
-    final hour = now.hour.toString().padLeft(2, '0');
+    final hour =
+        now.hour.toString().padLeft(2, '0');
 
-    final minute = now.minute.toString().padLeft(2, '0');
+    final minute =
+        now.minute.toString().padLeft(2, '0');
 
-    final second = now.second.toString().padLeft(2, '0');
+    final second =
+        now.second.toString().padLeft(2, '0');
 
     setState(() {
-      currentTime = '$day $month $year $hour:$minute:$second WIB';
+      currentTime =
+          '$day $month $year $hour:$minute:$second WIB';
     });
   }
 
@@ -104,30 +114,48 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
 
             const SizedBox(width: 5),
 
-            const Text('•', style: TextStyle(color: Colors.grey)),
+            const Text(
+              '•',
+              style: TextStyle(
+                color: Colors.grey,
+              ),
+            ),
 
             const SizedBox(width: 5),
 
             const Text(
               'Absensi',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
+              ),
             ),
 
             const SizedBox(width: 8),
 
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 6,
+                vertical: 3,
+              ),
               decoration: BoxDecoration(
                 color: const Color(0xFFECEEF0),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: const Row(
                 children: [
-                  Icon(Icons.circle, size: 7, color: Color(0xFF10B981)),
+                  Icon(
+                    Icons.circle,
+                    size: 7,
+                    color: Color(0xFF10B981),
+                  ),
                   SizedBox(width: 4),
                   Text(
                     'Online',
-                    style: TextStyle(fontSize: 11, color: Colors.grey),
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey,
+                    ),
                   ),
                 ],
               ),
@@ -137,14 +165,20 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
 
         actions: [
           Container(
-            margin: const EdgeInsets.only(right: 16),
+            margin: const EdgeInsets.only(
+              right: 16,
+            ),
             width: 32,
             height: 32,
             decoration: const BoxDecoration(
               color: Color(0xFF006C49),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.person, color: Colors.white, size: 18),
+            child: const Icon(
+              Icons.person,
+              color: Colors.white,
+              size: 18,
+            ),
           ),
         ],
       ),
@@ -155,20 +189,29 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
       body: SafeArea(
         child: Column(
           children: [
+
             // ===========================================
             // STATUS 3/3
             // ===========================================
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
+              padding: const EdgeInsets.fromLTRB(
+                16,
+                8,
+                16,
+                4,
+              ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween,
                 children: [
+
                   Row(
                     children: [
                       Container(
                         width: 6,
                         height: 6,
-                        decoration: const BoxDecoration(
+                        decoration:
+                            const BoxDecoration(
                           color: Color(0xFF006C49),
                           shape: BoxShape.circle,
                         ),
@@ -192,7 +235,10 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    icon: const Icon(Icons.close, size: 20),
+                    icon: const Icon(
+                      Icons.close,
+                      size: 20,
+                    ),
                   ),
                 ],
               ),
@@ -202,18 +248,22 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
             // PROGRESS BAR
             // ===========================================
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+              ),
               child: Container(
                 height: 4,
                 decoration: BoxDecoration(
                   color: const Color(0xFFECEEF0),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius:
+                      BorderRadius.circular(10),
                 ),
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: const Color(0xFF006C49),
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius:
+                        BorderRadius.circular(10),
                   ),
                 ),
               ),
@@ -223,7 +273,12 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
             // JUDUL
             // ===========================================
             const Padding(
-              padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+              padding: EdgeInsets.fromLTRB(
+                16,
+                8,
+                16,
+                8,
+              ),
               child: Column(
                 children: [
                   Text(
@@ -241,7 +296,10 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
                   Text(
                     'Posisikan wajah Anda tepat di dalam bingkai.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 12, color: Color(0xFF6C7A71)),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF6C7A71),
+                    ),
                   ),
                 ],
               ),
@@ -252,49 +310,66 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
             // ===========================================
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                ),
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
                     color: const Color(0xFF1E232A),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius:
+                        BorderRadius.circular(16),
                   ),
                   child: Stack(
                     children: [
+
                       // ---------------------------------
                       // AREA WAJAH
                       // ---------------------------------
                       Center(
                         child: Column(
-                          mainAxisSize: MainAxisSize.min,
+                          mainAxisSize:
+                              MainAxisSize.min,
                           children: [
+
                             Container(
                               width: 128,
                               height: 160,
-                              decoration: BoxDecoration(
+                              decoration:
+                                  BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: const Color(0xFFBBCABF),
+                                  color:
+                                      const Color(
+                                    0xFFBBCABF,
+                                  ),
                                   width: 2,
                                 ),
                               ),
                               child: const Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment
+                                        .center,
                                 children: [
                                   Icon(
                                     Icons.face,
                                     size: 48,
-                                    color: Color(0xFFBBCABF),
+                                    color:
+                                        Color(0xFFBBCABF),
                                   ),
 
                                   SizedBox(height: 8),
 
                                   Text(
                                     'Posisikan Wajah',
-                                    textAlign: TextAlign.center,
+                                    textAlign:
+                                        TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 11,
-                                      color: Color(0xFFBBCABF),
+                                      color:
+                                          Color(
+                                        0xFFBBCABF,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -312,24 +387,34 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
                         left: 12,
                         right: 12,
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          mainAxisAlignment:
+                              MainAxisAlignment
+                                  .spaceBetween,
                           children: [
+
                             Container(
-                              padding: const EdgeInsets.symmetric(
+                              padding:
+                                  const EdgeInsets
+                                      .symmetric(
                                 horizontal: 10,
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF1E232A)
-                                    .withOpacity(0.85),
-                                borderRadius: BorderRadius.circular(20),
+                                color: const Color(
+                                  0xFF1E232A,
+                                ).withOpacity(0.85),
+                                borderRadius:
+                                    BorderRadius
+                                        .circular(20),
                               ),
                               child: const Row(
                                 children: [
                                   Icon(
                                     Icons.circle,
                                     size: 8,
-                                    color: Color(0xFF10B981),
+                                    color: Color(
+                                      0xFF10B981,
+                                    ),
                                   ),
 
                                   SizedBox(width: 6),
@@ -338,8 +423,10 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
                                     'Wajah Terdeteksi',
                                     style: TextStyle(
                                       fontSize: 11,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.white,
+                                      fontWeight:
+                                          FontWeight.w500,
+                                      color:
+                                          Colors.white,
                                     ),
                                   ),
                                 ],
@@ -348,14 +435,19 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
 
                             // Jam
                             Container(
-                              padding: const EdgeInsets.symmetric(
+                              padding:
+                                  const EdgeInsets
+                                      .symmetric(
                                 horizontal: 8,
                                 vertical: 6,
                               ),
                               decoration: BoxDecoration(
-                                color: const Color(0xFF1E232A)
-                                    .withOpacity(0.85),
-                                borderRadius: BorderRadius.circular(20),
+                                color: const Color(
+                                  0xFF1E232A,
+                                ).withOpacity(0.85),
+                                borderRadius:
+                                    BorderRadius
+                                        .circular(20),
                               ),
                               child: Row(
                                 children: [
@@ -365,13 +457,17 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
                                     color: Colors.white,
                                   ),
 
-                                  const SizedBox(width: 4),
+                                  const SizedBox(
+                                    width: 4,
+                                  ),
 
                                   Text(
                                     currentTime,
-                                    style: const TextStyle(
+                                    style:
+                                        const TextStyle(
                                       fontSize: 10,
-                                      color: Colors.white,
+                                      color:
+                                          Colors.white,
                                     ),
                                   ),
                                 ],
@@ -393,10 +489,13 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
                           child: Container(
                             width: 80,
                             height: 96,
-                            decoration: BoxDecoration(
+                            decoration:
+                                BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: const Color(0xFF4EDEA3).withOpacity(0.4),
+                                color: const Color(
+                                  0xFF4EDEA3,
+                                ).withOpacity(0.4),
                               ),
                             ),
                           ),
@@ -412,9 +511,15 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
             // INFO
             // ===========================================
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              padding: const EdgeInsets.fromLTRB(
+                16,
+                8,
+                16,
+                0,
+              ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment:
+                    MainAxisAlignment.center,
                 children: [
                   const Icon(
                     Icons.verified,
@@ -443,12 +548,20 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
             // CAMERA CONTROLS
             // ===========================================
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+              padding: const EdgeInsets.fromLTRB(
+                16,
+                12,
+                16,
+                8,
+              ),
               child: Column(
                 children: [
+
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment:
+                        MainAxisAlignment.spaceBetween,
                     children: [
+
                       // Balik kamera
                       _cameraButton(
                         icon: Icons.flip_camera_ios,
@@ -463,16 +576,20 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
                         child: Container(
                           width: 68,
                           height: 68,
-                          padding: const EdgeInsets.all(4),
+                          padding: const EdgeInsets.all(
+                            4,
+                          ),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: const Color(0xFF006C49),
+                              color:
+                                  const Color(0xFF006C49),
                               width: 2,
                             ),
                           ),
                           child: Container(
-                            decoration: const BoxDecoration(
+                            decoration:
+                                const BoxDecoration(
                               shape: BoxShape.circle,
                               color: Color(0xFF006C49),
                             ),
@@ -505,9 +622,17 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.arrow_back, size: 15),
+                        Icon(
+                          Icons.arrow_back,
+                          size: 15,
+                        ),
                         SizedBox(width: 4),
-                        Text('Batal', style: TextStyle(fontSize: 11)),
+                        Text(
+                          'Batal',
+                          style: TextStyle(
+                            fontSize: 11,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -521,11 +646,14 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
       // =================================================
       // BOTTOM NAVIGATION
       // =================================================
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar:
+          BottomNavigationBar(
         currentIndex: 0,
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: const Color(0xFF006C49),
-        unselectedItemColor: const Color(0xFF6C7A71),
+        selectedItemColor:
+            const Color(0xFF006C49),
+        unselectedItemColor:
+            const Color(0xFF6C7A71),
         backgroundColor: Colors.white,
 
         items: const [
@@ -570,7 +698,11 @@ class _FaceVerificationPageState extends State<FaceVerificationPage> {
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: onPressed,
-          child: Icon(icon, size: 20, color: const Color(0xFF6C7A71)),
+          child: Icon(
+            icon,
+            size: 20,
+            color: const Color(0xFF6C7A71),
+          ),
         ),
       ),
     );
