@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import '../../core/navigation/app_navigation.dart';
-import '../../widgets/custom_bottom_nav.dart';
 
 class AttendanceSuccessPage extends StatelessWidget {
   const AttendanceSuccessPage({super.key});
@@ -320,7 +318,7 @@ class AttendanceSuccessPage extends StatelessWidget {
                                 children: [
 
                                   const Text(
-                                    'Pricilll',
+                                    'Alisa Yasmin',
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight:
@@ -479,9 +477,9 @@ class AttendanceSuccessPage extends StatelessWidget {
                 height: 48,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                      '/',
-                      (route) => false,
+                    Navigator.popUntil(
+                      context,
+                      (route) => route.isFirst,
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -521,9 +519,35 @@ class AttendanceSuccessPage extends StatelessWidget {
         ),
       ),
 
-      bottomNavigationBar: CustomBottomNav(
+      // ================= BOTTOM NAVIGATION =================
+      bottomNavigationBar:
+          BottomNavigationBar(
         currentIndex: 0,
-        onTap: (index) => AppNavigation.handleBottomNav(context, index),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor:
+            const Color(0xFF006C49),
+        unselectedItemColor:
+            const Color(0xFF6C7A71),
+        backgroundColor: Colors.white,
+
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.how_to_reg),
+            label: 'Absensi',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
+            label: 'Jadwal',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.point_of_sale),
+            label: 'POS',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Profil',
+          ),
+        ],
       ),
     );
   }

@@ -2,13 +2,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_text_styles.dart';
-import '../../core/navigation/app_navigation.dart';
 import '../../widgets/custom_bottom_nav.dart';
 import 'widgets/shift_info_card.dart';
 import 'widgets/gps_status_bar.dart';
 import 'widgets/history_card.dart';
 
-enum CheckInState { idle, loading }
+enum CheckInState { idle, loading, success }
 
 class AbsensiPage extends StatefulWidget {
   const AbsensiPage({super.key});
@@ -49,20 +48,14 @@ class _AbsensiPageState extends State<AbsensiPage> {
     return '$d, ${_now.day} $m ${_now.year} | ${two(_now.hour)}:${two(_now.minute)}:${two(_now.second)} WIB';
   }
 
+  // Tiru alur pada script asli: tombol -> loading 1200ms -> sukses.
+  // Idealnya navigasi berpindah ke verifikasi_wajah_page lalu verifikasi_gps_page
+  // sebelum sampai di sini; disederhanakan agar polanya terlihat jelas.
   Future<void> _handleCheckIn() async {
     setState(() => _checkInState = CheckInState.loading);
-
     await Future.delayed(const Duration(milliseconds: 1200));
     if (!mounted) return;
-
-    await Navigator.of(context).pushNamed('/gps-verification');
-
-    if (!mounted) return;
-    setState(() => _checkInState = CheckInState.idle);
-  }
-
-  void _handleBottomNavigation(int index) {
-    AppNavigation.handleBottomNav(context, index);
+    setState(() => _checkInState = CheckInState.success);
   }
 
   void _handleRefreshGps() {
@@ -83,7 +76,7 @@ class _AbsensiPageState extends State<AbsensiPage> {
       appBar: _buildAppBar(),
       bottomNavigationBar: CustomBottomNav(
         currentIndex: _navIndex,
-        onTap: _handleBottomNavigation,
+        onTap: (i) => setState(() => _navIndex = i),
       ),
       body: SafeArea(
         top: false,
@@ -127,13 +120,7 @@ class _AbsensiPageState extends State<AbsensiPage> {
                     statusLabel: 'Tepat Waktu',
                   ),
                 ],
-                onSeeAll: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Riwayat lengkap belum tersedia.'),
-                    ),
-                  );
-                },
+                onSeeAll: () {},
               ),
             ],
           ),
@@ -226,7 +213,9 @@ class _AbsensiPageState extends State<AbsensiPage> {
           child: ElevatedButton(
             onPressed: _checkInState == CheckInState.loading ? null : _handleCheckIn,
             style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
+              backgroundColor: _checkInState == CheckInState.success
+                  ? const Color(0xFF065F46)
+                  : AppColors.primary,
               foregroundColor: Colors.white,
               elevation: 1,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
@@ -275,6 +264,15 @@ class _AbsensiPageState extends State<AbsensiPage> {
             ),
             const SizedBox(width: 10),
             Text('Memverifikasi Presensi...', style: AppTextStyles.labelLg.copyWith(color: Colors.white)),
+          ],
+        );
+      case CheckInState.success:
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.done_all, size: 22),
+            const SizedBox(width: 8),
+            Text('Absensi Berhasil Masuk!', style: AppTextStyles.labelLg.copyWith(color: Colors.white)),
           ],
         );
     }

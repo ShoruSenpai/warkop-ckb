@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import '../../core/navigation/app_navigation.dart';
-import '../../widgets/custom_bottom_nav.dart';
 
 class FaceVerificationPage extends StatefulWidget {
   const FaceVerificationPage({super.key});
@@ -17,7 +15,6 @@ class _FaceVerificationPageState
   Timer? timer;
 
   String currentTime = '';
-  bool _isSubmitting = false;
 
   @override
   void initState() {
@@ -79,26 +76,16 @@ class _FaceVerificationPageState
     super.dispose();
   }
 
-  // Tombol ambil foto. Kamera masih mock, tetapi alur halaman sudah aktif.
-  Future<void> takePhoto() async {
-    if (_isSubmitting) return;
-
-    setState(() => _isSubmitting = true);
-
+  // Tombol ambil foto
+  void takePhoto() {
+    // Untuk sementara hanya memberikan feedback.
+    // Kamera asli bisa ditambahkan setelah ini.
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
         content: Text('Foto kehadiran diambil'),
-        duration: Duration(milliseconds: 700),
+        duration: Duration(seconds: 1),
       ),
     );
-
-    await Future.delayed(const Duration(milliseconds: 700));
-    if (!mounted) return;
-
-    await Navigator.of(context).pushNamed('/attendance-success');
-
-    if (!mounted) return;
-    setState(() => _isSubmitting = false);
   }
 
   @override
@@ -585,7 +572,7 @@ class _FaceVerificationPageState
 
                       // SHUTTER
                       GestureDetector(
-                        onTap: _isSubmitting ? null : takePhoto,
+                        onTap: takePhoto,
                         child: Container(
                           width: 68,
                           height: 68,
@@ -656,9 +643,40 @@ class _FaceVerificationPageState
         ),
       ),
 
-      bottomNavigationBar: CustomBottomNav(
+      // =================================================
+      // BOTTOM NAVIGATION
+      // =================================================
+      bottomNavigationBar:
+          BottomNavigationBar(
         currentIndex: 0,
-        onTap: (index) => AppNavigation.handleBottomNav(context, index),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor:
+            const Color(0xFF006C49),
+        unselectedItemColor:
+            const Color(0xFF6C7A71),
+        backgroundColor: Colors.white,
+
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.how_to_reg),
+            label: 'Absensi',
+          ),
+
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
+            label: 'Jadwal',
+          ),
+
+          BottomNavigationBarItem(
+            icon: Icon(Icons.point_of_sale),
+            label: 'POS',
+          ),
+
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Profil',
+          ),
+        ],
       ),
     );
   }

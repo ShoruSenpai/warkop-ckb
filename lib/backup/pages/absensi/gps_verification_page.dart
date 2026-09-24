@@ -1,7 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../core/navigation/app_navigation.dart';
-import '../../widgets/custom_bottom_nav.dart';
 
 class AttendancePage extends StatefulWidget {
   const AttendancePage({super.key});
@@ -457,11 +455,9 @@ class _AttendancePageState extends State<AttendancePage> {
                 width: double.infinity,
                 height: 44,
                 child: ElevatedButton(
-                  onPressed: isScanning
-                      ? null
-                      : () {
-                          Navigator.of(context).pushNamed('/face-verification');
-                        },
+                  onPressed: () {
+                    // Nanti diarahkan ke face_verification.dart
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
                         const Color(0xFF006C49),
@@ -559,9 +555,31 @@ class _AttendancePageState extends State<AttendancePage> {
         ),
       ),
 
-      bottomNavigationBar: CustomBottomNav(
+      // ================= BOTTOM NAVIGATION =================
+      bottomNavigationBar: BottomNavigationBar(
         currentIndex: 0,
-        onTap: (index) => AppNavigation.handleBottomNav(context, index),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: const Color(0xFF006C49),
+        unselectedItemColor: const Color(0xFF6C7A71),
+        backgroundColor: Colors.white,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.how_to_reg),
+            label: 'Absensi',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
+            label: 'Jadwal',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.point_of_sale),
+            label: 'POS',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Profil',
+          ),
+        ],
       ),
     );
   }
