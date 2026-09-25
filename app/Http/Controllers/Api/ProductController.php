@@ -3,13 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Throwable;
+
+// models
 use App\Models\Product;
 use App\Models\ProductPackaging;
 use App\Models\ProductRecipe;
 use App\Models\SupplierPurchaseItem;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Throwable;
+
+// services
+use App\Services\R2ImageService;
 
 class ProductController extends Controller
 {
@@ -40,7 +45,7 @@ class ProductController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, R2ImageService $imageService)
     {
         $validated = $request->validate([
             'category_id' => 'required|integer|exists:categories,id',
@@ -53,7 +58,11 @@ class ProductController extends Controller
 
             'stock_type' => 'required|in:static,recipe,untracked',
 
-            'image_url' => 'nullable|string|max:500',
+            'image' => [
+                'nullable',
+                'image',
+                'max:5120'
+            ],
 
             'is_recommended' => 'nullable|boolean',
 
@@ -71,8 +80,14 @@ class ProductController extends Controller
                 'required|numeric|min:0.01',
         ]);
 
+        $uploadedImage = null;
+
         try {
-            $responseData = DB::transaction(function () use ($validated) {
+            if($request->hasfile('image')) {
+                $uploadedImage = $imageService->uploadproductImage($request->file('image'));
+            }
+
+            $responseData = DB::transaction(function () use ($validated, $uploadedImage) {
 
                 $product = Product::create([
                     'category_id' => $validated['category_id'],
@@ -90,7 +105,8 @@ class ProductController extends Controller
 
                     'stock_type' => $validated['stock_type'],
 
-                    'image_url' => $validated['image_url'] ?? null,
+                    'image_url' => $uploadedImage['url'] ?? null,
+                        'image_path' => $uploadedImage['path'] ?? null ,
 
                     'is_recommended' =>
                         $validated['is_recommended'] ?? false,
@@ -141,6 +157,13 @@ class ProductController extends Controller
             ], 201);
 
         } catch (Throwable $e) {
+            if($uploadedImage) {
+                try {
+                    $imageService->delete($uploadedImage['path']);
+                } catch(Throwable $cleanupException) {
+                    report($cleanupException);
+                }
+            }
 
             report($e);
 

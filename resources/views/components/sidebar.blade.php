@@ -5,7 +5,7 @@
     $menus = [
         'MAIN MENU' => [
             ['name' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'fas fa-chart-pie', 'badge' => 0, 'roles' => ['owner', 'admin']],
-            ['name' => 'Product Management', 'route' => 'product.index', 'icon' => 'fas fa-box-open', 'badge' => 0, 'roles' => ['owner', 'admin']],
+            ['name' => 'Product Management', 'route' => 'products.index', 'icon' => 'fas fa-box-open', 'badge' => 0, 'roles' => ['owner', 'admin']],
             ['name' => 'Raw Materials', 'route' => 'raw-material.index', 'icon' => 'fas fa-cubes', 'badge' => 0, 'roles' => ['owner', 'admin']],
             ['name' => 'Purchases', 'route' => 'supplier.index', 'icon' => 'fas fa-truck-loading', 'badge' => 0, 'roles' => ['owner', 'admin']],
             ['name' => 'Laporan', 'route' => 'report.index', 'icon' => 'fas fa-file-invoice-dollar', 'badge' => 0, 'roles' => ['owner', 'admin']],

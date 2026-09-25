@@ -23,20 +23,28 @@ Route::middleware(['auth', 'role:owner,admin'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+        return view('dashboard');})->name('dashboard');
+
     Route::get('/products', function () {
-        return view('products.index');
-    })->name('product.index');
+        return view('products.index');})->name('products.index');
+    Route::get('/products/create', function () {
+        return view('products.create');})->name('products.create');
+    Route::get('/products/{product}/edit', function ($product) {
+        return view('products.edit', ['productId' => $product,]);
+    })->name('products.edit');
+
     Route::get('/raw-materials', function () {
         return view('raw-materials.index');
     })->name('raw-material.index');
+
     Route::get('/suppliers', function () {
         return view('suppliers.index');
     })->name('supplier.index');
+
     Route::get('/reports', function () {
         return view('reports.index');
     })->name('report.index');
+
     Route::get('/settings', function ()
     { return view('settings.index');
     })->name('settings');

@@ -8,7 +8,7 @@ import {
     toggleModal,
 } from "./helper.js";
 
-import { apiFetch } from "./api.js";
+import { apiFetch } from "../utils/api.js";
 import { fetchRawMaterials } from "./table.js";
 
 export async function openEditMaterialModal(id) {

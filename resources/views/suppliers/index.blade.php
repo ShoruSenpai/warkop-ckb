@@ -2,7 +2,7 @@
 
     <div class="flex justify-between items-center mb-6">
         <div>
-            <h2 class="text-2xl font-bold text-ckb-secondary">
+            <h2 class="text-2xl font-bold text-ckb-on-surface">
                 Input Pembelian Supplier
             </h2>
 
