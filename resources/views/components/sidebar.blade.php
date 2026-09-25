@@ -6,7 +6,7 @@
         'MAIN MENU' => [
             ['name' => 'Dashboard', 'route' => 'dashboard', 'icon' => 'fas fa-chart-pie', 'badge' => 0, 'roles' => ['owner', 'admin']],
             ['name' => 'Product Management', 'route' => 'product.index', 'icon' => 'fas fa-box-open', 'badge' => 0, 'roles' => ['owner', 'admin']],
-            ['name' => 'Raw Materials', 'route' => 'raw-material.index', 'icon' => 'fas fa-cubes', 'badge' => 3, 'roles' => ['owner', 'admin']],
+            ['name' => 'Raw Materials', 'route' => 'raw-material.index', 'icon' => 'fas fa-cubes', 'badge' => 0, 'roles' => ['owner', 'admin']],
             ['name' => 'Purchases', 'route' => 'supplier.index', 'icon' => 'fas fa-truck-loading', 'badge' => 0, 'roles' => ['owner', 'admin']],
             ['name' => 'Laporan', 'route' => 'report.index', 'icon' => 'fas fa-file-invoice-dollar', 'badge' => 0, 'roles' => ['owner', 'admin']],
         ],
@@ -17,12 +17,12 @@
     ];
 @endphp
 
-<aside class="w-64 bg-ckb-primary text-ckb-bg flex flex-col h-full shrink-0">
-    <div class="h-16 flex items-center px-6 border-b border-white/10">
-        <div class="w-8 h-8 bg-white rounded flex items-center justify-center text-ckb-primary font-bold mr-3">CKB</div>
+<aside class="w-64 bg-ckb-inverse-surface text-ckb-inverse-on-surface flex flex-col h-full shrink-0">
+    <div class="h-16 flex items-center px-6 border-b border-white/10 gap-4">
+        <img src="{{ asset('/assets/photos/warkop-ckb-logo.webp') }}" alt="warkop-ckb-logo" loading="lazy" class="w-8 rounded-sm">
         <div>
             <h1 class="text-sm font-bold leading-tight">Warkop Cak Kebo</h1>
-            <p class="text-[10px] text-gray-400 tracking-wider">ADMIN PANEL</p>
+            <p class="text-[10px]  tracking-wider">ADMIN PANEL</p>
         </div>
     </div>
 
@@ -53,7 +53,7 @@
                             @endphp
                             <li>
                                 <a href="{{ $routeUrl }}"
-                                   class="flex items-center px-6 py-2.5 text-sm transition-colors {{ $isActive ? 'bg-white/10 border-l-4 border-ckb-bg font-medium' : 'text-gray-300 hover:bg-white/5 border-l-4 border-transparent' }}">
+                                   class="flex items-center px-6 py-2.5 text-sm transition-colors {{ $isActive ? 'bg-ckb-secondary-container font-medium text-ckb-on-secondary-container' : 'text-ckb-inverse-on-surface hover:bg-white/5 border-l-4 border-transparent' }}">
                                     <i class="{{ $item['icon'] }} w-5 text-center mr-3 text-lg {{ $isActive ? 'text-white' : 'text-gray-400' }}"></i>
                                     <span class="flex-1">{{ $item['name'] }}</span>
                                     @if($item['badge'] > 0)

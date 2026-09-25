@@ -5,7 +5,6 @@
 
         <select
             class="item-select w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-white focus:ring-1 focus:ring-ckb-primary focus:outline-none transition"
-            onchange="onItemChange(this)"
             required
         >
 
@@ -27,7 +26,6 @@
 
         <select
             class="packaging-select w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-white focus:ring-1 focus:ring-ckb-primary focus:outline-none transition"
-            onchange="onPackagingChange(this)"
             required
             disabled
         >
@@ -54,7 +52,6 @@
             min="0.1"
             class="qty w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none transition"
             value="1"
-            oninput="calculateRow(this)"
             required
         >
 
@@ -71,7 +68,7 @@
             <span
                 class="conversion-text text-xs text-gray-400"
             >
-                Pilih satuan beli
+                Satuan Beli
             </span>
 
         </div>
@@ -88,7 +85,6 @@
             step="0.01"
             class="price w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none transition"
             value="0"
-            oninput="calculateRow(this)"
             required
         >
 
@@ -113,7 +109,6 @@
 
         <button
             type="button"
-            onclick="removeRow(this)"
             class="text-red-400 hover:text-red-600"
             title="Hapus baris"
         >

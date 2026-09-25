@@ -7,13 +7,109 @@
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+    'Segoe UI Symbol', 'Noto Color Emoji';
 
-    --color-ckb-primary: #271310;
-    --color-ckb-secondary: #75584d;
-    --color-ckb-accent: #75584D;
-    --color-ckb-bg: #FFFBF6;
-    --color-ckb-card: #FFFFFF;
-    --color-ckb-warning: #ED6C02;
-    --color-ckb-error: #BA1A1A;
+    /* =========================
+       SURFACE
+       ========================= */
+
+    --color-ckb-surface: #f7f9fb;
+    --color-ckb-surface-dim: #d8dadc;
+    --color-ckb-surface-bright: #f7f9fb;
+
+    --color-ckb-surface-container-lowest: #ffffff;
+    --color-ckb-surface-container-low: #f2f4f6;
+    --color-ckb-surface-container: #eceef0;
+    --color-ckb-surface-container-high: #e6e8ea;
+    --color-ckb-surface-container-highest: #e0e3e5;
+
+    --color-ckb-background: #f7f9fb;
+    --color-ckb-surface-variant: #e0e3e5;
+
+    /* =========================
+       ON SURFACE
+       ========================= */
+
+    --color-ckb-on-surface: #191c1e;
+    --color-ckb-on-surface-variant: #3c4a42;
+
+    /* =========================
+       INVERSE
+       ========================= */
+
+    --color-ckb-inverse-surface: #2d3133;
+    --color-ckb-inverse-on-surface: #eff1f3;
+
+    /* =========================
+       OUTLINE
+       ========================= */
+
+    --color-ckb-outline: #6c7a71;
+    --color-ckb-outline-variant: #bbcabf;
+    --color-ckb-surface-tint: #006c49;
+
+    /* ========================= PRIMARY SLATE / BLUE-GRAY ========================= */
+    --color-ckb-primary: #283044;
+    --color-ckb-on-primary: #ffffff;
+    --color-ckb-primary-container: #dae2fd;
+    --color-ckb-on-primary-container: #5c647a;
+    --color-ckb-inverse-primary: #dae2fd;
+
+    /* ========================= SECONDARY GREEN ========================= */
+    --color-ckb-secondary: #006c49;
+    --color-ckb-on-secondary: #ffffff;
+    --color-ckb-secondary-container: #10b981;
+    --color-ckb-on-secondary-container: #00422b;
+
+
+    /* =========================
+       TERTIARY
+       BIRU
+       ========================= */
+
+    --color-ckb-tertiary: #0053db;
+    --color-ckb-on-tertiary: #ffffff;
+
+    --color-ckb-tertiary-container: #7f9fff;
+    --color-ckb-on-tertiary-container: #00328b;
+
+    /* =========================
+       ERROR
+       ========================= */
+
+    --color-ckb-error: #ba1a1a;
+    --color-ckb-on-error: #ffffff;
+
+    --color-ckb-error-container: #ffdad6;
+    --color-ckb-on-error-container: #93000a;
+
+    /* =========================
+       PRIMARY FIXED
+       ========================= */
+
+    --color-ckb-primary-fixed: #6ffbbe;
+    --color-ckb-primary-fixed-dim: #4edea3;
+
+    --color-ckb-on-primary-fixed: #002113;
+    --color-ckb-on-primary-fixed-variant: #005236;
+
+    /* =========================
+       SECONDARY FIXED
+       ========================= */
+
+    --color-ckb-secondary-fixed: #dae2fd;
+    --color-ckb-secondary-fixed-dim: #bec6e0;
+
+    --color-ckb-on-secondary-fixed: #131b2e;
+    --color-ckb-on-secondary-fixed-variant: #3f465c;
+
+    /* =========================
+       TERTIARY FIXED
+       ========================= */
+
+    --color-ckb-tertiary-fixed: #dbe1ff;
+    --color-ckb-tertiary-fixed-dim: #b4c5ff;
+
+    --color-ckb-on-tertiary-fixed: #00174b;
+    --color-ckb-on-tertiary-fixed-variant: #003ea8;
 }
