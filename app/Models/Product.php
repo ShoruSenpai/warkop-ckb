@@ -6,41 +6,40 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $table = 'products';
+    protected $table = "products";
 
     protected $fillable = [
-        'category_id',
-        'name',
-        'description',
-        'base_price',
-        'stock',
-        'stock_type',
-        'image_url',
-        'image_path' .
-        'is_recommended',
-        'status',
-        'image_path',
-        'is_recommended'
+        "category_id",
+        "name",
+        "description",
+        "base_price",
+        "stock",
+        "stock_type",
+        "image_url",
+        "image_path" . "is_recommended",
+        "status",
+        "image_path",
+        "is_recommended",
     ];
 
     protected $casts = [
-        'stock' => 'integer',
-        'base_price' => 'decimal:2',
-        'is_recommended' => 'boolean',
+        "stock" => "integer",
+        "base_price" => "decimal:2",
+        "is_recommended" => "boolean",
     ];
 
     public function category()
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(Category::class, "category_id");
     }
 
     public function packagings()
     {
-        return $this->hasMany(ProductPackaging::class, 'product_id');
+        return $this->hasMany(ProductPackaging::class, "product_id");
     }
 
     public function recipes()
     {
-        return $this->hasMany(ProductRecipe::class, 'product_id');
+        return $this->hasMany(ProductRecipe::class, "product_id");
     }
 }

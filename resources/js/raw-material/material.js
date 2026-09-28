@@ -29,6 +29,9 @@ export function openAddMaterialModal() {
 
 export function closeMaterialModal() {
     toggleModal("material-modal", false);
+
+    state.editingMaterial = null;
+    state.packagingData = [];
 }
 
 export function addMaterialPackagingRow(data = null) {
@@ -351,7 +354,14 @@ export function initMaterialEvents() {
 
     $("material-form")?.addEventListener("submit", submitMaterial);
 
-    $("material-modal")?.addEventListener("click", (event) => {
+    const materialModal = $("material-modal");
+
+    materialModal?.addEventListener("click", (event) => {
+        if (event.target === materialModal) {
+            closeMaterialModal();
+            return;
+        }
+
         const closeButton = event.target.closest("[data-modal-close]");
 
         if (closeButton) {
@@ -361,8 +371,12 @@ export function initMaterialEvents() {
 
         const actionButton = event.target.closest("[data-action]");
 
-        if (actionButton?.dataset.action === "remove-packaging") {
-            removeMaterialPackagingRow(actionButton);
+        if (!actionButton) return;
+
+        switch (actionButton.dataset.action) {
+            case "remove-packaging":
+                removeMaterialPackagingRow();
+                return;
         }
     });
 

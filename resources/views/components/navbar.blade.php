@@ -1,21 +1,77 @@
-@props(['title'])
+@props (["title" => null])
 
-<header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shrink-0">
-    <div class="flex items-center flex-1">
-        <h2 class="text-lg font-semibold text-ckb-primary mr-8">{{ $title }}</h2>
+@php
+    $breadcrumbs = [
+        "dashboard" => ["Dashboard"],
 
-        <div class="relative w-96 hidden md:block">
-            <input type="text" placeholder="Cari produk, bahan baku, supplier..."
-                   class="w-full pl-4 pr-10 py-1.5 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-1 focus:ring-ckb-accent">
-        </div>
+        "products.index" => ["Product Management"],
+
+        "products.create" => ["Product Management", "Tambah Produk"],
+
+        "products.edit" => ["Product Management", "Edit Produk"],
+
+        "raw-material.index" => ["Bahan Baku"],
+
+        "supplier.index" => ["Pembelian"],
+
+        "report.transactions" => ["Laporan", "Riwayat Transaksi"],
+
+        "report.sales" => ["Laporan", "Laporan Penjualan"],
+
+        "report.purchases" => ["Laporan", "Laporan Pembelian"],
+
+        "report.stock" => ["Laporan", "Laporan Stok"],
+
+        "settings" => ["Settings"],
+
+        "users.index" => ["User Management"],
+    ];
+
+    $currentRoute = request()->route()?->getName();
+
+    $currentBreadcrumbs = $breadcrumbs[$currentRoute] ?? [$title ?? "Admin Panel"];
+@endphp
+
+<header
+    class="flex h-16 shrink-0 items-center justify-between border-b border-ckb-outline-variant/40 bg-ckb-surface-container-lowest px-6"
+>
+    {{-- Current Route --}}
+    <div class="flex min-w-0 items-center">
+        @foreach ($currentBreadcrumbs as $index => $breadcrumb)
+            @if ($index > 0)
+                <i
+                    class="fas fa-chevron-right mx-3 text-[10px] text-ckb-outline"
+                ></i>
+
+            @endif
+
+            <h2
+                class="
+                    truncate
+                    {{ $index === count($currentBreadcrumbs) - 1
+                        ? 'text-lg font-semibold text-ckb-primary'
+                        : 'text-sm font-medium text-ckb-on-surface-variant'
+                    }}
+                "
+            >
+                {{ $breadcrumb }}
+            </h2>
+
+        @endforeach
     </div>
 
-    <div class="flex items-center">
+    {{-- Logout --}}
+    <div class="shrink-0">
         <form action="{{ route('logout') }}" method="POST">
             @csrf
-            <button type="submit" class="flex items-center text-sm text-gray-600 hover:text-ckb-error transition-colors px-3 py-1.5 rounded-md hover:bg-red-50">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                Keluar
+
+            <button
+                type="submit"
+                class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ckb-on-surface-variant transition-colors hover:bg-ckb-error-container hover:text-ckb-on-error-container"
+            >
+                <i class="fas fa-right-from-bracket"></i>
+
+                <span class="hidden sm:inline"> Keluar </span>
             </button>
         </form>
     </div>

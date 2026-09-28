@@ -13,7 +13,12 @@ export function handleStockTypeChange() {
 }
 
 export function initStockTypeEvents() {
-    document.querySelectorAll('input[name="stock_type"]').forEach((input) => {
-        input.addEventListener("change", handleStockTypeChange);
+    document.addEventListener("change", (event) => {
+        if (
+            event.target instanceof HTMLInputElement &&
+            event.target.matches('input[name="stock_type"]')
+        ) {
+            handleStockTypeChange();
+        }
     });
 }

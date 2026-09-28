@@ -11,44 +11,54 @@ use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    public function showLogin() {
-        if(Auth::Check()) {
-            return redirect()->route('dashboard');
+    public function showLogin()
+    {
+        if (Auth::Check()) {
+            return redirect()->route("dashboard");
         }
 
-        return view('auth.login');
+        return view("auth.login");
     }
 
-    public function processLogin(Request $request) {
+    public function processLogin(Request $request)
+    {
         $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required'
+            "email" => "required|email",
+            "password" => "required",
         ]);
 
-        if(Auth::attempt($credentials)) {
+        if (Auth::attempt($credentials)) {
             $user = Auth::user();
 
-            if($user->role === 'employee') {
+            if ($user->role === "employee") {
                 Auth::logout();
                 return back()->withErrors([
-                    'email' => 'Access denied. Karyawan tidak diizinkan memasuki panel admin.',
+                    "email" =>
+                        "Access denied. Karyawan tidak diizinkan memasuki panel admin.",
                 ]);
             }
 
             $request->session()->regenerate();
 
-            return redirect()->route('dashboard');
+            return redirect()->route("dashboard");
         }
 
-        return back()->withErrors(['email' => 'The provided credentials do not match our records.'])->withInput();
+        return back()
+            ->withErrors([
+                "email" => "The provided credentials do not match our records.",
+            ])
+            ->withInput();
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('success', 'Logged out successfully.');
+        return redirect()
+            ->route("login")
+            ->with("success", "Logged out successfully.");
     }
 }

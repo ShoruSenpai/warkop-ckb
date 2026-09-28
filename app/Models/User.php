@@ -16,24 +16,16 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    protected $table = 'users';
+    protected $table = "users";
 
-    protected $fillable = [
-        'username',
-        'email',
-        'password',
-        'role'
-    ];
+    protected $fillable = ["username", "email", "password", "role"];
 
-    protected $hidden = [
-        'password',
-        "remember_token"
-    ];
+    protected $hidden = ["password", "remember_token"];
 
     protected function casts(): array
     {
         return [
-            'password' => 'hashed'
+            "password" => "hashed",
         ];
     }
 

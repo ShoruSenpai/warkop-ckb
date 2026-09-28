@@ -9,23 +9,21 @@ class Employee extends Model
 {
     use HasFactory;
 
-    protected $table = 'employees';
+    protected $table = "employees";
 
     protected $fillable = [
-        'user_id',
-        'employee_code',
-        'full_name',
-        'position',
-        'phone_number',
-        'is_active'
+        "user_id",
+        "employee_code",
+        "full_name",
+        "position",
+        "phone_number",
+        "is_active",
     ];
 
-    protected $hidden = [
-        'pin_code'
-    ];
+    protected $hidden = ["pin_code"];
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'id');
+        return $this->belongsTo(User::class, "id");
     }
 }

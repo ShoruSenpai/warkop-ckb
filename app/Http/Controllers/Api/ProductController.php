@@ -27,11 +27,11 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::with([
-            'category:id,name',
-            'recipes.rawMaterial:id,name,unit_measurement,current_stock',
-            'packagings:id,product_id,purchase_unit,conversion_factor,is_active',
+            "category:id,name",
+            "recipes.rawMaterial:id,name,unit_measurement,current_stock",
+            "packagings:id,product_id,purchase_unit,conversion_factor,is_active",
         ])
-            ->orderBy('name')
+            ->orderBy("name")
             ->get()
             ->map(function ($product) {
                 return $this->formatProduct($product);
@@ -39,61 +39,60 @@ class ProductController extends Controller
             ->values();
 
         return response()->json([
-            'success' => true,
-            'message' => 'Get Products',
-            'data' => $products,
+            "success" => true,
+            "message" => "Get Products",
+            "data" => $products,
         ]);
     }
 
     public function store(Request $request, R2ImageService $imageService)
     {
         $validated = $request->validate([
-            'category_id' => 'required|integer|exists:categories,id',
+            "category_id" => "required|integer|exists:categories,id",
 
-            'name' => 'required|string|max:100',
+            "name" => "required|string|max:100",
 
-            'description' => 'nullable|string',
+            "description" => "nullable|string",
 
-            'base_price' => 'required|numeric|min:0',
+            "base_price" => "required|numeric|min:0",
 
-            'stock_type' => 'required|in:static,recipe,untracked',
+            "stock_type" => "required|in:static,recipe,untracked",
 
-            'image' => [
-                'nullable',
-                'image',
-                'max:5120'
-            ],
+            "image" => ["nullable", "image", "max:5120"],
 
-            'is_recommended' => 'nullable|boolean',
+            "is_recommended" => "nullable|boolean",
 
-            'status' => 'nullable|in:available,sold_out,disabled',
+            "status" => "nullable|in:available,sold_out,disabled",
 
             /*
              * Recipe wajib diisi kalau stock_type = recipe.
              */
-            'recipes' => 'required_if:stock_type,recipe|array|min:1',
+            "recipes" => "required_if:stock_type,recipe|array|min:1",
 
-            'recipes.*.raw_material_id' =>
-                'required|integer|exists:raw_materials,id|distinct',
+            "recipes.*.raw_material_id" =>
+                "required|integer|exists:raw_materials,id|distinct",
 
-            'recipes.*.amount_needed' =>
-                'required|numeric|min:0.01',
+            "recipes.*.amount_needed" => "required|numeric|min:0.01",
         ]);
 
         $uploadedImage = null;
 
         try {
-            if($request->hasfile('image')) {
-                $uploadedImage = $imageService->uploadproductImage($request->file('image'));
+            if ($request->hasfile("image")) {
+                $uploadedImage = $imageService->uploadproductImage(
+                    $request->file("image"),
+                );
             }
 
-            $responseData = DB::transaction(function () use ($validated, $uploadedImage) {
-
+            $responseData = DB::transaction(function () use (
+                $validated,
+                $uploadedImage,
+            ) {
                 $product = Product::create([
-                    'category_id' => $validated['category_id'],
-                    'name' => $validated['name'],
-                    'description' => $validated['description'] ?? null,
-                    'base_price' => $validated['base_price'],
+                    "category_id" => $validated["category_id"],
+                    "name" => $validated["name"],
+                    "description" => $validated["description"] ?? null,
+                    "base_price" => $validated["base_price"],
 
                     /*
                      * Untuk:
@@ -101,35 +100,30 @@ class ProductController extends Controller
                      * recipe   -> akan dihitung dinamis
                      * untracked -> tidak dipakai
                      */
-                    'stock' => 0,
+                    "stock" => 0,
 
-                    'stock_type' => $validated['stock_type'],
+                    "stock_type" => $validated["stock_type"],
 
-                    'image_url' => $uploadedImage['url'] ?? null,
-                        'image_path' => $uploadedImage['path'] ?? null ,
+                    "image_url" => $uploadedImage["url"] ?? null,
+                    "image_path" => $uploadedImage["path"] ?? null,
 
-                    'is_recommended' =>
-                        $validated['is_recommended'] ?? false,
+                    "is_recommended" => $validated["is_recommended"] ?? false,
 
-                    'status' =>
-                        $validated['status'] ?? 'available',
+                    "status" => $validated["status"] ?? "available",
                 ]);
 
                 /*
                  * Simpan recipe jika jenis produk = recipe.
                  */
                 if (
-                    $validated['stock_type'] === 'recipe'
-                    && !empty($validated['recipes'])
+                    $validated["stock_type"] === "recipe" &&
+                    !empty($validated["recipes"])
                 ) {
-                    foreach ($validated['recipes'] as $recipe) {
-
+                    foreach ($validated["recipes"] as $recipe) {
                         ProductRecipe::create([
-                            'product_id' => $product->id,
-                            'raw_material_id' =>
-                                $recipe['raw_material_id'],
-                            'amount_needed' =>
-                                $recipe['amount_needed'],
+                            "product_id" => $product->id,
+                            "raw_material_id" => $recipe["raw_material_id"],
+                            "amount_needed" => $recipe["amount_needed"],
                         ]);
                     }
                 }
@@ -138,9 +132,9 @@ class ProductController extends Controller
                  * Load ulang semua relasi sebelum transaction selesai.
                  */
                 $product->load([
-                    'category:id,name',
-                    'recipes.rawMaterial:id,name,unit_measurement,current_stock',
-                    'packagings:id,product_id,purchase_unit,conversion_factor,is_active',
+                    "category:id,name",
+                    "recipes.rawMaterial:id,name,unit_measurement,current_stock",
+                    "packagings:id,product_id,purchase_unit,conversion_factor,is_active",
                 ]);
 
                 /*
@@ -150,95 +144,94 @@ class ProductController extends Controller
                 return $this->formatProduct($product);
             });
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Product created successfully.',
-                'data' => $responseData,
-            ], 201);
-
+            return response()->json(
+                [
+                    "success" => true,
+                    "message" => "Product created successfully.",
+                    "data" => $responseData,
+                ],
+                201,
+            );
         } catch (Throwable $e) {
-            if($uploadedImage) {
+            if ($uploadedImage) {
                 try {
-                    $imageService->delete($uploadedImage['path']);
-                } catch(Throwable $cleanupException) {
+                    $imageService->delete($uploadedImage["path"]);
+                } catch (Throwable $cleanupException) {
                     report($cleanupException);
                 }
             }
 
             report($e);
 
-            return response()->json([
-                'success' => false,
-                'message' =>
-                    'Gagal membuat produk. Silakan periksa data yang dimasukkan.',
-            ], 500);
+            return response()->json(
+                [
+                    "success" => false,
+                    "message" =>
+                        "Gagal membuat produk. Silakan periksa data yang dimasukkan.",
+                ],
+                500,
+            );
         }
     }
 
     public function show(Product $product)
     {
         $product->load([
-            'category:id,name',
-            'recipes.rawMaterial:id,name,unit_measurement,current_stock',
-            'packagings:id,product_id,purchase_unit,conversion_factor,is_active',
+            "category:id,name",
+            "recipes.rawMaterial:id,name,unit_measurement,current_stock",
+            "packagings:id,product_id,purchase_unit,conversion_factor,is_active",
         ]);
 
         return response()->json([
-            'success' => true,
-            'message' => 'Get Product',
-            'data' => $this->formatProduct($product),
+            "success" => true,
+            "message" => "Get Product",
+            "data" => $this->formatProduct($product),
         ]);
     }
 
-    public function update(
-        Request $request,
-        Product $product
-    ) {
+    public function update(Request $request, Product $product)
+    {
         $validated = $request->validate([
-            'category_id' => 'required|integer|exists:categories,id',
+            "category_id" => "required|integer|exists:categories,id",
 
-            'name' => 'required|string|max:100',
+            "name" => "required|string|max:100",
 
-            'description' => 'nullable|string',
+            "description" => "nullable|string",
 
-            'base_price' => 'required|numeric|min:0',
+            "base_price" => "required|numeric|min:0",
 
-            'stock_type' => 'required|in:static,recipe,untracked',
+            "stock_type" => "required|in:static,recipe,untracked",
 
-            'image_url' => 'nullable|string|max:500',
+            "image_url" => "nullable|string|max:500",
 
-            'is_recommended' => 'nullable|boolean',
+            "is_recommended" => "nullable|boolean",
 
-            'status' => 'nullable|in:available,sold_out,disabled',
+            "status" => "nullable|in:available,sold_out,disabled",
 
-            'recipes' => 'required_if:stock_type,recipe|array|min:1',
+            "recipes" => "required_if:stock_type,recipe|array|min:1",
 
-            'recipes.*.raw_material_id' =>
-                'required|integer|exists:raw_materials,id|distinct',
+            "recipes.*.raw_material_id" =>
+                "required|integer|exists:raw_materials,id|distinct",
 
-            'recipes.*.amount_needed' =>
-                'required|numeric|min:0.01',
+            "recipes.*.amount_needed" => "required|numeric|min:0.01",
         ]);
 
         try {
             $responseData = DB::transaction(function () use (
                 $validated,
-                $product
+                $product,
             ) {
-
                 $product->update([
-                    'category_id' => $validated['category_id'],
-                    'name' => $validated['name'],
-                    'description' => $validated['description'] ?? null,
-                    'base_price' => $validated['base_price'],
-                    'stock_type' => $validated['stock_type'],
-                    'image_url' => $validated['image_url'] ?? null,
+                    "category_id" => $validated["category_id"],
+                    "name" => $validated["name"],
+                    "description" => $validated["description"] ?? null,
+                    "base_price" => $validated["base_price"],
+                    "stock_type" => $validated["stock_type"],
+                    "image_url" => $validated["image_url"] ?? null,
 
-                    'is_recommended' =>
-                        $validated['is_recommended'] ?? false,
+                    "is_recommended" => $validated["is_recommended"] ?? false,
 
-                    'status' =>
-                        $validated['status'] ?? $product->status,
+                    "status" => $validated["status"] ?? $product->status,
                 ]);
 
                 /*
@@ -249,45 +242,43 @@ class ProductController extends Controller
                 $product->recipes()->delete();
 
                 if (
-                    $validated['stock_type'] === 'recipe'
-                    && !empty($validated['recipes'])
+                    $validated["stock_type"] === "recipe" &&
+                    !empty($validated["recipes"])
                 ) {
-                    foreach ($validated['recipes'] as $recipe) {
-
+                    foreach ($validated["recipes"] as $recipe) {
                         ProductRecipe::create([
-                            'product_id' => $product->id,
-                            'raw_material_id' =>
-                                $recipe['raw_material_id'],
-                            'amount_needed' =>
-                                $recipe['amount_needed'],
+                            "product_id" => $product->id,
+                            "raw_material_id" => $recipe["raw_material_id"],
+                            "amount_needed" => $recipe["amount_needed"],
                         ]);
                     }
                 }
 
                 $product->load([
-                    'category:id,name',
-                    'recipes.rawMaterial:id,name,unit_measurement,current_stock',
-                    'packagings:id,product_id,purchase_unit,conversion_factor,is_active',
+                    "category:id,name",
+                    "recipes.rawMaterial:id,name,unit_measurement,current_stock",
+                    "packagings:id,product_id,purchase_unit,conversion_factor,is_active",
                 ]);
 
                 return $this->formatProduct($product);
             });
 
             return response()->json([
-                'success' => true,
-                'message' => 'Product updated successfully.',
-                'data' => $responseData,
+                "success" => true,
+                "message" => "Product updated successfully.",
+                "data" => $responseData,
             ]);
-
         } catch (Throwable $e) {
-
             report($e);
 
-            return response()->json([
-                'success' => false,
-                'message' =>
-                    'Gagal memperbarui produk. Silakan periksa data yang dimasukkan.',
-            ], 500);
+            return response()->json(
+                [
+                    "success" => false,
+                    "message" =>
+                        "Gagal memperbarui produk. Silakan periksa data yang dimasukkan.",
+                ],
+                500,
+            );
         }
     }
 
@@ -298,28 +289,28 @@ class ProductController extends Controller
          * dari history transaksi / master lain.
          */
 
-        $hasOrderHistory = DB::table('order_items')
-            ->where('product_id', $product->id)
+        $hasOrderHistory = DB::table("order_items")
+            ->where("product_id", $product->id)
             ->exists();
 
-        $hasPurchaseHistory = DB::table('supplier_purchase_items')
-            ->where('product_id', $product->id)
+        $hasPurchaseHistory = DB::table("supplier_purchase_items")
+            ->where("product_id", $product->id)
             ->exists();
 
-        $hasRecipes = DB::table('product_recipes')
-            ->where('product_id', $product->id)
+        $hasRecipes = DB::table("product_recipes")
+            ->where("product_id", $product->id)
             ->exists();
 
-        $hasPackagings = DB::table('product_packagings')
-            ->where('product_id', $product->id)
+        $hasPackagings = DB::table("product_packagings")
+            ->where("product_id", $product->id)
             ->exists();
 
-        $hasOptions = DB::table('product_option_groups')
-            ->where('product_id', $product->id)
+        $hasOptions = DB::table("product_option_groups")
+            ->where("product_id", $product->id)
             ->exists();
 
-        $hasDiscounts = DB::table('product_discounts')
-            ->where('product_id', $product->id)
+        $hasDiscounts = DB::table("product_discounts")
+            ->where("product_id", $product->id)
             ->exists();
 
         if (
@@ -330,21 +321,23 @@ class ProductController extends Controller
             $hasOptions ||
             $hasDiscounts
         ) {
-            return response()->json([
-                'success' => false,
-                'message' =>
-                    'Produk tidak dapat dihapus karena sudah digunakan dalam data lain atau memiliki riwayat transaksi.',
-            ], 409);
+            return response()->json(
+                [
+                    "success" => false,
+                    "message" =>
+                        "Produk tidak dapat dihapus karena sudah digunakan dalam data lain atau memiliki riwayat transaksi.",
+                ],
+                409,
+            );
         }
 
         $product->delete();
 
         return response()->json([
-            'success' => true,
-            'message' => 'Product deleted successfully.',
+            "success" => true,
+            "message" => "Product deleted successfully.",
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -354,137 +347,142 @@ class ProductController extends Controller
 
     public function packagingIndex(Product $product)
     {
-        $packagings = $product->packagings()
-            ->orderBy('purchase_unit')
-            ->get();
+        $packagings = $product->packagings()->orderBy("purchase_unit")->get();
 
         return response()->json([
-            'success' => true,
-            'message' => 'Get Product Packagings',
-            'data' => $packagings,
+            "success" => true,
+            "message" => "Get Product Packagings",
+            "data" => $packagings,
         ]);
     }
 
-    public function packagingStore(
-        Request $request,
-        Product $product
-    ) {
+    public function packagingStore(Request $request, Product $product)
+    {
         /*
          * Packaging pembelian hanya berlaku untuk
          * produk dengan stock_type = static.
          */
-        if ($product->stock_type !== 'static') {
-            return response()->json([
-                'success' => false,
-                'message' =>
-                    'Packaging pembelian hanya dapat digunakan untuk produk static.',
-            ], 422);
+        if ($product->stock_type !== "static") {
+            return response()->json(
+                [
+                    "success" => false,
+                    "message" =>
+                        "Packaging pembelian hanya dapat digunakan untuk produk static.",
+                ],
+                422,
+            );
         }
 
         $validated = $request->validate([
-            'purchase_unit' =>
-                'required|string|max:50',
+            "purchase_unit" => "required|string|max:50",
 
-            'conversion_factor' =>
-                'required|numeric|min:0.001',
+            "conversion_factor" => "required|numeric|min:0.001",
 
-            'is_active' =>
-                'nullable|boolean',
+            "is_active" => "nullable|boolean",
         ]);
 
-        $exists = $product->packagings()
-            ->where('purchase_unit', $validated['purchase_unit'])
+        $exists = $product
+            ->packagings()
+            ->where("purchase_unit", $validated["purchase_unit"])
             ->exists();
 
         if ($exists) {
-            return response()->json([
-                'success' => false,
-                'message' =>
-                    'Satuan pembelian tersebut sudah terdaftar untuk produk ini.',
-            ], 422);
+            return response()->json(
+                [
+                    "success" => false,
+                    "message" =>
+                        "Satuan pembelian tersebut sudah terdaftar untuk produk ini.",
+                ],
+                422,
+            );
         }
 
         $packaging = $product->packagings()->create([
-            'purchase_unit' => $validated['purchase_unit'],
-            'conversion_factor' =>
-                $validated['conversion_factor'],
-            'is_active' =>
-                $validated['is_active'] ?? true,
+            "purchase_unit" => $validated["purchase_unit"],
+            "conversion_factor" => $validated["conversion_factor"],
+            "is_active" => $validated["is_active"] ?? true,
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Product packaging created successfully.',
-            'data' => $packaging,
-        ], 201);
+        return response()->json(
+            [
+                "success" => true,
+                "message" => "Product packaging created successfully.",
+                "data" => $packaging,
+            ],
+            201,
+        );
     }
 
     public function packagingUpdate(
         Request $request,
         Product $product,
-        ProductPackaging $packaging
+        ProductPackaging $packaging,
     ) {
         /*
          * Pastikan packaging memang milik product tersebut.
          */
         if ($packaging->product_id !== $product->id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Packaging tidak ditemukan untuk produk ini.',
-            ], 404);
+            return response()->json(
+                [
+                    "success" => false,
+                    "message" => "Packaging tidak ditemukan untuk produk ini.",
+                ],
+                404,
+            );
         }
 
         $validated = $request->validate([
-            'purchase_unit' =>
-                'required|string|max:50',
+            "purchase_unit" => "required|string|max:50",
 
-            'conversion_factor' =>
-                'required|numeric|min:0.001',
+            "conversion_factor" => "required|numeric|min:0.001",
 
-            'is_active' =>
-                'nullable|boolean',
+            "is_active" => "nullable|boolean",
         ]);
 
-        $exists = $product->packagings()
-            ->where('purchase_unit', $validated['purchase_unit'])
-            ->where('id', '!=', $packaging->id)
+        $exists = $product
+            ->packagings()
+            ->where("purchase_unit", $validated["purchase_unit"])
+            ->where("id", "!=", $packaging->id)
             ->exists();
 
         if ($exists) {
-            return response()->json([
-                'success' => false,
-                'message' =>
-                    'Satuan pembelian tersebut sudah terdaftar untuk produk ini.',
-            ], 422);
+            return response()->json(
+                [
+                    "success" => false,
+                    "message" =>
+                        "Satuan pembelian tersebut sudah terdaftar untuk produk ini.",
+                ],
+                422,
+            );
         }
 
         $packaging->update([
-            'purchase_unit' =>
-                $validated['purchase_unit'],
+            "purchase_unit" => $validated["purchase_unit"],
 
-            'conversion_factor' =>
-                $validated['conversion_factor'],
+            "conversion_factor" => $validated["conversion_factor"],
 
-            'is_active' =>
-                $validated['is_active'] ?? true,
+            "is_active" => $validated["is_active"] ?? true,
         ]);
 
         return response()->json([
-            'success' => true,
-            'message' => 'Product packaging updated successfully.',
-            'data' => $packaging->fresh(),
+            "success" => true,
+            "message" => "Product packaging updated successfully.",
+            "data" => $packaging->fresh(),
         ]);
     }
 
     public function packagingDestroy(
         Product $product,
-        ProductPackaging $packaging
+        ProductPackaging $packaging,
     ) {
         if ($packaging->product_id !== $product->id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Packaging tidak ditemukan untuk produk ini.',
-            ], 404);
+            return response()->json(
+                [
+                    "success" => false,
+                    "message" => "Packaging tidak ditemukan untuk produk ini.",
+                ],
+                404,
+            );
         }
 
         /*
@@ -492,26 +490,28 @@ class ProductController extends Controller
          * dalam transaksi pembelian.
          */
         $used = SupplierPurchaseItem::where(
-            'product_packaging_id',
-            $packaging->id
+            "product_packaging_id",
+            $packaging->id,
         )->exists();
 
         if ($used) {
-            return response()->json([
-                'success' => false,
-                'message' =>
-                    'Packaging tidak dapat dihapus karena sudah digunakan dalam riwayat pembelian.',
-            ], 409);
+            return response()->json(
+                [
+                    "success" => false,
+                    "message" =>
+                        "Packaging tidak dapat dihapus karena sudah digunakan dalam riwayat pembelian.",
+                ],
+                409,
+            );
         }
 
         $packaging->delete();
 
         return response()->json([
-            'success' => true,
-            'message' => 'Product packaging deleted successfully.',
+            "success" => true,
+            "message" => "Product packaging deleted successfully.",
         ]);
     }
-
 
     /*
     |--------------------------------------------------------------------------
@@ -522,22 +522,22 @@ class ProductController extends Controller
     private function formatProduct(Product $product): array
     {
         return [
-            'id' => $product->id,
+            "id" => $product->id,
 
-            'category_id' => $product->category_id,
+            "category_id" => $product->category_id,
 
-            'category' => $product->category
+            "category" => $product->category
                 ? [
-                    'id' => $product->category->id,
-                    'name' => $product->category->name,
+                    "id" => $product->category->id,
+                    "name" => $product->category->name,
                 ]
                 : null,
 
-            'name' => $product->name,
+            "name" => $product->name,
 
-            'description' => $product->description,
+            "description" => $product->description,
 
-            'base_price' => $product->base_price,
+            "base_price" => $product->base_price,
 
             /*
              * Ini stok yang akan dipakai frontend.
@@ -546,55 +546,49 @@ class ProductController extends Controller
              * recipe    -> hasil hitung bahan baku
              * untracked -> null
              */
-            'stock' => $this->calculateStock($product),
+            "stock" => $this->calculateStock($product),
 
-            'stock_type' => $product->stock_type,
+            "stock_type" => $product->stock_type,
 
-            'image_url' => $product->image_url,
+            "image_url" => $product->image_url,
 
-            'is_recommended' => $product->is_recommended,
+            "is_recommended" => $product->is_recommended,
 
-            'status' => $product->status,
+            "status" => $product->status,
 
-            'recipes' => $product->recipes
+            "recipes" => $product->recipes
                 ->map(function ($recipe) {
                     return [
-                        'id' => $recipe->id,
-                        'raw_material_id' =>
-                            $recipe->raw_material_id,
-                        'raw_material' => $recipe->rawMaterial
+                        "id" => $recipe->id,
+                        "raw_material_id" => $recipe->raw_material_id,
+                        "raw_material" => $recipe->rawMaterial
                             ? [
-                                'id' => $recipe->rawMaterial->id,
-                                'name' =>
-                                    $recipe->rawMaterial->name,
-                                'unit_measurement' =>
+                                "id" => $recipe->rawMaterial->id,
+                                "name" => $recipe->rawMaterial->name,
+                                "unit_measurement" =>
                                     $recipe->rawMaterial->unit_measurement,
-                                'current_stock' =>
+                                "current_stock" =>
                                     $recipe->rawMaterial->current_stock,
                             ]
                             : null,
-                        'amount_needed' =>
-                            $recipe->amount_needed,
+                        "amount_needed" => $recipe->amount_needed,
                     ];
                 })
                 ->values(),
 
-            'packagings' => $product->packagings
+            "packagings" => $product->packagings
                 ->map(function ($packaging) {
                     return [
-                        'id' => $packaging->id,
-                        'purchase_unit' =>
-                            $packaging->purchase_unit,
-                        'conversion_factor' =>
-                            $packaging->conversion_factor,
-                        'is_active' =>
-                            $packaging->is_active,
+                        "id" => $packaging->id,
+                        "purchase_unit" => $packaging->purchase_unit,
+                        "conversion_factor" => $packaging->conversion_factor,
+                        "is_active" => $packaging->is_active,
                     ];
                 })
                 ->values(),
 
-            'created_at' => $product->created_at,
-            'updated_at' => $product->updated_at,
+            "created_at" => $product->created_at,
+            "updated_at" => $product->updated_at,
         ];
     }
 
@@ -603,11 +597,11 @@ class ProductController extends Controller
         /*
          * UNTRACKED
          */
-        if ($product->stock_type === 'untracked') {
+        if ($product->stock_type === "untracked") {
             return null;
         }
 
-        if ($product->stock_type === 'static') {
+        if ($product->stock_type === "static") {
             return (int) $product->stock;
         }
 
@@ -618,7 +612,6 @@ class ProductController extends Controller
         }
 
         $possibleStock = $recipes->map(function ($recipe) {
-
             $rawMaterial = $recipe->rawMaterial;
 
             if (!$rawMaterial) {
@@ -632,9 +625,7 @@ class ProductController extends Controller
                 return 0;
             }
 
-            return (int) floor(
-                $currentStock / $amountNeeded
-            );
+            return (int) floor($currentStock / $amountNeeded);
         });
 
         return $possibleStock->min() ?? 0;

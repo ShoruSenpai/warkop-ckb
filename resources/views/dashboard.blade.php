@@ -3,7 +3,11 @@
 
     <div class="mb-6">
         <h2 class="text-2xl font-bold text-ckb-primary">Dashboard</h2>
-        <p class="text-sm text-gray-500">{{ \Carbon\Carbon::now()->translatedFormat('l, d M Y') }} — Shift Pagi 06:00-14:00</p>
+        <p class="text-sm text-gray-500">{{
+            \Carbon\Carbon::now()->translatedFormat(
+                "l, d M Y",
+            )
+        }} — Shift Pagi 06:00-14:00</p>
     </div>
 
     <!-- Statistik Cards (Contoh) -->
@@ -31,8 +35,9 @@
     </div>
 
     <!-- Tempatkan Chart atau Tabel di sini nantinya -->
-    <div class="bg-white h-64 rounded-xl border border-gray-100 shadow-sm flex items-center justify-center text-gray-400">
+    <div
+        class="bg-white h-64 rounded-xl border border-gray-100 shadow-sm flex items-center justify-center text-gray-400"
+    >
         Area Grafik & Data Laporan
     </div>
-
 </x-layout>

@@ -3,4 +3,5 @@ export const state = {
     activePackagingMaterial: null,
     packagingData: [],
     editingPackagingId: null,
+    editingMaterial: null,
 };

@@ -243,18 +243,17 @@ export async function submitProduct(event) {
 export async function initProductForm() {
     readFormConfig();
 
+    initRecipeEvents();
+    initPackagingEvents();
+    initStockTypeEvents();
+
     await Promise.all([fetchCategories(), prepareRecipeBuilder()]);
 
     if (state.productMode === "edit" && state.productId) {
         await fetchProductDetail(state.productId);
-    } else {
-        await prepareRecipeBuilder();
-        handleStockTypeChange();
     }
 
-    initRecipeEvents();
-    initPackagingEvents();
-    initStockTypeEvents();
+    handleStockTypeChange();
 
     $("product-form")?.addEventListener("submit", submitProduct);
 }
@@ -283,8 +282,7 @@ function initImagePreview() {
     });
 }
 
-document.addEventListener(
-    "DOMContentLoaded",
-    initProductForm,
-    initImagePreview,
-);
+document.addEventListener("DOMContentLoaded", () => {
+    initProductForm();
+    initImagePreview();
+});

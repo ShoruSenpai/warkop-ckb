@@ -11,20 +11,23 @@ class CheckWebRole
     public function handle(Request $request, Closure $next, ...$roles)
     {
         if (!Auth::check()) {
-            return redirect()->route('login');
+            return redirect()->route("login");
         }
 
         $user = Auth::user();
 
-        if (in_array($user->role, ['employee', 'cashier'])) {
+        if (in_array($user->role, ["employee", "cashier"])) {
             Auth::logout();
-            return redirect()->route('login')->withErrors([
-                'email' => 'Akses ditolak. Web Panel khusus untuk Owner dan Admin.'
-            ]);
+            return redirect()
+                ->route("login")
+                ->withErrors([
+                    "email" =>
+                        "Akses ditolak. Web Panel khusus untuk Owner dan Admin.",
+                ]);
         }
 
         if (!empty($roles) && !in_array($user->role, $roles)) {
-            abort(403, 'Anda tidak memiliki izin mengakses halaman ini.');
+            abort(403, "Anda tidak memiliki izin mengakses halaman ini.");
         }
 
         return $next($request);

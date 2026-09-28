@@ -1,21 +1,20 @@
 <x-layout title="Pembelian Supplier">
-
     <div class="flex justify-between items-center mb-6">
         <div>
             <h2 class="text-2xl font-bold text-ckb-on-surface">
                 Input Pembelian Supplier
             </h2>
 
-            <p class="text-sm text-gray-500">
-                Catat nota belanja dan update stok secara otomatis
-            </p>
+            <p class="text-sm text-gray-500">Catat nota belanja dan update stok secara otomatis</p>
         </div>
     </div>
 
     <form id="form-purchase">
         <x-supplier.invoice-info />
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <div class="flex justify-between items-center mb-4 border-b border-gray-100 pb-2">
+            <div
+                class="flex justify-between items-center mb-4 border-b border-gray-100 pb-2"
+            >
                 <h3 class="font-bold text-ckb-secondary">
                     Daftar Item Belanja
                 </h3>
@@ -39,38 +38,23 @@
             </div>
 
             <div class="overflow-x-auto">
-                <table
-                    id="purchase-table"
-                    class="w-full text-left"
-                >
+                <table id="purchase-table" class="w-full text-left">
                     <thead>
-                    <tr class="text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                        <th class="pb-2 w-64">
-                            Nama Barang *
-                        </th>
-                        <th class="pb-2 w-32">
-                            Satuan Beli *
-                        </th>
-                        <th class="pb-2 w-20">
-                            Jumlah *
-                        </th>
-                        <th class="pb-2 w-44">
-                            Konversi
-                        </th>
-                        <th class="pb-2 w-36">
-                            Harga Satuan *
-                        </th>
-                        <th class="pb-2 w-36">
-                            Subtotal
-                        </th>
-                        <th class="pb-2 w-10 text-center">
-                            Aksi
-                        </th>
-                    </tr>
+                        <tr
+                            class="text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-100"
+                        >
+                            <th class="pb-2 w-64">Nama Barang *</th>
+                            <th class="pb-2 w-32">Satuan Beli *</th>
+                            <th class="pb-2 w-20">Jumlah *</th>
+                            <th class="pb-2 w-44">Konversi</th>
+                            <th class="pb-2 w-36">Harga Satuan *</th>
+                            <th class="pb-2 w-36">Subtotal</th>
+                            <th class="pb-2 w-10 text-center">Aksi</th>
+                        </tr>
                     </thead>
                     <tbody id="item-list"></tbody>
                 </table>
-               </div>
+            </div>
             <x-supplier.summary-footer />
         </div>
     </form>
@@ -80,7 +64,6 @@
     </template>
 
     <x-slot:script>
-        @vite('resources/js/supplier/index.js')
+        @vite ("resources/js/supplier/index.js")
     </x-slot:script>
-
 </x-layout>
