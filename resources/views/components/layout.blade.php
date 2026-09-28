@@ -12,7 +12,7 @@
 
     @vite (["resources/css/app.css", "resources/js/app.js"])
 </head>
-<body class="bg-ckb-bg flex h-screen overflow-hidden font-sans">
+<body class="bg-ckb-background flex h-screen overflow-hidden font-sans">
     <x-sidebar />
 
     <div

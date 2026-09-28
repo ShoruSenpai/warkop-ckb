@@ -1,36 +1,93 @@
 const loginUrl = document.querySelector('meta[name="login-url"]')?.content;
 
-/**
- * Read a browser cookie by name.
- */
 function getCookie(name) {
     const cookies = document.cookie.split("; ");
 
-    const cookie = cookies.find((item) => item.startsWith(`${name}=`));
+    const cookiesItem = cookies.find((item) => item.startsWith(`${name}=`));
 
-    return cookie ? cookie.substring(name.length + 1) : null;
+    return cookiesItem ? cookiesItem.substring(name.length + 1) : null;
 }
 
-/**
- * Get the raw CSRF token from the meta tag.
- *
- * This value is used for X-CSRF-TOKEN.
- */
 function getCsrfToken() {
     return document.querySelector('meta[name="csrf-token"]')?.content;
 }
 
-/**
- * Get the XSRF cookie value.
- *
- * Laravel expects the URL-decoded cookie value
- * in the X-XSRF-TOKEN header and will decrypt it
- * internally.
- */
 function getXsrfToken() {
     const cookie = getCookie("XSRF-TOKEN");
 
     return cookie ? decodeURIComponent(cookie) : null;
+}
+
+async function handleApiError(response, data) {
+    if (response.status === 401) {
+        await Swal.fire({
+            icon: "warning",
+            title: "Sesi Berakhir",
+            text: "Sesi login kamu sudah berakhir. Silakan login kembali.",
+            confirmButtonText: "Login",
+            confirmButtonColor: "#6B4423",
+        });
+
+        if (loginUrl) {
+            window.location.href = loginUrl;
+        }
+
+        throw new Error("UNAUTHORIZED");
+    }
+
+    if (response.status === 403) {
+        await Swal.fire({
+            icon: "error",
+            title: "Akses Ditolak",
+            text:
+                data?.message ||
+                "Kamu tidak memiliki izin untuk melakukan tindakan ini.",
+            confirmButtonText: "Mengerti",
+            confirmButtonColor: "#6B4423",
+        });
+
+        throw new Error("FORBIDDEN");
+    }
+
+    if (response.status === 404) {
+        await Swal.fire({
+            icon: "error",
+            title: "Data Tidak Ditemukan",
+            text: data?.message || "Data yang kamu cari tidak ditemukan.",
+            confirmButtonText: "Mengerti",
+            confirmButtonColor: "#6B4423",
+        });
+
+        throw new Error("NOT_FOUND");
+    }
+
+    if (response.status === 503) {
+        await Swal.fire({
+            icon: "warning",
+            title: "Koneksi Bermasalah",
+            text:
+                data?.message ||
+                "Layanan sedang tidak tersedia. Silakan coba lagi.",
+            confirmButtonText: "Coba Lagi",
+            confirmButtonColor: "#6B4423",
+        });
+
+        throw new Error("SERVICE_UNAVAILABLE");
+    }
+
+    if (response.status >= 500) {
+        await Swal.fire({
+            icon: "error",
+            title: "Terjadi Kesalahan",
+            text:
+                data?.message ||
+                "Terjadi kesalahan pada server. Silakan coba lagi.",
+            confirmButtonText: "Mengerti",
+            confirmButtonColor: "#6B4423",
+        });
+
+        throw new Error("SERVER_ERROR");
+    }
 }
 
 export async function apiFetch(url, options = {}) {
@@ -41,9 +98,6 @@ export async function apiFetch(url, options = {}) {
         ...(options.headers || {}),
     };
 
-    /*
-     * Add CSRF protection for state-changing requests.
-     */
     if (method !== "GET") {
         const csrfToken = getCsrfToken();
         const xsrfToken = getXsrfToken();
@@ -59,25 +113,34 @@ export async function apiFetch(url, options = {}) {
 
     let body = options.body;
 
-    /*
-     * FormData is used for requests that contain files.
-     *
-     * Do not manually set Content-Type here.
-     * The browser must generate the multipart boundary.
-     */
     if (body instanceof FormData) {
         // Leave the body untouched.
     } else if (body && typeof body !== "string") {
         headers["Content-Type"] = "application/json";
+
         body = JSON.stringify(body);
     }
 
-    const response = await fetch(url, {
-        ...options,
-        headers,
-        body,
-        credentials: "same-origin",
-    });
+    let response;
+
+    try {
+        response = await fetch(url, {
+            ...options,
+            headers,
+            body,
+            credentials: "same-origin",
+        });
+    } catch (error) {
+        await Swal.fire({
+            icon: "warning",
+            title: "Koneksi Bermasalah",
+            text: "Tidak dapat terhubung ke server. Periksa koneksi internet dan coba lagi.",
+            confirmButtonText: "Mengerti",
+            confirmButtonColor: "#6B4423",
+        });
+
+        throw new Error("NETWORK_ERROR");
+    }
 
     let data;
 
@@ -89,20 +152,8 @@ export async function apiFetch(url, options = {}) {
         };
     }
 
-    if (response.status === 401) {
-        await Swal.fire({
-            icon: "warning",
-            title: "Sesi Berakhir",
-            text: "Sesi login kamu sudah berakhir. Silakan login kembali.",
-            confirmButtonText: "Login",
-            confirmButtonColor: "#6B4423",
-        });
-
-        if (loginUrl) {
-            window.location.href = loginUrl;
-        }
-
-        throw new Error("UNAUTHORIZED");
+    if (!response.ok) {
+        await handleApiError(response, data);
     }
 
     return {
