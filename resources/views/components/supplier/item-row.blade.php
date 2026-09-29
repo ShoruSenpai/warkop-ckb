@@ -5,10 +5,8 @@
             class="item-select w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-white focus:ring-1 focus:ring-ckb-primary focus:outline-none transition"
             required
         >
-            <option value="" disabled selected>
-                -- Pilih Barang --
-            </option></select
-        >s
+            <option value="" disabled selected>-- Pilih Barang --</option>
+        </select>
     </td>
 
     {{-- Satuan Beli --}}

@@ -100,7 +100,7 @@ function fillProductForm(product) {
 
     $("product-description").value = product.description ?? "";
 
-    $("product-image").value = product.image_url ?? "";
+    // $("product-image").value = product.image_url ?? "";
 
     $("product-recommended").checked = Boolean(product.is_recommended);
 
@@ -131,21 +131,34 @@ function buildProductFormData() {
     const formData = new FormData();
 
     formData.append("category_id", $("product-category").value);
-
     formData.append("name", $("product-name").value.trim());
-
     formData.append("base_price", $("product-price").value);
-
     formData.append("stock_type", stockType);
-
     formData.append("description", $("product-description").value.trim());
-
     formData.append(
         "is_recommended",
         $("product-recommended").checked ? "1" : "0",
     );
-
     formData.append("status", state.currentProduct?.status || "available");
+
+    if (state.productMode === "create" && state.productPackagings.length) {
+        state.productPackagings.forEach((packaging, index) => {
+            formData.append(
+                `packagings[${index}][purchase_unit]`,
+                packaging.purchase_unit,
+            );
+
+            formData.append(
+                `packagings[${index}][conversion_factor]`,
+                packaging.conversion_factor,
+            );
+
+            formData.append(
+                `packagings[${index}][is_active]`,
+                packaging.is_active ? "1" : "0",
+            );
+        });
+    }
 
     if (stockType === "recipe") {
         const recipes = getRecipeRows();

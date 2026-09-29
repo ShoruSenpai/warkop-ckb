@@ -64,7 +64,7 @@
             </button>
         </div>
 
-        <div class="space-y-4 p-5">
+        <div id="packaging-form" class="space-y-4 p-5">
             <div>
                 <label
                     class="mb-1 block text-xs font-semibold text-ckb-primary"
@@ -76,6 +76,7 @@
                     type="text"
                     id="packaging-unit"
                     maxlength="50"
+                    required
                     placeholder="Contoh: dus"
                     class="w-full rounded-lg border border-ckb-outline-variant/60 px-3 py-2.5 text-sm outline-none focus:border-ckb-primary"
                 />
@@ -93,32 +94,34 @@
                     id="packaging-conversion"
                     min="0.001"
                     step="0.001"
+                    required
+                    {{-- CHANGED --}}
                     placeholder="Contoh: 24"
                     class="w-full rounded-lg border border-ckb-outline-variant/60 px-3 py-2.5 text-sm outline-none focus:border-ckb-primary"
                 />
 
                 <p class="mt-1 text-[11px] text-ckb-outline">Contoh: 1 dus = 24 pcs.</p>
             </div>
-        </div>
 
-        <div
-            class="flex justify-end gap-3 border-t border-ckb-outline-variant/30 px-5 py-4"
-        >
-            <button
-                type="button"
-                data-modal-close
-                class="rounded-lg border border-ckb-outline-variant px-4 py-2 text-sm font-semibold text-ckb-on-surface-variant"
+            <div
+                class="flex justify-end gap-3 border-t border-ckb-outline-variant/30 px-5 py-4"
             >
-                Batal
-            </button>
+                <button
+                    type="button"
+                    data-modal-close
+                    class="rounded-lg border border-ckb-outline-variant px-4 py-2 text-sm font-semibold text-ckb-on-surface-variant"
+                >
+                    Batal
+                </button>
 
-            <button
-                type="button"
-                id="btn-save-packaging"
-                class="rounded-lg bg-ckb-primary px-4 py-2 text-sm font-semibold text-ckb-on-primary"
-            >
-                Simpan
-            </button>
+                <button
+                    type="button"
+                    id="btn-save-packaging"
+                    class="rounded-lg bg-ckb-primary px-4 py-2 text-sm font-semibold text-ckb-on-primary"
+                >
+                    Simpan
+                </button>
+            </div>
         </div>
     </div>
 </div>

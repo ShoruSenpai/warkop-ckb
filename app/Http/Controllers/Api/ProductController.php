@@ -49,30 +49,24 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             "category_id" => "required|integer|exists:categories,id",
-
             "name" => "required|string|max:100",
-
             "description" => "nullable|string",
-
             "base_price" => "required|numeric|min:0",
-
             "stock_type" => "required|in:static,recipe,untracked",
-
             "image" => ["nullable", "image", "max:5120"],
-
             "is_recommended" => "nullable|boolean",
-
             "status" => "nullable|in:available,sold_out,disabled",
-
             /*
              * Recipe wajib diisi kalau stock_type = recipe.
              */
             "recipes" => "required_if:stock_type,recipe|array|min:1",
-
             "recipes.*.raw_material_id" =>
                 "required|integer|exists:raw_materials,id|distinct",
-
             "recipes.*.amount_needed" => "required|numeric|min:0.01",
+            "packagings" => "nullable|array",
+            "packagings.*.purchase_unit" => "required|string|max:50",
+            "packagings.*.conversion_factor" => "required|numeric|min:0.001",
+            "packagings.*.is_active" => "nullable|boolean",
         ]);
 
         $uploadedImage = null;
@@ -112,9 +106,6 @@ class ProductController extends Controller
                     "status" => $validated["status"] ?? "available",
                 ]);
 
-                /*
-                 * Simpan recipe jika jenis produk = recipe.
-                 */
                 if (
                     $validated["stock_type"] === "recipe" &&
                     !empty($validated["recipes"])
@@ -128,9 +119,52 @@ class ProductController extends Controller
                     }
                 }
 
-                /*
-                 * Load ulang semua relasi sebelum transaction selesai.
-                 */
+                if (
+                    $validated["stock_type"] !== "static" &&
+                    !empty($validated["packagings"])
+                ) {
+                    return response()->json(
+                        [
+                            "success" => false,
+                            "message" =>
+                                "Packaging pembelian hanya dapat digunakan untuk produk static.",
+                        ],
+                        422,
+                    );
+                }
+
+                if (
+                    $validated["stock_type"] === "static" &&
+                    !empty($validated["packagings"])
+                ) {
+                    $packagingUnits = [];
+
+                    foreach ($validated["packagings"] as $packaging) {
+                        $normalizedUnit = mb_strtolower(
+                            trim($packaging["purchase_unit"]),
+                        );
+
+                        if (in_array($normalizedUnit, $packagingUnits, true)) {
+                            throw new \Exception(
+                                "Satuan pembelian duplikat: " .
+                                    $packaging["purchase_unit"],
+                            );
+                        }
+
+                        $packagingUnits[] = $normalizedUnit;
+
+                        ProductPackaging::create([
+                            "product_id" => $product->id,
+                            "purchase_unit" => trim(
+                                $packaging["purchase_unit"],
+                            ),
+                            "conversion_factor" =>
+                                $packaging["conversion_factor"],
+                            "is_active" => $packaging["is_active"] ?? true,
+                        ]);
+                    }
+                }
+
                 $product->load([
                     "category:id,name",
                     "recipes.rawMaterial:id,name,unit_measurement,current_stock",
@@ -534,10 +568,9 @@ class ProductController extends Controller
                 : null,
 
             "name" => $product->name,
-
             "description" => $product->description,
-
             "base_price" => $product->base_price,
+            "base_unit" => "pcs",
 
             /*
              * Ini stok yang akan dipakai frontend.
@@ -547,15 +580,10 @@ class ProductController extends Controller
              * untracked -> null
              */
             "stock" => $this->calculateStock($product),
-
             "stock_type" => $product->stock_type,
-
             "image_url" => $product->image_url,
-
             "is_recommended" => $product->is_recommended,
-
             "status" => $product->status,
-
             "recipes" => $product->recipes
                 ->map(function ($recipe) {
                     return [

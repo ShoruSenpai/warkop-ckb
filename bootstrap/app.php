@@ -8,6 +8,7 @@ use Laravel\Sanctum\Http\Middleware\CheckAbilities;
 use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
 use Illuminate\Database\QueryException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
+use Illuminate\Validation\ValidationException;
 
 //
 use App\Http\Middleware\CheckWebRole;
@@ -36,6 +37,16 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (Throwable $e, Request $request) {
             if ($request->is("api/*") || $request->expectsJson()) {
+                if ($e instanceof ValidationException) {
+                    return response()->json(
+                        [
+                            "error" => "VALIDATION_ERROR",
+                            "message" => "Data yang dikirim tidak valid.",
+                            "errors" => $e->errors(),
+                        ],
+                        422,
+                    );
+                }
                 if (
                     $e instanceof QueryException &&
                     str_starts_with((string) $e->getCode(), "08")

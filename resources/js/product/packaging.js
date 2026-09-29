@@ -63,7 +63,7 @@ export function renderPackagingList() {
                             <button
                                 type="button"
                                 data-action="edit-packaging"
-                                data-id="${Number(packaging.id)}"
+                                data-id="${escapeHtml(String(packaging.id))}"
                                 class="
                                     flex h-8 w-8
                                     items-center justify-center
@@ -79,7 +79,7 @@ export function renderPackagingList() {
                             <button
                                 type="button"
                                 data-action="delete-packaging"
-                                data-id="${Number(packaging.id)}"
+                                data-id="${escapeHtml(String(packaging.id))}"
                                 class="
                                     flex h-8 w-8
                                     items-center justify-center
@@ -121,16 +121,6 @@ export function closePackagingModal() {
 }
 
 export async function savePackaging() {
-    if (!state.productId) {
-        await Swal.fire({
-            icon: "info",
-            title: "Simpan produk dulu",
-            text: "Packaging baru dapat dikelola setelah produk tersimpan.",
-        });
-
-        return;
-    }
-
     const purchaseUnit = $("packaging-unit").value.trim();
 
     const conversionFactor = Number($("packaging-conversion").value);
@@ -151,6 +141,57 @@ export async function savePackaging() {
 
     const id = state.editingPackagingId;
 
+    /*
+     * CREATE MODE
+     *
+     * Produk belum memiliki ID.
+     * Packaging disimpan sementara di state.
+     * Nanti form.js akan mengirimkannya bersama
+     * request create product.
+     */
+    if (!state.productId) {
+        const packagingData = {
+            id:
+                id ??
+                `draft-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+            purchase_unit: purchaseUnit,
+            conversion_factor: conversionFactor,
+            is_active: true,
+            _draft: true,
+        };
+
+        if (id) {
+            const index = state.productPackagings.findIndex(
+                (item) => String(item.id) === String(id),
+            );
+
+            if (index !== -1) {
+                state.productPackagings[index] = packagingData;
+            }
+        } else {
+            state.productPackagings.push(packagingData);
+        }
+
+        renderPackagingList();
+        closePackagingModal();
+
+        // await Swal.fire({
+        //     icon: "success",
+        //     title: "Satuan ditambahkan",
+        //     text: "Satuan akan disimpan bersama produk.",
+        //     timer: 1000,
+        //     showConfirmButton: false,
+        // });
+
+        return;
+    }
+
+    /*
+     * EDIT MODE
+     *
+     * Produk sudah tersimpan.
+     * Packaging langsung disimpan ke API.
+     */
     const url = id
         ? `/api/products/${state.productId}/packagings/${id}`
         : `/api/products/${state.productId}/packagings`;
@@ -162,9 +203,7 @@ export async function savePackaging() {
             method,
             body: {
                 purchase_unit: purchaseUnit,
-
                 conversion_factor: conversionFactor,
-
                 is_active: true,
             },
         });
@@ -201,7 +240,6 @@ export async function savePackaging() {
         });
     }
 }
-
 export async function reloadProductPackagings() {
     if (!state.productId) return;
 
@@ -220,10 +258,19 @@ export async function reloadProductPackagings() {
 
 export async function deletePackaging(id) {
     const packaging = state.productPackagings.find(
-        (item) => Number(item.id) === Number(id),
+        (item) => String(item.id) === String(id),
     );
 
     if (!packaging) return;
+
+    if (!state.productId) {
+        state.productPackagings = state.productPackagings.filter(
+            (item) => String(item.id) !== String(id),
+        );
+
+        renderPackagingList();
+        return;
+    }
 
     const confirmed = await Swal.fire({
         icon: "warning",
@@ -280,37 +327,45 @@ export function initPackagingEvents() {
     );
 
     $("packaging-modal")?.addEventListener("click", (event) => {
-        if (event.target.closest("[data-modal-close]")) {
+        const closeButton = event.target.closest("[data-modal-close]");
+
+        if (closeButton) {
             closePackagingModal();
             return;
         }
 
-        const button = event.target.closest("[data-action]");
+        const actionButton = event.target.closest("[data-action]");
 
-        if (!button) return;
+        if (!actionButton) {
+            return;
+        }
 
-        const id = Number(button.dataset.id);
+        const id = actionButton.dataset.id;
+        const action = actionButton.dataset.action;
 
-        switch (button.dataset.action) {
-            case "edit-packaging":
-                const packaging = state.productPackagings.find(
-                    (item) => Number(item.id) === id,
-                );
+        if (action === "edit-packaging") {
+            const packaging = state.productPackagings.find(
+                (item) => String(item.id) === String(id),
+            );
 
-                if (packaging) {
-                    openPackagingModal(packaging);
-                }
+            if (!packaging) {
+                console.warn("Packaging tidak ditemukan:", id);
+                return;
+            }
 
-                break;
+            openPackagingModal(packaging);
+            return;
+        }
 
-            case "delete-packaging":
-                deletePackaging(id);
-                break;
+        if (action === "delete-packaging") {
+            deletePackaging(id);
         }
     });
 
-    $("packaging-form")?.addEventListener("submit", (event) => {
-        event.preventDefault();
-        savePackaging();
-    });
+    $("btn-save-packaging")?.addEventListener("click", savePackaging);
+
+    // $("packaging-form")?.addEventListener("submit", (event) => {
+    //     event.preventDefault();
+    //     savePackaging();
+    // });
 }

@@ -20,7 +20,7 @@ class SupplierPurchaseController extends Controller
         $rawMaterials = RawMaterial::with([
             "packagings" => function ($query) {
                 $query
-                    ->where("is_active", "true")
+                    ->where("is_active", true)
                     ->select(
                         "id",
                         "raw_material_id",
@@ -58,7 +58,7 @@ class SupplierPurchaseController extends Controller
         $products = Product::with([
             "packagings" => function ($query) {
                 $query
-                    ->where("is_active", "true")
+                    ->where("is_active", true)
                     ->select(
                         "id",
                         "product_id",
