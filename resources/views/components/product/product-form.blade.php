@@ -40,24 +40,12 @@
                 </div>
 
                 <div>
-                    <div class="mb-1 flex items-center justify-between">
-                        <label
-                            for="product-category"
-                            class="text-xs font-semibold text-ckb-primary"
-                        >
-                            Kategori *
-                        </label>
-
-                        @if (in_array(auth()->user()?->role, ["owner", "admin"]))
-                            <button
-                                type="button"
-                                id="btn-add-category"
-                                class="text-xs font-semibold text-ckb-primary hover:underline"
-                            >
-                                + Tambah Kategori
-                            </button>
-                        @endif
-                    </div>
+                    <label
+                        for="product-category"
+                        class="mb-1 block text-xs font-semibold text-ckb-primary"
+                    >
+                        Kategori *
+                    </label>
 
                     <select
                         id="product-category"

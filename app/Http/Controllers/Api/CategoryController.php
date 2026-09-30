@@ -10,46 +10,46 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::orderBy("name")->get(["id", "name"]);
+        $categories = Category::orderBy('name')->get(['id', 'name']);
 
         return response()->json([
-            "success" => true,
-            "message" => "Get Categories",
-            "data" => $categories,
+            'success' => true,
+            'message' => 'Get Categories',
+            'data' => $categories,
         ]);
     }
 
     public function store(Request $request)
     {
-        // Only owner can create a category.
-        if ($request->user()->role !== "owner") {
+        // Owner and admin can create a category.
+        if (! in_array($request->user()->role, ['owner', 'admin'])) {
             return response()->json(
                 [
-                    "success" => false,
-                    "message" => "You are not authorized to create a category.",
+                    'success' => false,
+                    'message' => 'You are not authorized to create a category.',
                 ],
                 403,
             );
         }
 
         $validated = $request->validate([
-            "name" => [
-                "required",
-                "string",
-                "max:100",
-                "unique:categories,name",
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                'unique:categories,name',
             ],
         ]);
 
         $category = Category::create([
-            "name" => trim($validated["name"]),
+            'name' => trim($validated['name']),
         ]);
 
         return response()->json(
             [
-                "success" => true,
-                "message" => "Kategori berhasil ditambahkan.",
-                "data" => $category,
+                'success' => true,
+                'message' => 'Kategori berhasil ditambahkan.',
+                'data' => $category,
             ],
             201,
         );
