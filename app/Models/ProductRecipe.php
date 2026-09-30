@@ -13,7 +13,7 @@ class ProductRecipe extends Model
     protected $fillable = ["product_id", "raw_material_id", "amount_needed"];
 
     protected $casts = [
-        "amount_needed" => "decimal:2",
+        "amount_needed" => "integer",
     ];
 
     public function product()

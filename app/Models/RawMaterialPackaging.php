@@ -16,7 +16,7 @@ class RawMaterialPackaging extends Model
     ];
 
     protected $casts = [
-        "conversion_factor" => "decimal:3",
+        "conversion_factor" => "integer",
         "is_active" => "boolean",
     ];
 

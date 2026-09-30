@@ -31,9 +31,7 @@ export async function fetchRawMaterials() {
 
 export function renderTable(items) {
     const tbody = $("raw-material-list");
-
     const alertBox = $("critical-alert");
-
     const summary = $("summary-text");
 
     if (!items.length) {
@@ -60,24 +58,38 @@ export function renderTable(items) {
     tbody.innerHTML = items
         .map((item) => {
             const stock = parseFloat(item.current_stock) || 0;
+            const minimumStock = parseFloat(item.minimum_stock) || 0;
 
-            const isCritical = stock <= 100;
+            let status;
+            let isCritical = false;
 
-            if (isCritical) {
-                criticalCount++;
-            }
-
-            const status = isCritical
-                ? `
+            if (stock <= 0) {
+                status = `
                     <span class="text-red-700 bg-red-50 px-2 py-1 rounded text-xs font-semibold">
+                        ● Habis
+                    </span>
+                `;
+
+                isCritical = true;
+            } else if (stock <= minimumStock) {
+                status = `
+                    <span class="text-orange-700 bg-orange-50 px-2 py-1 rounded text-xs font-semibold">
                         ● Menipis
                     </span>
-                `
-                : `
+                `;
+
+                isCritical = true;
+            } else {
+                status = `
                     <span class="text-green-700 bg-green-50 px-2 py-1 rounded text-xs font-semibold">
                         ● Aman
                     </span>
                 `;
+            }
+
+            if (isCritical) {
+                criticalCount++;
+            }
 
             return `
                 <tr class="border-b border-gray-50 text-sm">
@@ -96,9 +108,14 @@ export function renderTable(items) {
                         </span>
                     </td>
 
-                    <td class="py-3 font-bold text-ckb-secondary">
+                    <td class="py-3 font-bold text-ckb-primary">
                         ${stock.toLocaleString("id-ID")}
                         ${escapeHtml(item.unit_measurement)}
+                    </td>
+
+                    <td class="py-3 text-gray-500 font-semibold">
+                            ${minimumStock.toLocaleString("id-ID")}
+                            ${escapeHtml(item.unit_measurement)}
                     </td>
 
                     <td class="py-3">

@@ -24,7 +24,7 @@ class Product extends Model
 
     protected $casts = [
         "stock" => "integer",
-        "base_price" => "decimal:2",
+        "base_price" => "integer",
         "is_recommended" => "boolean",
     ];
 

@@ -31,6 +31,7 @@
                     <th class="py-3 font-medium">Nama Bahan Baku</th>
                     <th class="py-3 font-medium">Satuan Dasar</th>
                     <th class="py-3 font-medium">Stok Saat Ini</th>
+                    <th class="py-3 font-medium">Stok Minimum</th>
                     <th class="py-3 font-medium">Status</th>
                     <th class="py-3 font-medium text-right">Aksi</th>
                 </tr>
@@ -38,7 +39,7 @@
 
             <tbody id="raw-material-list">
                 <tr>
-                    <td colspan="6" class="py-6 text-center text-gray-400">
+                    <td colspan="7" class="py-6 text-center text-gray-400">
                         <i class="fas fa-spinner fa-spin mr-2"></i>
                         Memuat data bahan baku...
                     </td>

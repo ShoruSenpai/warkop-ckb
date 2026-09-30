@@ -27,10 +27,10 @@ class SupplierPurchaseItem extends Model
     ];
 
     protected $casts = [
-        "quantity" => "decimal:2",
-        "conversion_factor" => "decimal:3",
-        "unit_price" => "decimal:2",
-        "subtotal" => "decimal:2",
+        "quantity" => "integer",
+        "conversion_factor" => "integer",
+        "unit_price" => "integer",
+        "subtotal" => "integer",
     ];
 
     public function rawMaterial()

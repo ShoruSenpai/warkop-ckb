@@ -67,6 +67,7 @@
         <div id="packaging-form" class="space-y-4 p-5">
             <div>
                 <label
+                    for="packaging-unit"
                     class="mb-1 block text-xs font-semibold text-ckb-primary"
                 >
                     Satuan Pembelian *
@@ -75,6 +76,7 @@
                 <input
                     type="text"
                     id="packaging-unit"
+                    name="purchase_unit"
                     maxlength="50"
                     required
                     placeholder="Contoh: dus"
@@ -84,6 +86,7 @@
 
             <div>
                 <label
+                    for="packaging-conversion"
                     class="mb-1 block text-xs font-semibold text-ckb-primary"
                 >
                     Konversi *
@@ -92,6 +95,7 @@
                 <input
                     type="number"
                     id="packaging-conversion"
+                    name="conversion_factor"
                     min="0.001"
                     step="0.001"
                     required

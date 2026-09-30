@@ -7,7 +7,7 @@ export async function fetchRawMaterials() {
         const { response, data } = await apiFetch("/api/raw-materials");
 
         if (!response.ok) {
-            console.error("Gagal mengambil raw materials:", data);
+            console.error("Gagal mengambil bahan baku:", data);
 
             return;
         }
@@ -18,7 +18,7 @@ export async function fetchRawMaterials() {
             return;
         }
 
-        console.error("Gagal mengambil raw materials:", error);
+        console.error("Gagal mengambil bahan baku:", error);
     }
 }
 
@@ -119,6 +119,7 @@ export function renderRecipeRows() {
 
                             <div>
                                 <label
+                                for="recipe-material-${index}"
                                     class="
                                         mb-1 block
                                         text-[11px]
@@ -130,6 +131,7 @@ export function renderRecipeRows() {
                                 </label>
 
                                 <select
+                                    id="recipe-material-${index}"
                                     class="
                                         recipe-material
                                         w-full rounded-lg
@@ -177,6 +179,7 @@ export function renderRecipeRows() {
 
                             <div>
                                 <label
+                                    for="recipe-amount-${index}"
                                     class="
                                         mb-1 block
                                         text-[11px]
@@ -191,8 +194,9 @@ export function renderRecipeRows() {
 
                                     <input
                                         type="number"
-                                        min="0.01"
-                                        step="0.01"
+                                        id="recipe-amount-${index}"
+                                        min="1"
+                                        step="1"
                                         value="${row.amount_needed ?? ""}"
                                         class="
                                             recipe-amount

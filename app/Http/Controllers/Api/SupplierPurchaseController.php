@@ -136,8 +136,8 @@ class SupplierPurchaseController extends Controller
             "items.*.product_packaging_id" =>
                 "nullable|integer|exists:product_packagings,id",
 
-            "items.*.quantity" => "required|numeric|min:0.1",
-            "items.*.unit_price" => "required|numeric|min:0",
+            "items.*.quantity" => "required|integer|min:0.1",
+            "items.*.unit_price" => "required|integer|min:0",
         ]);
 
         DB::beginTransaction();

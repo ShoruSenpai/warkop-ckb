@@ -66,6 +66,34 @@
                 </div>
             </div>
 
+            <div>
+                <label
+                    class="block text-xs font-semibold text-ckb-primary mb-1"
+                >
+                    Batas Stok Minimum *
+                </label>
+
+                <div class="relative">
+                    <input
+                        id="rm_minimum_stock"
+                        type="number"
+                        required
+                        min="0"
+                        placeholder="cth: 10000"
+                        class="w-full border border-gray-200 rounded-lg px-3 py-2 pr-12 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none bg-white"
+                    />
+
+                    <span
+                        id="rm-minimum-stock-unit"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400"
+                    >
+                        ml
+                    </span>
+                </div>
+
+                <p class="text-[11px] text-gray-400 mt-1">Sistem akan memberi peringatan saat stok mencapai atau berada di bawah batas ini.</p>
+            </div>
+
             <!-- Packaging -->
             <div class="mt-6">
                 <div class="flex justify-between items-center mb-3">
@@ -73,30 +101,34 @@
                         <h4 class="text-sm font-bold text-ckb-primary">
                             Kemasan Pembelian
                         </h4>
+
                         <p class="text-[11px] text-gray-400">Tentukan satuan pembelian dan jumlah satuan dasar di dalamnya.</p>
                     </div>
 
                     <button
                         type="button"
-                        id="btn-add-packaging"
+                        data-action="add-packaging"
                         class="text-xs font-semibold text-ckb-primary hover:text-ckb-accent"
                     >
                         + Tambah Kemasan
                     </button>
                 </div>
+
                 <div id="material-packaging-list" class="space-y-3">
-                    <!-- Packaging row dibuat via JS -->
+                    <!-- Packaging rows are created by JS -->
                 </div>
+
                 <div
                     id="material-packaging-empty"
                     class="border border-dashed border-gray-300 rounded-lg p-4 text-center"
                 >
                     <i class="fas fa-box-open text-gray-300 text-xl mb-2"></i>
+
                     <p class="text-xs text-gray-400">Belum ada kemasan pembelian.</p>
 
                     <button
                         type="button"
-                        id="btn-add-packaging"
+                        data-action="add-packaging"
                         class="text-xs text-ckb-primary font-semibold mt-1 hover:underline"
                     >
                         Tambahkan kemasan
@@ -137,6 +169,7 @@
                         >
                             Satuan Beli *
                         </label>
+
                         <input
                             type="text"
                             class="material-packaging-unit w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none"
@@ -152,13 +185,13 @@
                         >
                             Isi dalam Satuan Dasar *
                         </label>
+
                         <input
                             type="number"
                             class="material-packaging-conversion w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none"
                             min="0.001"
                             step="0.001"
                             placeholder="cth: 12000"
-                            oninput="updateMaterialPackagingPreview(this)"
                             required
                         />
                     </div>
@@ -172,7 +205,10 @@
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
-                <p class="material-packaging-preview text-[11px] text-gray-400 mt-2">Masukkan jumlah konversi.</p>
+
+                <p
+                    class="material-packaging-preview text-[11px] text-gray-400 mt-2"
+                >Masukkan jumlah konversi.</p>
             </div>
         </template>
     </div>

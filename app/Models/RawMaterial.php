@@ -8,10 +8,16 @@ class RawMaterial extends Model
 {
     protected $table = "raw_materials";
 
-    protected $fillable = ["name", "unit_measurement", "current_stock"];
+    protected $fillable = [
+        "name",
+        "unit_measurement",
+        "current_stock",
+        "minimum_stock",
+    ];
 
     protected $casts = [
-        "current_stock" => "decimal:2",
+        "current_stock" => "integer",
+        "minimum_stock" => "integer",
     ];
 
     public function packagings()

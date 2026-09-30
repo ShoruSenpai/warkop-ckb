@@ -98,7 +98,7 @@ export function updateMaterialPackagingPreview(input) {
     }
 
     preview.innerHTML = `
-        <span class="font-semibold text-ckb-secondary">
+        <span class="font-semibold text-ckb-primary">
             1 ${escapeHtml(unit)}
             =
             ${conversion.toLocaleString("id-ID")}
@@ -193,10 +193,25 @@ export async function submitMaterial(event) {
 
     const button = $("btn-save-material");
 
+    const minimumStock = Number($("rm_minimum_stock").value);
+
+    if (!Number.isFinite(minimumStock) || minimumStock < 0) {
+        await showApiError(
+            {
+                message: "Batas stok minimum harus 0 atau lebih.",
+            },
+            "Batas Stok Tidak Valid",
+        );
+
+        $("rm_minimum_stock").focus();
+
+        return;
+    }
+
     const payload = {
         name: $("rm_name").value.trim(),
-
         unit_measurement: $("rm_unit").value,
+        minimum_stock: minimumStock,
     };
 
     const packagings = collectPackagings();
@@ -374,23 +389,29 @@ export function initMaterialEvents() {
         if (!actionButton) return;
 
         switch (actionButton.dataset.action) {
+            case "add-packaging":
+                addMaterialPackagingRow();
+                return;
+
             case "remove-packaging":
-                removeMaterialPackagingRow();
+                removeMaterialPackagingRow(actionButton);
                 return;
         }
     });
-
-    $("btn-add-packaging")?.addEventListener("click", () =>
-        addMaterialPackagingRow(),
-    );
-
-    $("btn-add-empty-packaging")?.addEventListener("click", () =>
-        addMaterialPackagingRow(),
-    );
 
     $("material-packaging-list")?.addEventListener("input", (event) => {
         if (event.target.matches(".material-packaging-conversion")) {
             updateMaterialPackagingPreview(event.target);
         }
+    });
+
+    $("rm_unit")?.addEventListener("change", () => {
+        $("rm-minimum-stock-unit").textContent = $("rm_unit").value;
+
+        document
+            .querySelectorAll(".material-packaging-conversion")
+            .forEach((input) => {
+                updateMaterialPackagingPreview(input);
+            });
     });
 }

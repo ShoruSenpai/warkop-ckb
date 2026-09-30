@@ -28,6 +28,7 @@ class RawMaterialController extends Controller
             [
                 "name" => "required|string|max:100",
                 "unit_measurement" => "required|in:gram,ml,pcs",
+                "minimum_stock" => "required|numeric",
             ],
             [
                 "name.required" => "Nama bahan baku wajib diisi.",
@@ -42,6 +43,7 @@ class RawMaterialController extends Controller
             "name" => $validated["name"],
             "unit_measurement" => $validated["unit_measurement"],
             "current_stock" => 0,
+            "minimum_stock" => $validated["minimum_stock"],
         ]);
 
         return response()->json(
@@ -191,7 +193,7 @@ class RawMaterialController extends Controller
                     ),
                 ],
 
-                "conversion_factor" => "required|numeric|min:0.001",
+                "conversion_factor" => "required|integer|min:0.001",
 
                 "is_active" => "nullable|boolean",
             ],
@@ -205,7 +207,7 @@ class RawMaterialController extends Controller
 
                 "conversion_factor.required" => "Nilai konversi wajib diisi.",
 
-                "conversion_factor.numeric" =>
+                "conversion_factor.integer" =>
                     "Nilai konversi harus berupa angka.",
 
                 "conversion_factor.min" =>
@@ -265,7 +267,7 @@ class RawMaterialController extends Controller
                         ->ignore($packaging->id),
                 ],
 
-                "conversion_factor" => "required|numeric|min:0.001",
+                "conversion_factor" => "required|integer|min:0.001",
 
                 "is_active" => "nullable|boolean",
             ],
@@ -279,7 +281,7 @@ class RawMaterialController extends Controller
 
                 "conversion_factor.required" => "Nilai konversi wajib diisi.",
 
-                "conversion_factor.numeric" =>
+                "conversion_factor.integer" =>
                     "Nilai konversi harus berupa angka.",
 
                 "conversion_factor.min" =>

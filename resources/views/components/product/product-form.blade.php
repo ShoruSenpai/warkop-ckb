@@ -163,9 +163,6 @@
         {{-- Recipe --}}
         <x-product.recipe-builder />
 
-        {{-- Packaging --}}
-        <x-product.packaging-manager />
-
         {{-- Footer action --}}
         <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <a
@@ -185,4 +182,7 @@
             </button>
         </div>
     </form>
+
+    {{-- Packaging --}}
+    <x-product.packaging-manager />
 </div>

@@ -43,7 +43,7 @@
     {{-- Material modal --}}
     <x-raw-material.material-modal />
 
-    {{-- Packaging modal --}}
+    {{-- Edit Material modal --}}
     <x-raw-material.packaging-modal />
 
     <x-slot:script>
