@@ -97,9 +97,11 @@
                     id="packaging-conversion"
                     name="conversion_factor"
                     min="0.001"
+                    max="9999999999"
+                    maxlength="10"
+                    oninput="if(this.value.length > 10) this.value = this.value.slice(0,10)"
                     step="0.001"
                     required
-                    {{-- CHANGED --}}
                     placeholder="Contoh: 24"
                     class="w-full rounded-lg border border-ckb-outline-variant/60 px-3 py-2.5 text-sm outline-none focus:border-ckb-primary"
                 />

@@ -79,6 +79,9 @@
                         type="number"
                         required
                         min="0"
+                        max="9999999999"
+                        maxlength="10"
+                        oninput="if(this.value.length > 10) this.value = this.value.slice(0,10)"
                         placeholder="cth: 10000"
                         class="w-full border border-gray-200 rounded-lg px-3 py-2 pr-12 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none bg-white"
                     />
@@ -190,6 +193,9 @@
                             type="number"
                             class="material-packaging-conversion w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none"
                             min="0.001"
+                            max="9999999999"
+                            maxlength="10"
+                            oninput="if(this.value.length > 10) this.value = this.value.slice(0,10)"
                             step="0.001"
                             placeholder="cth: 12000"
                             required

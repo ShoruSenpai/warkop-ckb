@@ -75,6 +75,9 @@
                             type="number"
                             id="product-price"
                             min="0"
+                            max="9999999999"
+                            maxlength="10"
+                            oninput="if(this.value.length > 10) this.value = this.value.slice(0,10)"
                             step="100"
                             required
                             placeholder="12000"

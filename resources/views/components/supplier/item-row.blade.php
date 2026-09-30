@@ -26,6 +26,9 @@
             type="number"
             step="0.1"
             min="0.1"
+            max="9999999999"
+            maxlength="10"
+            oninput="if(this.value.length > 10) this.value = this.value.slice(0,10)"
             class="qty w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none transition"
             value="1"
             required
@@ -48,6 +51,9 @@
         <input
             type="number"
             min="0"
+            max="9999999999"
+            maxlength="10"
+            oninput="if(this.value.length > 10) this.value = this.value.slice(0,10)"
             step="0.01"
             class="price w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none transition"
             value="0"

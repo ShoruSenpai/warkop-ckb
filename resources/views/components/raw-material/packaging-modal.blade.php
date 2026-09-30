@@ -116,6 +116,9 @@
                             id="packaging-conversion"
                             type="number"
                             min="0.001"
+                            max="9999999999"
+                            maxlength="10"
+                            oninput="if(this.value.length > 10) this.value = this.value.slice(0,10)"
                             step="0.001"
                             required
                             placeholder="cth: 12000"

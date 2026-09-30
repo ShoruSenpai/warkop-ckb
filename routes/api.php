@@ -1,17 +1,16 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-
-// custom controller
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\ProductController;
+// custom controller
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\RawMaterialController;
+use App\Http\Controllers\Api\ReportController;
+use App\Http\Controllers\Api\SettingController;
 use App\Http\Controllers\Api\SupplierPurchaseController;
-
-// custom middleware
 use App\Http\Middleware\ExtendTokenActivity;
+// custom middleware
+use Illuminate\Support\Facades\Route;
 
 Route::post('/login', [AuthController::class, 'login']);
 
@@ -83,5 +82,16 @@ Route::middleware(['auth:sanctum', ExtendTokenActivity::class])->group(function 
     Route::get('/inventory-items', [SupplierPurchaseController::class, 'getInventoryItems']);
     Route::get('/supplier-suggestions', [SupplierPurchaseController::class, 'getSupplierSuggestions']);
     Route::post('/supplier-purchases', [SupplierPurchaseController::class, 'store']);
-});
 
+    // reports & dashboard
+    Route::get('/dashboard/summary', [ReportController::class, 'dashboardSummary']);
+    Route::get('/reports/transactions', [ReportController::class, 'transactions']);
+    Route::get('/reports/sales', [ReportController::class, 'sales']);
+    Route::get('/reports/purchases', [ReportController::class, 'purchases']);
+    Route::get('/reports/stock', [ReportController::class, 'stock']);
+
+    // settings & profile
+    Route::get('/settings', [SettingController::class, 'index']);
+    Route::put('/settings/profile', [SettingController::class, 'updateProfile']);
+    Route::get('/settings/users', [SettingController::class, 'users']);
+});
