@@ -45,9 +45,9 @@ Route::middleware(["auth", "role:owner,admin"])->group(function () {
         return view("suppliers.index");
     })->name("supplier.index");
 
-    Route::get("/reports", function () {
-        return view("reports.index");
-    })->name("report.index");
+    Route::get("/reports/purchases", function () {
+        return view("reports.purchases.index");
+    })->name("reports.purchases");
 
     Route::get("/settings", function () {
         return view("settings.index");

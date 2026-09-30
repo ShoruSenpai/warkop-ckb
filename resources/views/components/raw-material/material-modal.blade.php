@@ -60,7 +60,7 @@
                     >
                         <option value="gram">gram</option>
                         <option value="ml">ml</option>
-                        <option value="pcs">pcs</option>
+                        {{--                        <option value="pcs">pcs</option>--}}
                     </select>
                     <p class="text-[11px] text-gray-400 mt-1">Satuan ini digunakan untuk menyimpan stok.</p>
                 </div>

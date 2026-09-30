@@ -5,7 +5,6 @@ import {
 } from "./inventory.js";
 
 import { addRow, initRowEvents } from "./rows.js";
-
 import { initPurchaseEvents } from "./purchase.js";
 
 import { $ } from "./helper.js";

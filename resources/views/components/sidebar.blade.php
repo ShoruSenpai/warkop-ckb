@@ -61,7 +61,7 @@
 
                     [
                         "name" => "Laporan Pembelian",
-                        "route" => "reports.purchases",
+                        "route" => "reports.purchases.index",
                         "active" => "reports.purchases*",
                     ],
 

@@ -48,7 +48,7 @@
         <input
             type="number"
             min="0"
-            step="0.01"
+            step="1"
             class="price w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none transition"
             value="0"
             required
