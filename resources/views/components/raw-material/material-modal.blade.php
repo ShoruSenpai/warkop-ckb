@@ -90,7 +90,7 @@
                         id="rm-minimum-stock-unit"
                         class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400"
                     >
-                        ml
+                        gram
                     </span>
                 </div>
 

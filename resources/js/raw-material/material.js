@@ -11,6 +11,9 @@ export function openAddMaterialModal() {
 
     $("material-form").reset();
     $("material-id").value = "";
+    if ($("rm-minimum-stock-unit") && $("rm_unit")) {
+        $("rm-minimum-stock-unit").textContent = $("rm_unit").value;
+    }
 
     $("material-modal-title").innerText = "Daftarkan Bahan Baku Baru";
 
