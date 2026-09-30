@@ -16,7 +16,7 @@
             </div>
 
             <div class="flex items-center gap-2">
-                @if (auth()->user()?->role === "owner")
+                @if (in_array(auth()->user()?->role, ["owner", "admin"]))
                     <button
                         type="button"
                         id="btn-add-category"

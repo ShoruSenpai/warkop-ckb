@@ -13,6 +13,8 @@ import { setProductPackagings, initPackagingEvents } from "./packaging.js";
 
 import { handleStockTypeChange, initStockTypeEvents } from "./stock-type.js";
 
+import { initCategoryEvents } from "./category.js";
+
 function readFormConfig() {
     const wrapper = $("product-form-wrapper");
 
@@ -259,6 +261,7 @@ export async function initProductForm() {
     initRecipeEvents();
     initPackagingEvents();
     initStockTypeEvents();
+    initCategoryEvents();
 
     await Promise.all([fetchCategories(), prepareRecipeBuilder()]);
 

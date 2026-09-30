@@ -21,6 +21,8 @@
         <x-product.product-form mode="create" />
     </div>
 
+    <x-product.category-modal />
+
     <x-slot:script>
         @vite ("resources/js/product/form.js")
     </x-slot:script>
