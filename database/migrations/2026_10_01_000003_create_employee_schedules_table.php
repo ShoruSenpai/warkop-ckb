@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void {
+    public function up(): void
+    {
         Schema::create('employee_schedules', function (Blueprint $table) {
             $table->id();
             $table->foreignId('employee_id')->constrained('employees')->cascadeOnDelete();
@@ -15,10 +16,14 @@ return new class extends Migration
             $table->time('start_time');
             $table->time('end_time');
             $table->timestampTz('created_at')->useCurrent();
-            $table->timestampTz('updated_at')->useCurrent()->useCurrentOnUpdate();
+            $table->timestampTz('updated_at')->useCurrent();
 
             $table->index(['employee_id', 'schedule_date'], 'idx_emp_schedules_date');
         });
     }
-    public function down(): void { Schema::dropIfExists('employee_schedules'); }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('employee_schedules');
+    }
 };
