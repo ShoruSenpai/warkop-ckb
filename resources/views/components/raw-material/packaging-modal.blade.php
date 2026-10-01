@@ -48,7 +48,7 @@
                         <input
                             id="edit-rm-name"
                             type="text"
-                            maxlength="100"
+                            maxlength="50"
                             required
                             class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none"
                         />
@@ -115,8 +115,8 @@
                         <input
                             id="packaging-conversion"
                             type="number"
-                            min="0.001"
-                            step="0.001"
+                            min="1"
+                            max="999999"
                             required
                             placeholder="cth: 12000"
                             class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none"

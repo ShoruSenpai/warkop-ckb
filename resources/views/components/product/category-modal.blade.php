@@ -42,7 +42,7 @@
                     type="text"
                     id="category-name"
                     name="name"
-                    maxlength="100"
+                    maxlength="50"
                     autocomplete="off"
                     placeholder="Contoh: Makanan"
                     class="w-full rounded-xl border border-gray-300 px-4 py-2.5 text-sm outline-none transition focus:border-ckb-primary focus:ring-2 focus:ring-ckb-primary/20"

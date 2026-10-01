@@ -11,25 +11,6 @@
     </title>
 
     @vite (["resources/css/app.css", "resources/js/app.js"])
-
-    {{-- hardcore code --}}
-    <script>
-        const LIMIT_CONFIG = {
-            maxDigits: 9,
-        };
-
-        document.addEventListener("input", (event) => {
-            const input = event.target;
-
-            if (input.type !== "number") {
-                return;
-            }
-
-            if (input.value.length > LIMIT_CONFIG.maxDigits) {
-                input.value = input.value.slice(0, LIMIT_CONFIG.maxDigits);
-            }
-        });
-    </script>
 </head>
 <body class="bg-ckb-background flex h-screen overflow-hidden font-sans">
     <x-sidebar />

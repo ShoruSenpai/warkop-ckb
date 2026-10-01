@@ -12,9 +12,10 @@
             <input
                 type="text"
                 id="invoice_number"
-                required
-                placeholder="cth: INV-2026-0047"
+                maxlength="20"
+                placeholder="cth: INV-0106-0047"
                 class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none"
+                required
             />
         </div>
 
@@ -26,10 +27,11 @@
             <input
                 type="text"
                 id="supplier_name"
+                maxlength="50"
                 list="supplier-suggestions"
-                required
                 placeholder="Pilih / Ketik Nama Supplier"
                 class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none"
+                required
             />
 
             <datalist id="supplier-suggestions"></datalist>

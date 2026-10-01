@@ -196,6 +196,7 @@ export function renderRecipeRows() {
                                         type="number"
                                         id="recipe-amount-${index}"
                                         min="1"
+                                        max="9999"
                                         step="1"
                                         value="${row.amount_needed ?? ""}"
                                         class="

@@ -24,8 +24,9 @@
     <td class="py-2 pr-2">
         <input
             type="number"
-            step="0.1"
-            min="0.1"
+            step="1"
+            min="1"
+            max="999"
             class="qty w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none transition"
             value="1"
             required
@@ -48,6 +49,7 @@
         <input
             type="number"
             min="0"
+            max="999999999"
             step="1"
             class="price w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none transition"
             value="0"

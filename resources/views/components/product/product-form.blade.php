@@ -75,9 +75,10 @@
                             type="number"
                             id="product-price"
                             min="0"
+                            max="999999999"
                             step="100"
                             required
-                            placeholder="12000"
+                            placeholder="10.000"
                             class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest py-2.5 pl-10 pr-3 text-sm text-ckb-on-surface outline-none focus:border-ckb-primary focus:ring-2 focus:ring-ckb-primary/10"
                         />
                     </div>
@@ -94,6 +95,7 @@
                     <textarea
                         id="product-description"
                         rows="3"
+                        maxlength="500"
                         placeholder="Deskripsi produk..."
                         class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-primary focus:ring-2 focus:ring-ckb-primary/10"
                     ></textarea>
