@@ -5,27 +5,29 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
-        Schema::create('products', function (Blueprint $table) {
+        Schema::create("products", function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->constrained('categories')->cascadeOnDelete();
-            $table->string('name', 100);
-            $table->text('description')->nullable();
-            $table->bigInteger('base_price')->default(0);
-            $table->bigInteger('stock')->default(0);
-            $table->string('stock_type', 20)->default('static');
-            $table->string('image_url', 2048)->nullable();
-            $table->boolean('is_recommended')->default(false);
-            $table->string('status', 20)->default('available');
-            $table->timestampTz('created_at')->useCurrent();
-            $table->timestampTz('updated_at')->useCurrent();
-            $table->string('image_path', 500)->nullable();
+            $table
+                ->foreignId("category_id")
+                ->constrained("categories")
+                ->cascadeOnDelete();
+            $table->string("name", 50);
+            $table->text("description")->nullable();
+            $table->bigInteger("base_price")->default(0);
+            $table->bigInteger("stock")->default(0);
+            $table->string("stock_type", 20)->default("static");
+            $table->string("image_url", 2048)->nullable();
+            $table->string("image_path", 500)->nullable();
+            $table->boolean("is_recommended")->default(false);
+            $table->string("status", 20)->default("available");
+            $table->timestampTz("created_at")->useCurrent();
+            $table->timestampTz("updated_at")->useCurrent();
 
-            $table->index('category_id', 'idx_products_category');
-            $table->index('status', 'idx_products_status');
+            $table->index("category_id", "idx_products_category");
+            $table->index("status", "idx_products_status");
         });
 
         DB::statement("
@@ -43,6 +45,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('products');
+        Schema::dropIfExists("products");
     }
 };

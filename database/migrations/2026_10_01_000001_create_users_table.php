@@ -5,19 +5,18 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create("users", function (Blueprint $table) {
             $table->id();
-            $table->string('username', 50)->unique();
-            $table->string('email', 254)->unique();
-            $table->string('password', 255);
-            $table->string('role', 20)->default('employee');
+            $table->string("username", 20)->unique();
+            $table->string("email", 50)->unique();
+            $table->string("password", 255);
+            $table->string("role", 20)->default("employee");
             $table->rememberToken();
-            $table->timestampTz('created_at')->useCurrent();
-            $table->timestampTz('updated_at')->useCurrent();
+            $table->timestampTz("created_at")->useCurrent();
+            $table->timestampTz("updated_at")->useCurrent();
         });
 
         DB::statement("
@@ -29,6 +28,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists("users");
     }
 };
