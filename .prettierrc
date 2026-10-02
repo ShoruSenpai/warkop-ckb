@@ -1,0 +1,15 @@
+{
+    "plugins": [
+        "@prettier/plugin-php",
+        "prettier-plugin-blade"
+    ],
+    "phpVersion": "auto",
+    "overrides": [
+        {
+            "files": ["*.blade.php"],
+            "options": {
+                "parser": "blade"
+            }
+        }
+    ]
+}
