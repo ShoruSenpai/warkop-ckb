@@ -1,0 +1,28 @@
+export const $ = (id) => document.getElementById(id);
+
+export function escapeHtml(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
+
+export function validationMessage(data) {
+    if (!data?.errors) {
+        return data?.message || "Data belum dapat diproses.";
+    }
+
+    return Object.values(data.errors).flat().map(escapeHtml).join("<br>");
+}
+
+export async function showApiError(data, title = "Terjadi Kesalahan") {
+    await Swal.fire({
+        icon: "error",
+        title,
+        html: validationMessage(data),
+        confirmButtonText: "Mengerti",
+        confirmButtonColor: "#6B4423",
+    });
+}
