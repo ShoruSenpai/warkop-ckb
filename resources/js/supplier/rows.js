@@ -1,6 +1,6 @@
 import { state } from "./state.js";
-import { $, escapeHtml, showApiError } from "./helper.js";
-
+import { $, escapeHtml } from "@/utils/dom.js";
+import { showApiError } from "@/utils/ui.js";
 import { calculateRow, updateSummary } from "./calculation.js";
 
 export function populateSelectOptions(select) {

@@ -32,7 +32,7 @@
                     <input
                         type="text"
                         id="product-name"
-                        maxlength="100"
+                        maxlength="50"
                         required
                         placeholder="Contoh: Kopi Susu Gula Aren"
                         class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-primary focus:ring-2 focus:ring-ckb-primary/10"

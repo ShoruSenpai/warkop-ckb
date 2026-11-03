@@ -78,7 +78,6 @@
                     id="packaging-unit"
                     name="purchase_unit"
                     maxlength="20"
-                    required
                     placeholder="Contoh: dus"
                     class="w-full rounded-lg border border-ckb-outline-variant/60 px-3 py-2.5 text-sm outline-none focus:border-ckb-primary"
                 />
@@ -99,7 +98,6 @@
                     min="1"
                     max="999999"
                     step="1"
-                    required
                     placeholder="Contoh: 24"
                     class="w-full rounded-lg border border-ckb-outline-variant/60 px-3 py-2.5 text-sm outline-none focus:border-ckb-primary"
                 />

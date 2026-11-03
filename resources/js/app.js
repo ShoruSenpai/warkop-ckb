@@ -12,6 +12,24 @@ window.Swal = Swal;
 document.addEventListener("input", (event) => {
     const input = event.target;
 
+    if (input.type === "text" && input.maxLength > 0) {
+        if (input.value.length > input.maxLength) {
+            input.value = input.value.slice(0, input.maxLength);
+
+            Swal.fire({
+                toast: true,
+                position: "top-end",
+                icon: "warning",
+                title: `Maksimal ${input.maxLength} karakter`,
+                showConfirmButton: false,
+                timer: 1800,
+                timerProgressBar: true,
+            });
+        }
+
+        return;
+    }
+
     if (input.type !== "number") {
         return;
     }
@@ -20,7 +38,6 @@ document.addEventListener("input", (event) => {
         return;
     }
 
-    // Only allow whole numbers.
     const digits = input.value.replace(/\D/g, "");
 
     if (digits === "") {
@@ -28,7 +45,6 @@ document.addEventListener("input", (event) => {
         return;
     }
 
-    // Use the number of digits in max as the input length limit.
     const maxDigits = input.max.replace(/\D/g, "").length;
 
     if (digits.length > maxDigits) {

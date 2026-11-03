@@ -1,14 +1,8 @@
 import { state } from "./state.js";
-
-import {
-    $,
-    escapeHtml,
-    findById,
-    showApiError,
-    toggleModal,
-} from "./helper.js";
-
-import { apiFetch } from "../utils/api.js";
+import { $, escapeHtml, toggleModal } from "@/utils/dom.js";
+import { showApiError } from "@/utils/ui.js";
+import { findById } from "@/utils/data.js";
+import { apiFetch } from "@/utils/api.js";
 import { fetchRawMaterials } from "./table.js";
 
 export async function openEditMaterialModal(id) {

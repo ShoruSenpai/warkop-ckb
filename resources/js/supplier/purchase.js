@@ -1,5 +1,6 @@
-import { $, showApiError } from "./helper.js";
 import { apiFetch } from "../utils/api.js";
+import { $ } from "@/utils/dom.js";
+import { showApiError } from "@/utils/ui.js";
 
 export async function submitPurchase(event) {
     event.preventDefault();

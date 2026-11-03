@@ -45,9 +45,22 @@ Route::middleware(["auth", "role:owner,admin"])->group(function () {
         return view("suppliers.index");
     })->name("supplier.index");
 
+    // reports
+    Route::get("/reports/transactions", function () {
+        return view("reports.transactions.index");
+    })->name("reports.transactions");
+
+    Route::get("/reports/sales", function () {
+        return view("reports.sales.index");
+    })->name("reports.sales");
+
     Route::get("/reports/purchases", function () {
         return view("reports.purchases.index");
-    })->name("reports.purchases");
+    })->name("reports.purchases.index");
+
+    Route::get("/reports/stock", function () {
+        return view("reports.stock.index");
+    })->name("reports.stock");
 
     Route::get("/settings", function () {
         return view("settings.index");

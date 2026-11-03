@@ -62,10 +62,10 @@ class ProductController extends Controller
             "recipes" => "required_if:stock_type,recipe|array|min:1",
             "recipes.*.raw_material_id" =>
                 "required|integer|exists:raw_materials,id|distinct",
-            "recipes.*.amount_needed" => "required|integer|min:0.01",
+            "recipes.*.amount_needed" => "required|integer|min:1",
             "packagings" => "nullable|array",
             "packagings.*.purchase_unit" => "required|string|max:50",
-            "packagings.*.conversion_factor" => "required|integer|min:0.001",
+            "packagings.*.conversion_factor" => "required|integer|min:1",
             "packagings.*.is_active" => "nullable|boolean",
         ]);
 
@@ -247,7 +247,7 @@ class ProductController extends Controller
             "recipes.*.raw_material_id" =>
                 "required|integer|exists:raw_materials,id|distinct",
 
-            "recipes.*.amount_needed" => "required|integer|min:0.01",
+            "recipes.*.amount_needed" => "required|integer|min:1",
         ]);
 
         try {
@@ -410,7 +410,7 @@ class ProductController extends Controller
         $validated = $request->validate([
             "purchase_unit" => "required|string|max:50",
 
-            "conversion_factor" => "required|integer|min:0.001",
+            "conversion_factor" => "required|integer|min:1",
 
             "is_active" => "nullable|boolean",
         ]);
@@ -468,7 +468,7 @@ class ProductController extends Controller
         $validated = $request->validate([
             "purchase_unit" => "required|string|max:50",
 
-            "conversion_factor" => "required|integer|min:0.001",
+            "conversion_factor" => "required|integer|min:1",
 
             "is_active" => "nullable|boolean",
         ]);

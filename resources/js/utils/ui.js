@@ -1,17 +1,8 @@
-export const $ = (id) => document.getElementById(id);
-
-export function escapeHtml(value) {
-    return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
+import { $, escapeHtml } from "./dom.js";
 
 export function validationMessage(data) {
     if (!data?.errors) {
-        return data?.message || "Data belum dapat diproses.";
+        return data?.message || "Data tidak dapat diproses.";
     }
 
     return Object.values(data.errors).flat().map(escapeHtml).join("<br>");

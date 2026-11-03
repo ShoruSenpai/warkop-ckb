@@ -193,7 +193,7 @@ class RawMaterialController extends Controller
                     ),
                 ],
 
-                "conversion_factor" => "required|integer|min:0.001",
+                "conversion_factor" => "required|integer|min:1",
 
                 "is_active" => "nullable|boolean",
             ],
@@ -267,7 +267,7 @@ class RawMaterialController extends Controller
                         ->ignore($packaging->id),
                 ],
 
-                "conversion_factor" => "required|integer|min:0.001",
+                "conversion_factor" => "required|integer|min:1",
 
                 "is_active" => "nullable|boolean",
             ],

@@ -1,6 +1,7 @@
 import { state } from "./state.js";
-import { apiFetch } from "../utils/api.js";
-import { $, escapeHtml, showApiError } from "./helper.js";
+import { apiFetch } from "@/utils/api.js";
+import { $, escapeHtml } from "@/utils/dom.js";
+import { showApiError } from "@/utils/ui.js";
 
 export async function fetchProducts() {
     try {

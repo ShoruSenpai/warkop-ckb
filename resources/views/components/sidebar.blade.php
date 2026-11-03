@@ -14,7 +14,7 @@
             ],
 
             [
-                "name" => "Product Management",
+                "name" => "Produk Manajemen",
                 "route" => "products.index",
                 "active" => "products.*",
                 "icon" => "fas fa-box-open",
@@ -23,7 +23,7 @@
             ],
 
             [
-                "name" => "Raw Materials",
+                "name" => "Bahan Baku",
                 "route" => "raw-material.index",
                 "active" => "raw-material.*",
                 "icon" => "fas fa-cubes",
@@ -32,7 +32,7 @@
             ],
 
             [
-                "name" => "Purchases",
+                "name" => "Pembelian",
                 "route" => "supplier.index",
                 "active" => "supplier.*",
                 "icon" => "fas fa-truck-loading",
@@ -273,29 +273,25 @@
                                         <ul class="mt-1 space-y-0.5">
                                             @foreach ($item["children"] as $child)
                                                 @php
-                                                    $childActive =
-                                                        Route::has($child["active"]) && request()->routeIs($child["active"]);
+                                                    $childActive = request()->routeIs($child["active"]);
+
                                                     $childUrl = Route::has($child["route"]) ? route($child["route"]) : "#";
                                                 @endphp
+
                                                 <li>
                                                     <a
                                                         href="{{ $childUrl }}"
-                                                        class="
-                                                            flex items-center
-                                                            border-l-4
-                                                            py-2 pl-[3.75rem] pr-6
-                                                            text-xs
-                                                            transition-colors
-
-                                                            {{ $childActive
-                                                                ? 'border-ckb-secondary-container bg-ckb-secondary-container/15 text-ckb-secondary-container font-semibold'
-                                                                : 'border-transparent text-ckb-inverse-on-surface/60 hover:bg-white/5 hover:text-ckb-inverse-on-surface'
-                                                            }}
+                                                        class="flex items-center border-l-4 py-2 pl-[3.75rem] pr-6 text-sm transition-colors
+                                                        {{ $childActive
+                                                    ? 'border-ckb-secondary-container bg-white/5 text-ckb-inverse-on-surface font-semibold'
+                                                    : 'border-transparent text-ckb-inverse-on-surface hover:bg-white/5'
+                                                        }}
                                                         "
                                                     >
                                                         {{ $child["name"] }}
                                                     </a>
                                                 </li>
+
                                             @endforeach
                                         </ul>
                                     </details>

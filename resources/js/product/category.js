@@ -1,6 +1,7 @@
-import { apiFetch } from "../utils/api.js";
+import { apiFetch } from "@/utils/api.js";
 import { fetchCategories } from "./list.js";
-import { $, showApiError } from "./helper.js";
+import { $ } from "@/utils/dom.js";
+import { showApiError } from "@/utils/ui.js";
 
 const modal = () => $("category-modal");
 const form = () => $("category-form");
