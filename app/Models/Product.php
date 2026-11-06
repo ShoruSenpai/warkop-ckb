@@ -14,6 +14,7 @@ class Product extends Model
         "description",
         "base_price",
         "stock",
+
         "stock_type",
         "image_url",
         "image_path",

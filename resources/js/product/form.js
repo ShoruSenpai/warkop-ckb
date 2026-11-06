@@ -213,6 +213,10 @@ export async function submitProduct(event) {
             console.log(key, value);
         }
 
+        if (isEdit) {
+            payload.append("_method", "PUT");
+        }
+
         const { response, data } = await apiFetch(url, {
             method,
             body: payload,

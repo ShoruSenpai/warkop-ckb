@@ -12,7 +12,7 @@ Route::middleware("guest")->group(function () {
 
 Route::get("/", function () {
     if (Auth::check()) {
-        return view("dashboard");
+        return view("dashboard.index");
     }
 
     return view("auth.login");
@@ -24,7 +24,7 @@ Route::middleware(["auth", "role:owner,admin"])->group(function () {
     Route::post("/logout", [AuthController::class, "logout"])->name("logout");
 
     Route::get("/dashboard", function () {
-        return view("dashboard");
+        return view("dashboard.index");
     })->name("dashboard");
 
     Route::get("/products", function () {

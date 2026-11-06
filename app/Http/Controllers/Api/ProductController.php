@@ -56,14 +56,15 @@ class ProductController extends Controller
             "image" => ["nullable", "image", "max:5120"],
             "is_recommended" => "nullable|boolean",
             "status" => "nullable|in:available,sold_out,disabled",
-            /*
-             * Recipe wajib diisi kalau stock_type = recipe.
-             */
             "recipes" => "required_if:stock_type,recipe|array|min:1",
             "recipes.*.raw_material_id" =>
                 "required|integer|exists:raw_materials,id|distinct",
             "recipes.*.amount_needed" => "required|integer|min:1",
-            "packagings" => "nullable|array",
+            "packagings" => [
+                "nullable",
+                "array",
+                "prohibited_unless:stock_type,static",
+            ],
             "packagings.*.purchase_unit" => "required|string|max:50",
             "packagings.*.conversion_factor" => "required|integer|min:1",
             "packagings.*.is_active" => "nullable|boolean",
