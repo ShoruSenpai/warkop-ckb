@@ -18,7 +18,7 @@ function getXsrfToken() {
     return cookie ? decodeURIComponent(cookie) : null;
 }
 
-async function handleApiError(response, data) {
+async function handleApiError(response) {
     if (response.status === 401) {
         await Swal.fire({
             icon: "warning",
@@ -33,60 +33,6 @@ async function handleApiError(response, data) {
         }
 
         throw new Error("UNAUTHORIZED");
-    }
-
-    if (response.status === 403) {
-        await Swal.fire({
-            icon: "error",
-            title: "Akses Ditolak",
-            text:
-                data?.message ||
-                "Kamu tidak memiliki izin untuk melakukan tindakan ini.",
-            confirmButtonText: "Mengerti",
-            confirmButtonColor: "#6B4423",
-        });
-
-        throw new Error("FORBIDDEN");
-    }
-
-    if (response.status === 404) {
-        await Swal.fire({
-            icon: "error",
-            title: "Data Tidak Ditemukan",
-            text: data?.message || "Data yang kamu cari tidak ditemukan.",
-            confirmButtonText: "Mengerti",
-            confirmButtonColor: "#6B4423",
-        });
-
-        throw new Error("NOT_FOUND");
-    }
-
-    if (response.status === 503) {
-        await Swal.fire({
-            icon: "warning",
-            title: "Koneksi Bermasalah",
-            text:
-                data?.message ||
-                "Layanan sedang tidak tersedia. Silakan coba lagi.",
-            confirmButtonText: "Coba Lagi",
-            confirmButtonColor: "#6B4423",
-        });
-
-        throw new Error("SERVICE_UNAVAILABLE");
-    }
-
-    if (response.status >= 500) {
-        await Swal.fire({
-            icon: "error",
-            title: "Terjadi Kesalahan",
-            text:
-                data?.message ||
-                "Terjadi kesalahan pada server. Silakan coba lagi.",
-            confirmButtonText: "Mengerti",
-            confirmButtonColor: "#6B4423",
-        });
-
-        throw new Error("SERVER_ERROR");
     }
 }
 
@@ -131,14 +77,6 @@ export async function apiFetch(url, options = {}) {
             credentials: "same-origin",
         });
     } catch (error) {
-        await Swal.fire({
-            icon: "warning",
-            title: "Koneksi Bermasalah",
-            text: "Tidak dapat terhubung ke server. Periksa koneksi internet dan coba lagi.",
-            confirmButtonText: "Mengerti",
-            confirmButtonColor: "#6B4423",
-        });
-
         throw new Error("NETWORK_ERROR");
     }
 
@@ -153,7 +91,7 @@ export async function apiFetch(url, options = {}) {
     }
 
     if (!response.ok) {
-        await handleApiError(response, data);
+        await handleApiError(response);
     }
 
     return {

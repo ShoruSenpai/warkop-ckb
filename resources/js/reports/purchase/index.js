@@ -78,7 +78,7 @@ function renderPurchaseReports(data) {
                     "
                 >
 
-                    <td class="px-4 py-4">
+                    <td class="px-3 py-3">
                         <span
                             class="
                                 font-semibold
@@ -91,14 +91,14 @@ function renderPurchaseReports(data) {
 
                     <td
                         class="
-                            px-4 py-4
+                            px-3 py-3
                             text-ckb-on-surface-variant
                         "
                     >
                         ${formatDate(purchase.purchase_date)}
                     </td>
 
-                    <td class="px-4 py-4">
+                    <td class="px-3 py-3">
                         <span
                             class="
                                 rounded-md
@@ -114,7 +114,7 @@ function renderPurchaseReports(data) {
                         </span>
                     </td>
 
-                    <td class="px-4 py-4">
+                    <td class="px-3 py-3">
                         <span
                             class="
                                 inline-flex

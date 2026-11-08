@@ -78,14 +78,13 @@ async function saveCategory() {
 
         if (!response.ok) {
             await showApiError(
-                response,
-                data?.message || "Gagal menambahkan kategori.",
+                data,
+                "Gagal Menambahkan Kategori",
             );
 
             return;
         }
 
-        // Refresh category data after successful creation.
         await fetchCategories();
 
         closeCategoryModal();
@@ -98,12 +97,12 @@ async function saveCategory() {
             showConfirmButton: false,
         });
     } catch (error) {
-        console.error("Gagal menambahkan kategori:", error);
+        if (error.message === "UNAUTHORIZED") {
+            return;
+        }
 
-        await Swal.fire({
-            icon: "error",
-            title: "Terjadi Kesalahan",
-            text: "Kategori gagal ditambahkan.",
+        await showApiError({
+            message: error.message || "Kategori gagal ditambahkan.",
         });
     } finally {
         setSavingState(false);

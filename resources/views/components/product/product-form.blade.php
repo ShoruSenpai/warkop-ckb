@@ -7,12 +7,12 @@
     id="product-form-wrapper"
     data-mode="{{ $mode }}"
     data-product-id="{{ $productId }}"
-    class="space-y-6"
+    class="space-y-4"
 >
-    <form id="product-form" class="space-y-6">
+    <form id="product-form" class="space-y-4">
         {{-- Informasi utama --}}
         <section
-            class="rounded-xl border border-ckb-outline-variant/40 bg-ckb-surface-container-lowest p-6"
+            class="rounded-xl border border-ckb-outline-variant/40 bg-ckb-surface-container-lowest p-4"
         >
             <div class="mb-5">
                 <h3 class="font-bold text-ckb-primary">Informasi Produk</h3>
@@ -76,7 +76,7 @@
                             id="product-price"
                             min="0"
                             max="999999999"
-                            step="100"
+                            step="1"
                             required
                             placeholder="10.000"
                             class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest py-2.5 pl-10 pr-3 text-sm text-ckb-on-surface outline-none focus:border-ckb-primary focus:ring-2 focus:ring-ckb-primary/10"
@@ -101,6 +101,7 @@
                     ></textarea>
                 </div>
 
+                @if ($mode === "create")
                 <div>
                     <div>
                         <label
@@ -130,6 +131,7 @@
                         </div>
                     </div>
                 </div>
+                @endif
 
                 <div class="flex items-end">
                     <label

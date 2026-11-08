@@ -1,6 +1,6 @@
 <section
     id="recipe-section"
-    class="hidden rounded-xl border border-ckb-outline-variant/40 bg-ckb-surface-container-lowest p-6"
+    class="hidden rounded-xl border border-ckb-outline-variant/40 bg-ckb-surface-container-lowest p-4"
 >
     <div class="mb-5 flex items-start justify-between gap-4">
         <div>

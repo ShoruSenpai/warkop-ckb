@@ -49,7 +49,7 @@ class ProductController extends Controller
     {
         $validated = $request->validate([
             "category_id" => "required|integer|exists:categories,id",
-            "name" => "required|string|max:100",
+            "name" => "required|string|max:50",
             "description" => "nullable|string",
             "base_price" => "required|integer|min:0",
             "stock_type" => "required|in:static,recipe,untracked",
@@ -65,8 +65,8 @@ class ProductController extends Controller
                 "array",
                 "prohibited_unless:stock_type,static",
             ],
-            "packagings.*.purchase_unit" => "required|string|max:50",
-            "packagings.*.conversion_factor" => "required|integer|min:1",
+            "packagings.*.purchase_unit" => "required|string|max:20",
+            "packagings.*.conversion_factor" => "required|integer|between:1,9999999",
             "packagings.*.is_active" => "nullable|boolean",
         ]);
 
@@ -118,20 +118,6 @@ class ProductController extends Controller
                             "amount_needed" => $recipe["amount_needed"],
                         ]);
                     }
-                }
-
-                if (
-                    $validated["stock_type"] !== "static" &&
-                    !empty($validated["packagings"])
-                ) {
-                    return response()->json(
-                        [
-                            "success" => false,
-                            "message" =>
-                                "Packaging pembelian hanya dapat digunakan untuk produk static.",
-                        ],
-                        422,
-                    );
                 }
 
                 if (
@@ -229,7 +215,7 @@ class ProductController extends Controller
         $validated = $request->validate([
             "category_id" => "required|integer|exists:categories,id",
 
-            "name" => "required|string|max:100",
+            "name" => "required|string|max:50",
 
             "description" => "nullable|string",
 
@@ -251,6 +237,17 @@ class ProductController extends Controller
             "recipes.*.amount_needed" => "required|integer|min:1",
         ]);
 
+        if (
+            $product->stock_type === "static" &&
+            $validated["stock_type"] !== "static" &&
+            $product->packagings()->exists()
+        ) {
+            return response()->json([
+                "success" => false,
+                "message" => "Jenis stok tidak dapat diubah selama produk masih memiliki kemasan pembelian. Hapus atau tangani kemasan terlebih dahulu.",
+            ], 422);
+        }
+
         try {
             $responseData = DB::transaction(function () use (
                 $validated,
@@ -262,7 +259,7 @@ class ProductController extends Controller
                     "description" => $validated["description"] ?? null,
                     "base_price" => $validated["base_price"],
                     "stock_type" => $validated["stock_type"],
-                    "image_url" => $validated["image_url"] ?? null,
+                    "image_url" => $validated["image_url"] ?? $product->image_url,
 
                     "is_recommended" => $validated["is_recommended"] ?? false,
 
@@ -409,9 +406,9 @@ class ProductController extends Controller
         }
 
         $validated = $request->validate([
-            "purchase_unit" => "required|string|max:50",
+            "purchase_unit" => "required|string|max:20",
 
-            "conversion_factor" => "required|integer|min:1",
+            "conversion_factor" => "required|integer|between:1,9999999",
 
             "is_active" => "nullable|boolean",
         ]);
@@ -467,9 +464,9 @@ class ProductController extends Controller
         }
 
         $validated = $request->validate([
-            "purchase_unit" => "required|string|max:50",
+            "purchase_unit" => "required|string|max:20",
 
-            "conversion_factor" => "required|integer|min:1",
+            "conversion_factor" => "required|integer|between:1,9999999",
 
             "is_active" => "nullable|boolean",
         ]);

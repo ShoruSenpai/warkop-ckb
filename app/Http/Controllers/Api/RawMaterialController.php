@@ -26,13 +26,13 @@ class RawMaterialController extends Controller
     {
         $validated = $request->validate(
             [
-                "name" => "required|string|max:100",
+                "name" => "required|string|max:50",
                 "unit_measurement" => "required|in:gram,ml,pcs",
-                "minimum_stock" => "required|numeric",
+                "minimum_stock" => "required|integer|between:0,999999",
             ],
             [
                 "name.required" => "Nama bahan baku wajib diisi.",
-                "name.max" => "Nama bahan baku maksimal 100 karakter.",
+                "name.max" => "Nama bahan baku maksimal 50 karakter.",
                 "unit_measurement.required" => "Satuan dasar wajib dipilih.",
                 "unit_measurement.in" =>
                     "Satuan dasar harus gram, ml, atau pcs.",
@@ -60,12 +60,12 @@ class RawMaterialController extends Controller
     {
         $validated = $request->validate(
             [
-                "name" => "required|string|max:100",
+                "name" => "required|string|max:50",
                 "unit_measurement" => "required|in:gram,ml,pcs",
             ],
             [
                 "name.required" => "Nama bahan baku wajib diisi.",
-                "name.max" => "Nama bahan baku maksimal 100 karakter.",
+                "name.max" => "Nama bahan baku maksimal 50 karakter.",
                 "unit_measurement.required" => "Satuan dasar wajib dipilih.",
                 "unit_measurement.in" =>
                     "Satuan dasar harus gram, ml, atau pcs.",
@@ -193,7 +193,7 @@ class RawMaterialController extends Controller
                     ),
                 ],
 
-                "conversion_factor" => "required|integer|min:1",
+                "conversion_factor" => "required|integer|between:1,9999999",
 
                 "is_active" => "nullable|boolean",
             ],
@@ -267,7 +267,7 @@ class RawMaterialController extends Controller
                         ->ignore($packaging->id),
                 ],
 
-                "conversion_factor" => "required|integer|min:1",
+                "conversion_factor" => "required|integer|between:1,9999999",
 
                 "is_active" => "nullable|boolean",
             ],

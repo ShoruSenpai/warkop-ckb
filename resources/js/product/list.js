@@ -163,7 +163,7 @@ export function renderProducts(products) {
                         last:border-0
                     ">
 
-                        <td class="px-4 py-4">
+                        <td class="px-3 py-3">
 
                             <div class="flex items-center gap-3">
 
@@ -227,7 +227,7 @@ export function renderProducts(products) {
                         </td>
 
                         <td class="
-                            px-4 py-4
+                            px-3 py-3
                             text-ckb-on-surface-variant
                         ">
                             ${
@@ -238,7 +238,7 @@ export function renderProducts(products) {
                         </td>
 
                         <td class="
-                            px-4 py-4
+                            px-3 py-3
                             font-semibold
                             text-ckb-primary
                         ">
@@ -247,7 +247,7 @@ export function renderProducts(products) {
                             )}
                         </td>
 
-                        <td class="px-4 py-4">
+                        <td class="px-3 py-3">
 
                             <span class="
                                 inline-flex items-center
@@ -263,14 +263,14 @@ export function renderProducts(products) {
                         </td>
 
                         <td class="
-                            px-4 py-4
+                            px-3 py-3
                             font-semibold
                             text-ckb-primary
                         ">
                             ${stock}
                         </td>
 
-                        <td class="px-4 py-4">
+                        <td class="px-3 py-3">
 
                             <span class="
                                 inline-flex items-center
@@ -284,7 +284,7 @@ export function renderProducts(products) {
 
                         </td>
 
-                        <td class="px-4 py-4">
+                        <td class="px-3 py-3">
 
                             <div class="flex justify-end gap-2">
 
@@ -383,6 +383,20 @@ export async function deleteProduct(id) {
 }
 
 export function initProductListEvents() {
+    $("btn-add-product")?.addEventListener("click", async (event) => {
+        if (state.categories.length) return;
+
+        event.preventDefault();
+
+        await Swal.fire({
+            icon: "warning",
+            title: "Kategori belum tersedia",
+            text: "Tambahkan kategori terlebih dahulu sebelum membuat produk.",
+            confirmButtonText: "Mengerti",
+            confirmButtonColor: "#6B4423",
+        });
+    });
+
     $("search-input")?.addEventListener("input", applyFilters);
 
     $("category-filter")?.addEventListener("change", applyFilters);

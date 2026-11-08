@@ -1,5 +1,5 @@
 <x-layout title="Edit Produk">
-    <div class="mx-auto max-w-5xl space-y-6">
+    <div class="mx-auto max-w-5xl space-y-4">
         <div class="flex items-center gap-3">
             <a
                 href="{{ route('products.index') }}"
@@ -10,7 +10,7 @@
             </a>
 
             <div>
-                <h2 class="text-2xl font-bold text-ckb-primary">Edit Produk</h2>
+            <h2 class="text-xl font-bold text-ckb-primary">Edit Produk</h2>
 
                 <p class="mt-1 text-sm text-ckb-on-surface-variant">Perbarui informasi produk.</p>
             </div>

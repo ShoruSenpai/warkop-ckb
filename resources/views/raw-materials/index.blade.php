@@ -1,16 +1,17 @@
-<x-layout title="Master Bahan Baku">
-    <div class="flex justify-between items-center mb-6">
-        <div>
-            <h2 class="text-2xl font-bold text-ckb-primary">
+<x-layout title="Manajemen Bahan Baku">
+    <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div class="min-w-0">
+            <p class="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-ckb-on-surface-variant">Inventori Operasional</p>
+            <h2 class="text-xl font-bold leading-tight text-ckb-primary sm:text-2xl">
                 Master Bahan Baku
             </h2>
-            <p id="summary-text" class="text-sm text-gray-500">Memuat ringkasan stok...</p>
+            <p id="summary-text" class="mt-1 text-xs text-gray-500">Memuat ringkasan stok...</p>
         </div>
 
         <button
             type="button"
             id="btn-add-material"
-            class="bg-ckb-primary text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-ckb-accent transition"
+            class="inline-flex shrink-0 items-center justify-center rounded-lg bg-ckb-primary px-3.5 py-2 text-xs font-semibold text-white transition hover:bg-ckb-accent sm:text-sm"
         >
             + Tambah Bahan Baku
         </button>
@@ -19,7 +20,7 @@
     {{-- Critical stock alert --}}
     <div
         id="critical-alert"
-        class="hidden bg-red-50 border border-red-200 text-ckb-error p-4 rounded-xl mb-6 flex justify-between items-center"
+        class="hidden flex items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 p-3 text-ckb-error mb-4"
     >
         <div class="flex items-center">
             <i class="fas fa-exclamation-triangle mr-3"></i>

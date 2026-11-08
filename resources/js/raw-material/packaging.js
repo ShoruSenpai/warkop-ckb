@@ -29,6 +29,8 @@ export async function openEditMaterialModal(id) {
 
     $("packaging-base-unit").innerText = item.unit_measurement;
 
+    $("packaging-base-unit-display").innerText = item.unit_measurement;
+
     toggleModal("packaging-modal", true);
 
     resetPackagingForm();

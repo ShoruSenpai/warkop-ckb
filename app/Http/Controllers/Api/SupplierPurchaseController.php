@@ -120,9 +120,9 @@ class SupplierPurchaseController extends Controller
     {
         $validated = $request->validate([
             "invoice_number" =>
-                "required|string|unique:supplier_purchases,invoice_number",
-            "supplier_name" => "required|string",
-            "purchase_date" => "required|date",
+                "required|string|max:20|unique:supplier_purchases,invoice_number",
+            "supplier_name" => "required|string|max:50",
+            "purchase_date" => "required|date|before_or_equal:today",
             "status" => "required|in:pending,received",
 
             "items" => "required|array|min:1",
@@ -136,8 +136,8 @@ class SupplierPurchaseController extends Controller
             "items.*.product_packaging_id" =>
                 "nullable|integer|exists:product_packagings,id",
 
-            "items.*.quantity" => "required|integer|min:1",
-            "items.*.unit_price" => "required|integer|min:0",
+            "items.*.quantity" => "required|integer|between:1,999",
+            "items.*.unit_price" => "required|integer|between:0,999999999",
         ]);
 
         DB::beginTransaction();
@@ -327,7 +327,7 @@ class SupplierPurchaseController extends Controller
                 [
                     "success" => false,
                     "message" =>
-                        "Gagal memproses pembelian: " . $e->getMessage(),
+                        "Gagal memproses pembelian. Periksa kembali data dan stok yang tersedia.",
                 ],
                 400,
             );

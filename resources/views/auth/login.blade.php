@@ -138,11 +138,11 @@
                             for="email"
                             class="text-xs sm:text-sm font-bold"
                         >
-                            Email / ID Karyawan
+                            Email
                         </label>
 
                         <span class="hidden sm:block text-[9px] text-ckb-on-surface-variant">
-                            NIP / Akun Resmi
+                            Akun Resmi
                         </span>
 
                     </div>
@@ -213,30 +213,6 @@
                         </button>
 
                     </div>
-
-                </div>
-
-
-                {{-- Remember --}}
-                <div class="flex items-center justify-between pt-0.5">
-
-                    <label class="flex items-center gap-2 cursor-pointer select-none">
-
-                        <input
-                            type="checkbox"
-                            name="remember"
-                            class="w-4 h-4 rounded border-ckb-outline-variant text-ckb-tertiary focus:ring-ckb-tertiary"
-                        >
-
-                        <span class="text-[10px] sm:text-xs font-medium text-ckb-on-surface-variant">
-                            Ingat sesi di perangkat terminal ini
-                        </span>
-
-                    </label>
-
-                    <span class="hidden sm:inline-flex px-1.5 py-1 rounded bg-ckb-surface-container text-[8px] font-bold text-ckb-on-surface-variant">
-                        Shift 1
-                    </span>
 
                 </div>
 

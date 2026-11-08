@@ -57,7 +57,6 @@
        PRIMARY
        Navy
        ========================= */
-
     --color-ckb-primary: #142747;
     --color-ckb-on-primary: #fffdf4;
 
@@ -76,6 +75,19 @@
 
     --color-ckb-secondary-container: #dce5f2;
     --color-ckb-on-secondary-container: #142747;
+
+    /* =========================
+       ACCENT
+       Medium Blue
+       ========================= */
+
+    --color-ckb-accent: #496b9a;
+    --color-ckb-on-accent: #fffdf4;
+
+    --color-ckb-accent-hover: #3e5e8d;
+
+    --color-ckb-accent-container: #e6edf6;
+    --color-ckb-on-accent-container: #142747;
 
     /* =========================
        TERTIARY

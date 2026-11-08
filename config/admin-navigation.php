@@ -43,37 +43,41 @@ return [
                     "icon" => "fas fa-truck-loading",
                     "roles" => ["owner", "admin"],
                 ],
+            ],
+        ],
+
+        [
+            "label" => "LAPORAN",
+            //            "icon" => "fas fa-file-invoice-dollar",
+            //            "roles" => ["owner", "admin"],
+
+            "items" => [
+                [
+                    "label" => "Riwayat Transaksi",
+                    "route" => "reports.transactions",
+                    "active" => ["reports.transactions*"],
+                    "icon" => "fas fa-file-invoice-dollar",
+                ],
 
                 [
-                    "label" => "Laporan",
+                    "label" => "Laporan Penjualan",
+                    "route" => "reports.sales",
+                    "active" => ["reports.sales*"],
                     "icon" => "fas fa-file-invoice-dollar",
-                    "roles" => ["owner", "admin"],
+                ],
 
-                    "children" => [
-                        [
-                            "label" => "Riwayat Transaksi",
-                            "route" => "reports.transactions",
-                            "active" => ["reports.transactions*"],
-                        ],
+                [
+                    "label" => "Laporan Pembelian",
+                    "route" => "reports.purchases.index",
+                    "active" => ["reports.purchases*"],
+                    "icon" => "fas fa-file-invoice-dollar",
+                ],
 
-                        [
-                            "label" => "Laporan Penjualan",
-                            "route" => "reports.sales",
-                            "active" => ["reports.sales*"],
-                        ],
-
-                        [
-                            "label" => "Laporan Pembelian",
-                            "route" => "reports.purchases.index",
-                            "active" => ["reports.purchases*"],
-                        ],
-
-                        [
-                            "label" => "Laporan Stok",
-                            "route" => "reports.stock",
-                            "active" => ["reports.stock*"],
-                        ],
-                    ],
+                [
+                    "label" => "Laporan Stok",
+                    "route" => "reports.stock",
+                    "active" => ["reports.stock*"],
+                    "icon" => "fas fa-file-invoice-dollar",
                 ],
             ],
         ],

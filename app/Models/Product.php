@@ -18,10 +18,8 @@ class Product extends Model
         "stock_type",
         "image_url",
         "image_path",
-        "image_path",
         "is_recommended",
         "status",
-        "is_recommended",
     ];
 
     protected $casts = [

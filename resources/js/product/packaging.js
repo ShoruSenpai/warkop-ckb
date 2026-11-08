@@ -53,7 +53,7 @@ export function renderPackagingList() {
                                     packaging.conversion_factor,
                                 ).toLocaleString("id-ID")}
                                 ${escapeHtml(
-                                    state.currentProduct?.base_unit ?? "",
+                                    state.currentProduct?.base_unit ?? "pcs",
                                 )}
                             </p>
                         </div>
@@ -151,6 +151,26 @@ export async function savePackaging() {
      * request create product.
      */
     if (!state.productId) {
+        const normalizedUnit = purchaseUnit.toLocaleLowerCase("id-ID");
+
+        const hasDuplicate = state.productPackagings.some(
+            (packaging) =>
+                String(packaging.id) !== String(id) &&
+                packaging.purchase_unit
+                    .trim()
+                    .toLocaleLowerCase("id-ID") === normalizedUnit,
+        );
+
+        if (hasDuplicate) {
+            await Swal.fire({
+                icon: "warning",
+                title: "Satuan beli duplikat",
+                text: "Satuan pembelian yang sama tidak boleh ditambahkan dua kali.",
+            });
+
+            return;
+        }
+
         const packagingData = {
             id:
                 id ??
@@ -365,8 +385,12 @@ export function initPackagingEvents() {
 
     $("btn-save-packaging")?.addEventListener("click", savePackaging);
 
-    // $("packaging-form")?.addEventListener("submit", (event) => {
-    //     event.preventDefault();
-    //     savePackaging();
-    // });
+    $("packaging-modal")?.addEventListener("keydown", async (event) => {
+        if (event.key !== "Enter" || event.target.tagName === "BUTTON") {
+            return;
+        }
+
+        event.preventDefault();
+        await savePackaging();
+    });
 }

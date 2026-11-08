@@ -1,8 +1,8 @@
 <x-layout title="Laporan Pembelian">
-    <div class="space-y-6">
+    <div class="space-y-4">
         {{-- Header --}}
         <div>
-            <h2 class="text-2xl font-bold text-ckb-primary">
+            <h2 class="text-xl font-bold text-ckb-primary">
                 Laporan Pembelian
             </h2>
 
@@ -24,19 +24,19 @@
                         <tr
                             class="text-left text-xs uppercase tracking-wider text-ckb-on-surface-variant"
                         >
-                            <th class="px-4 py-3 font-semibold">
+                            <th class="px-3 py-2.5 text-xs font-semibold">
                                 Nama Supplier
                             </th>
 
-                            <th class="px-4 py-3 font-semibold">
+                            <th class="px-3 py-2.5 text-xs font-semibold">
                                 Tanggal Pembelian
                             </th>
 
-                            <th class="px-4 py-3 font-semibold">
+                            <th class="px-3 py-2.5 text-xs font-semibold">
                                 Invoice Number
                             </th>
 
-                            <th class="px-4 py-3 font-semibold">Status</th>
+                            <th class="px-3 py-2.5 text-xs font-semibold">Status</th>
                         </tr>
                     </thead>
 
