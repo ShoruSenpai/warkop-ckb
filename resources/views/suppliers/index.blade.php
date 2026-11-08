@@ -1,7 +1,7 @@
 <x-layout title="Pembelian Supplier">
-    <div class="flex justify-between items-center mb-6">
+    <div class="mb-4 flex items-center justify-between">
         <div>
-            <h2 class="text-2xl font-bold text-ckb-on-surface">
+            <h2 class="text-xl font-bold text-ckb-on-surface">
                 Input Pembelian Supplier
             </h2>
 
@@ -11,13 +11,11 @@
 
     <form id="form-purchase">
         <x-supplier.invoice-info />
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
             <div
                 class="flex justify-between items-center mb-4 border-b border-gray-100 pb-2"
             >
-                <h3 class="font-bold text-ckb-secondary">
-                    Daftar Item Belanja
-                </h3>
+                <h3 class="font-bold text-ckb-primary">Daftar Item Belanja</h3>
                 <div class="flex items-center gap-2">
                     <button
                         type="button"
@@ -30,7 +28,7 @@
                     <button
                         type="button"
                         id="btn-add-row"
-                        class="text-sm font-semibold text-ckb-secondary hover:text-ckb-accent bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 transition"
+                        class="text-sm font-semibold text-ckb-primary hover:text-ckb-accent bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 transition"
                     >
                         + Tambah Baris
                     </button>

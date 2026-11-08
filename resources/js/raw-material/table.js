@@ -1,6 +1,7 @@
 import { state } from "./state.js";
 import { apiFetch } from "../utils/api.js";
-import { $, escapeHtml, showApiError } from "./helper.js";
+import { $, escapeHtml } from "@/utils/dom.js";
+import { showApiError } from "@/utils/ui.js";
 
 export async function fetchRawMaterials() {
     try {
@@ -38,8 +39,8 @@ export function renderTable(items) {
         tbody.innerHTML = `
             <tr>
                 <td
-                    colspan="6"
-                    class="py-8 text-center text-gray-400"
+                    colspan="7"
+                    class="px-3 py-8 text-center text-xs text-gray-400"
                 >
                     Belum ada bahan baku terdaftar.
                 </td>
@@ -94,35 +95,35 @@ export function renderTable(items) {
             return `
                 <tr class="border-b border-gray-50 text-sm">
 
-                    <td class="py-3 text-gray-400 text-xs font-mono">
+                    <td class="px-3 py-2.5 text-gray-400 text-[11px] font-mono">
                         #RM-${escapeHtml(item.id)}
                     </td>
 
-                    <td class="py-3 text-gray-800 font-medium">
+                    <td class="px-3 py-2.5 text-xs text-gray-800 font-medium">
                         ${escapeHtml(item.name)}
                     </td>
 
-                    <td class="py-3 text-gray-500">
+                    <td class="px-3 py-2.5 text-xs text-gray-500">
                         <span class="bg-gray-100 px-2 py-0.5 rounded text-xs">
                             ${escapeHtml(item.unit_measurement)}
                         </span>
                     </td>
 
-                    <td class="py-3 font-bold text-ckb-primary">
+                    <td class="px-3 py-2.5 text-xs font-bold text-ckb-primary">
                         ${stock.toLocaleString("id-ID")}
                         ${escapeHtml(item.unit_measurement)}
                     </td>
 
-                    <td class="py-3 text-gray-500 font-semibold">
+                    <td class="px-3 py-2.5 text-xs text-gray-500 font-semibold">
                             ${minimumStock.toLocaleString("id-ID")}
                             ${escapeHtml(item.unit_measurement)}
                     </td>
 
-                    <td class="py-3">
+                    <td class="px-3 py-2.5">
                         ${status}
                     </td>
 
-                    <td class="py-3">
+                    <td class="px-3 py-2.5">
                         <div class="flex justify-end gap-2">
 
                             <button

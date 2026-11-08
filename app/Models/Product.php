@@ -14,12 +14,12 @@ class Product extends Model
         "description",
         "base_price",
         "stock",
+
         "stock_type",
         "image_url",
-        "image_path" . "is_recommended",
-        "status",
         "image_path",
         "is_recommended",
+        "status",
     ];
 
     protected $casts = [

@@ -33,14 +33,14 @@
 @endphp
 
 <header
-    class="flex h-16 shrink-0 items-center justify-between border-b border-ckb-outline-variant/40 bg-ckb-surface-container-lowest px-6"
+    class="flex h-14 shrink-0 items-center justify-between border-b border-ckb-outline-variant/40 bg-ckb-surface-container-lowest px-4 sm:px-5"
 >
     {{-- Current Route --}}
     <div class="flex min-w-0 items-center">
         @foreach ($currentBreadcrumbs as $index => $breadcrumb)
             @if ($index > 0)
                 <i
-                    class="fas fa-chevron-right mx-3 text-[10px] text-ckb-outline"
+                    class="fas fa-chevron-right mx-2 text-[9px] text-ckb-outline"
                 ></i>
 
             @endif
@@ -49,8 +49,8 @@
                 class="
                     truncate
                     {{ $index === count($currentBreadcrumbs) - 1
-                        ? 'text-lg font-semibold text-ckb-primary'
-                        : 'text-sm font-medium text-ckb-on-surface-variant'
+                        ? 'text-base font-semibold text-ckb-primary'
+                        : 'text-xs font-medium text-ckb-on-surface-variant'
                     }}
                 "
             >
@@ -60,19 +60,20 @@
         @endforeach
     </div>
 
-    {{-- Logout --}}
-    <div class="shrink-0">
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
+    <div class="flex shrink-0 items-center gap-2">
+        <button
+            type="button"
+            aria-label="Notifikasi"
+            class="relative flex size-9 items-center justify-center rounded-xl bg-ckb-surface-container-low text-sm text-ckb-primary transition hover:bg-ckb-surface-container"
+        >
+            <i class="fas fa-bell"></i>
+            <span class="absolute right-2 top-2 size-1.5 rounded-full bg-ckb-error"></span>
+        </button>
 
-            <button
-                type="submit"
-                class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-ckb-on-surface-variant transition-colors hover:bg-ckb-error-container hover:text-ckb-on-error-container"
-            >
-                <i class="fas fa-right-from-bracket"></i>
-
-                <span class="hidden sm:inline"> Keluar </span>
-            </button>
-        </form>
+        <div class="inline-flex h-9 items-center gap-2 rounded-xl bg-ckb-secondary-container px-3 text-xs font-semibold text-ckb-on-secondary-container">
+            <span class="size-1.5 rounded-full bg-ckb-primary"></span>
+            <span class="hidden sm:inline">Toko Buka</span>
+            <span class="sm:hidden">Buka</span>
+        </div>
     </div>
 </header>

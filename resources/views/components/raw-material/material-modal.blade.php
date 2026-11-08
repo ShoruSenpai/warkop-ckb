@@ -60,6 +60,7 @@
                     >
                         <option value="gram">gram</option>
                         <option value="ml">ml</option>
+                        <option value="pcs">pcs</option>
                     </select>
                     <p class="text-[11px] text-gray-400 mt-1">Satuan ini digunakan untuk menyimpan stok.</p>
                 </div>
@@ -87,7 +88,7 @@
                         id="rm-minimum-stock-unit"
                         class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400"
                     >
-                        ml
+                        gram
                     </span>
                 </div>
 

@@ -1,115 +1,159 @@
 /*@import "@fortawesome/fontawesome-svg-core";*/
 
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
+@source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
+@source "../../storage/framework/views/*.php";
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-    'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans:
+        "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
 
     /* =========================
        SURFACE
+       Warm Ivory
        ========================= */
 
-    --color-ckb-surface: #f7f9fb;
-    --color-ckb-surface-dim: #d8dadc;
-    --color-ckb-surface-bright: #f7f9fb;
+    --color-ckb-surface: #fffdf4;
+    --color-ckb-surface-dim: #e8e5db;
+    --color-ckb-surface-bright: #fffdf4;
 
-    --color-ckb-surface-container-lowest: #ffffff;
-    --color-ckb-surface-container-low: #f2f4f6;
-    --color-ckb-surface-container: #eceef0;
-    --color-ckb-surface-container-high: #e6e8ea;
-    --color-ckb-surface-container-highest: #e0e3e5;
+    --color-ckb-surface-container-lowest: #fffdf4;
+    --color-ckb-surface-container-low: #faf8f1;
+    --color-ckb-surface-container: #f4f1e8;
+    --color-ckb-surface-container-high: #ebe7dc;
+    --color-ckb-surface-container-highest: #e2ded2;
 
-    --color-ckb-background: #f7f9fb;
-    --color-ckb-surface-variant: #e0e3e5;
+    --color-ckb-background: #f4f1e8;
+    --color-ckb-surface-variant: #e5e2d9;
 
     /* =========================
        ON SURFACE
        ========================= */
 
-    --color-ckb-on-surface: #191c1e;
-    --color-ckb-on-surface-variant: #3c4a42;
+    --color-ckb-on-surface: #1a263d;
+    --color-ckb-on-surface-variant: #596579;
 
     /* =========================
        INVERSE
+       Navy
        ========================= */
 
-    --color-ckb-inverse-surface: #2d3133;
-    --color-ckb-inverse-on-surface: #eff1f3;
+    --color-ckb-inverse-surface: #142747;
+    --color-ckb-inverse-on-surface: #fffdf4;
 
     /* =========================
        OUTLINE
        ========================= */
 
-    --color-ckb-outline: #6c7a71;
-    --color-ckb-outline-variant: #bbcabf;
-    --color-ckb-surface-tint: #006c49;
+    --color-ckb-outline: #7b8493;
+    --color-ckb-outline-variant: #d2d5d8;
 
-    /* ========================= PRIMARY SLATE / BLUE-GRAY ========================= */
-    --color-ckb-primary: #283044;
-    --color-ckb-on-primary: #ffffff;
-    --color-ckb-primary-container: #dae2fd;
-    --color-ckb-on-primary-container: #5c647a;
-    --color-ckb-inverse-primary: #dae2fd;
+    --color-ckb-surface-tint: #142747;
 
-    /* ========================= SECONDARY GREEN ========================= */
-    --color-ckb-secondary: #006c49;
-    --color-ckb-on-secondary: #ffffff;
-    --color-ckb-secondary-container: #10b981;
-    --color-ckb-on-secondary-container: #00422b;
+    /* =========================
+       PRIMARY
+       Navy
+       ========================= */
+    --color-ckb-primary: #142747;
+    --color-ckb-on-primary: #fffdf4;
 
+    --color-ckb-primary-container: #dce5f2;
+    --color-ckb-on-primary-container: #142747;
+
+    --color-ckb-inverse-primary: #dce5f2;
+
+    /* =========================
+       SECONDARY
+       Light Blue
+       ========================= */
+
+    --color-ckb-secondary: #dce5f2;
+    --color-ckb-on-secondary: #142747;
+
+    --color-ckb-secondary-container: #dce5f2;
+    --color-ckb-on-secondary-container: #142747;
+
+    /* =========================
+       ACCENT
+       Medium Blue
+       ========================= */
+
+    --color-ckb-accent: #496b9a;
+    --color-ckb-on-accent: #fffdf4;
+
+    --color-ckb-accent-hover: #3e5e8d;
+
+    --color-ckb-accent-container: #e6edf6;
+    --color-ckb-on-accent-container: #142747;
 
     /* =========================
        TERTIARY
-       BIRU
+       Muted Blue
        ========================= */
 
-    --color-ckb-tertiary: #0053db;
-    --color-ckb-on-tertiary: #ffffff;
+    --color-ckb-tertiary: #435b7c;
+    --color-ckb-on-tertiary: #fffdf4;
 
-    --color-ckb-tertiary-container: #7f9fff;
-    --color-ckb-on-tertiary-container: #00328b;
+    --color-ckb-tertiary-container: #e6ebf3;
+    --color-ckb-on-tertiary-container: #142747;
 
     /* =========================
        ERROR
+       Muted Red
        ========================= */
 
-    --color-ckb-error: #ba1a1a;
-    --color-ckb-on-error: #ffffff;
+    --color-ckb-error: #c7484e;
+    --color-ckb-on-error: #fff8f5;
 
-    --color-ckb-error-container: #ffdad6;
-    --color-ckb-on-error-container: #93000a;
+    --color-ckb-error-container: #f9e5e4;
+    --color-ckb-on-error-container: #873238;
 
     /* =========================
        PRIMARY FIXED
        ========================= */
 
-    --color-ckb-primary-fixed: #6ffbbe;
-    --color-ckb-primary-fixed-dim: #4edea3;
+    --color-ckb-primary-fixed: #dce5f2;
+    --color-ckb-primary-fixed-dim: #c4d2e4;
 
-    --color-ckb-on-primary-fixed: #002113;
-    --color-ckb-on-primary-fixed-variant: #005236;
+    --color-ckb-on-primary-fixed: #142747;
+    --color-ckb-on-primary-fixed-variant: #344b6a;
 
     /* =========================
        SECONDARY FIXED
        ========================= */
 
-    --color-ckb-secondary-fixed: #dae2fd;
-    --color-ckb-secondary-fixed-dim: #bec6e0;
+    --color-ckb-secondary-fixed: #dce5f2;
+    --color-ckb-secondary-fixed-dim: #c4d2e4;
 
-    --color-ckb-on-secondary-fixed: #131b2e;
-    --color-ckb-on-secondary-fixed-variant: #3f465c;
+    --color-ckb-on-secondary-fixed: #142747;
+    --color-ckb-on-secondary-fixed-variant: #344b6a;
 
     /* =========================
        TERTIARY FIXED
        ========================= */
 
-    --color-ckb-tertiary-fixed: #dbe1ff;
-    --color-ckb-tertiary-fixed-dim: #b4c5ff;
+    --color-ckb-tertiary-fixed: #e6ebf3;
+    --color-ckb-tertiary-fixed-dim: #ced9e8;
 
-    --color-ckb-on-tertiary-fixed: #00174b;
-    --color-ckb-on-tertiary-fixed-variant: #003ea8;
+    --color-ckb-on-tertiary-fixed: #142747;
+    --color-ckb-on-tertiary-fixed-variant: #435b7c;
+
+    /* =========================
+       ADDITIONAL COLOR ALIASES
+       ========================= */
+
+    --color-ckb-container: #fffdf4;
+    --color-ckb-on-container: #1a263d;
+
+    --color-ckb-on-background: #1a263d;
+
+    /* =========================
+       SHADOW
+       ========================= */
+
+    --shadow-surface: 0 4px 14px rgba(20, 39, 71, 0.07);
+    --shadow-floating: 0 8px 22px rgba(20, 39, 71, 0.15);
 }

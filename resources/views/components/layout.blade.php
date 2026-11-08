@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <meta name="login-url" content="{{ route('login') }}" />
     <title>
         {{
             $title ??
@@ -12,15 +14,15 @@
 
     @vite (["resources/css/app.css", "resources/js/app.js"])
 </head>
-<body class="bg-ckb-background flex h-screen overflow-hidden font-sans">
+<body class="bg-ckb-background flex h-dvh overflow-hidden font-sans">
     <x-sidebar />
 
     <div
-        class="flex-1 flex flex-col h-screen overflow-hidden bg-ckb-background"
+        class="flex min-w-0 flex-1 flex-col h-dvh overflow-hidden bg-ckb-background"
     >
         <x-navbar :title="$title ?? 'Dashboard'" />
 
-        <main class="flex-1 overflow-x-hidden overflow-y-auto bg-ckb-bg p-6">
+        <main class="min-h-0 flex-1 overflow-x-hidden overflow-y-auto bg-ckb-background p-4 sm:p-5">
             {{ $slot }}
         </main>
     </div>

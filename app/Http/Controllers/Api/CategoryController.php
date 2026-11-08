@@ -36,7 +36,7 @@ class CategoryController extends Controller
             "name" => [
                 "required",
                 "string",
-                "max:100",
+                "max:50",
                 "unique:categories,name",
             ],
         ]);

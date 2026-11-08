@@ -1,6 +1,6 @@
 import { state } from "./state.js";
 import { apiFetch } from "../utils/api.js";
-import { $, escapeHtml } from "./helper.js";
+import { $, escapeHtml } from "@/utils/dom.js";
 
 export async function fetchRawMaterials() {
     try {

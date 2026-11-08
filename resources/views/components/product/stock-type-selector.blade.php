@@ -1,5 +1,5 @@
 <section
-    class="rounded-xl border border-ckb-outline-variant/40 bg-ckb-surface-container-lowest p-6"
+    class="rounded-xl border border-ckb-outline-variant/40 bg-ckb-surface-container-lowest p-4"
 >
     <div class="mb-5">
         <h3 class="font-bold text-ckb-primary">Jenis Stok Produk</h3>

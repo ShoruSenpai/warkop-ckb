@@ -1,9 +1,9 @@
-<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-    <h3 class="font-bold text-ckb-primary mb-4 border-b border-gray-100 pb-2">
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-4">
+    <h3 class="font-bold text-sm text-ckb-primary mb-3 border-b border-gray-100 pb-2">
         Informasi Nota Pembelian
     </h3>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
         <div>
             <label class="block text-xs font-semibold text-gray-500 mb-1">
                 Nomor Invoice *

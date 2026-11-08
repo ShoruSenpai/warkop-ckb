@@ -1,8 +1,8 @@
 import { state } from "./state.js";
 
-import { $, escapeHtml, showApiError, toggleModal } from "./helper.js";
-
-import { apiFetch } from "../utils/api.js";
+import { $, escapeHtml, toggleModal } from "@/utils/dom.js";
+import { showApiError } from "@/utils/ui.js";
+import { apiFetch } from "@/utils/api.js";
 import { fetchRawMaterials } from "./table.js";
 
 export function openAddMaterialModal() {

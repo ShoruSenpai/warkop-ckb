@@ -71,6 +71,7 @@
     <td class="py-2 text-center">
         <button
             type="button"
+            data-action="remove-row"
             class="text-red-400 hover:text-red-600"
             title="Hapus baris"
         >

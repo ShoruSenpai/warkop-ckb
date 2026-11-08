@@ -1,6 +1,7 @@
 import { state } from "./state.js";
-import { apiFetch } from "../utils/api.js";
-import { $, escapeHtml, showApiError } from "./helper.js";
+import { apiFetch } from "@/utils/api.js";
+import { $, escapeHtml } from "@/utils/dom.js";
+import { showApiError } from "@/utils/ui.js";
 
 import {
     prepareRecipeBuilder,
@@ -128,6 +129,35 @@ function buildProductFormData() {
         throw new Error("Pilih jenis stok produk terlebih dahulu.");
     }
 
+    const recipes = getRecipeRows();
+
+    if (stockType === "recipe") {
+        if (!recipes.length) {
+            throw new Error("Tambahkan minimal satu bahan untuk resep produk.");
+        }
+
+        const materialIds = new Set();
+
+        for (const row of recipes) {
+            const materialId = Number(row.raw_material_id);
+            const amountNeeded = Number(row.amount_needed);
+
+            if (!Number.isInteger(materialId) || materialId <= 0) {
+                throw new Error("Pilih bahan baku pada setiap baris resep.");
+            }
+
+            if (materialIds.has(materialId)) {
+                throw new Error("Bahan baku dalam resep tidak boleh duplikat.");
+            }
+
+            if (!Number.isInteger(amountNeeded) || amountNeeded <= 0) {
+                throw new Error("Jumlah kebutuhan setiap bahan harus bilangan bulat lebih dari 0.");
+            }
+
+            materialIds.add(materialId);
+        }
+    }
+
     const formData = new FormData();
 
     formData.append("category_id", $("product-category").value);
@@ -141,7 +171,11 @@ function buildProductFormData() {
     );
     formData.append("status", state.currentProduct?.status || "available");
 
-    if (state.productMode === "create" && state.productPackagings.length) {
+    if (
+        state.productMode === "create" &&
+        stockType === "static" &&
+        state.productPackagings.length
+    ) {
         state.productPackagings.forEach((packaging, index) => {
             formData.append(
                 `packagings[${index}][purchase_unit]`,
@@ -161,8 +195,6 @@ function buildProductFormData() {
     }
 
     if (stockType === "recipe") {
-        const recipes = getRecipeRows();
-
         recipes.forEach((row, index) => {
             formData.append(
                 `recipes[${index}][raw_material_id]`,
@@ -178,7 +210,7 @@ function buildProductFormData() {
 
     const imageFile = $("product-image")?.files?.[0];
 
-    if (imageFile) {
+    if (state.productMode === "create" && imageFile) {
         formData.append("image", imageFile);
     }
 
@@ -206,7 +238,11 @@ export async function submitProduct(event) {
             ? `/api/products/${state.productId}`
             : "/api/products";
 
-        const method = isEdit ? "PUT" : "POST";
+        const method = "POST";
+
+        if (isEdit) {
+            payload.append("_method", "PUT");
+        }
 
         const { response, data } = await apiFetch(url, {
             method,
@@ -286,6 +322,20 @@ function initImagePreview() {
         if (!file) {
             preview.classList.add("hidden");
             previewImage.src = "";
+
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            input.value = "";
+            preview.classList.add("hidden");
+            previewImage.src = "";
+
+            Swal.fire({
+                icon: "warning",
+                title: "Ukuran gambar terlalu besar",
+                text: "Ukuran gambar maksimal 5 MB.",
+            });
 
             return;
         }

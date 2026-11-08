@@ -1,310 +1,270 @@
 @php
+    use App\Support\AdminNavigation;
+
     $user = auth()->user();
-    $userRole = $user->role ?? "employee";
 
-    $menus = [
-        "MAIN MENU" => [
-            [
-                "name" => "Dashboard",
-                "route" => "dashboard",
-                "active" => "dashboard",
-                "icon" => "fas fa-chart-pie",
-                "badge" => 0,
-                "roles" => ["owner", "admin"],
-            ],
+    $userRole = strtolower($user?->role ?? "employee");
 
-            [
-                "name" => "Product Management",
-                "route" => "products.index",
-                "active" => "products.*",
-                "icon" => "fas fa-box-open",
-                "badge" => 0,
-                "roles" => ["owner", "admin"],
-            ],
+    $displayName = $user?->employee?->full_name ?: $user?->username ?? "Admin";
 
-            [
-                "name" => "Raw Materials",
-                "route" => "raw-material.index",
-                "active" => "raw-material.*",
-                "icon" => "fas fa-cubes",
-                "badge" => 0,
-                "roles" => ["owner", "admin"],
-            ],
-
-            [
-                "name" => "Purchases",
-                "route" => "supplier.index",
-                "active" => "supplier.*",
-                "icon" => "fas fa-truck-loading",
-                "badge" => 0,
-                "roles" => ["owner", "admin"],
-            ],
-
-            [
-                "name" => "Laporan",
-                "type" => "dropdown",
-                "icon" => "fas fa-file-invoice-dollar",
-                "roles" => ["owner", "admin"],
-
-                "children" => [
-                    [
-                        "name" => "Riwayat Transaksi",
-                        "route" => "reports.transactions",
-                        "active" => "reports.transactions*",
-                    ],
-
-                    [
-                        "name" => "Laporan Penjualan",
-                        "route" => "reports.sales",
-                        "active" => "reports.sales*",
-                    ],
-
-                    [
-                        "name" => "Laporan Pembelian",
-                        "route" => "reports.purchases.index",
-                        "active" => "reports.purchases*",
-                    ],
-
-                    [
-                        "name" => "Laporan Stok",
-                        "route" => "reports.stock",
-                        "active" => "reports.stock*",
-                    ],
-                ],
-            ],
-        ],
-
-        "SYSTEM" => [
-            [
-                "name" => "Settings",
-                "route" => "settings",
-                "active" => "settings",
-                "icon" => "fas fa-cog",
-                "badge" => 0,
-                "roles" => ["owner", "admin"],
-            ],
-
-            [
-                "name" => "User Management",
-                "route" => "users.index",
-                "active" => "users.*",
-                "icon" => "fas fa-users-cog",
-                "badge" => 0,
-                "roles" => ["owner"],
-            ],
-        ],
+    $roleLabels = [
+        "owner" => "Owner",
+        "admin" => "Administrator",
     ];
+
+    $roleLabel = $roleLabels[$userRole] ?? ucfirst($userRole);
+
+    $groups = AdminNavigation::visibleGroups($userRole);
+
+    $avatarUrl =
+        "https://ui-avatars.com/api/?name=" .
+        urlencode($displayName) .
+        "&background=DBE6F5&color=14294A&bold=true";
 @endphp
 
 <aside
-    class="flex h-full w-64 shrink-0 flex-col bg-ckb-inverse-surface text-ckb-inverse-on-surface"
+    class="sticky top-0 flex h-dvh w-56 shrink-0 flex-col overflow-hidden bg-ckb-inverse-surface text-ckb-inverse-on-surface xl:w-60 2xl:w-64"
 >
-    {{-- Logo --}}
-    <div class="flex h-16 items-center gap-4 border-b border-white/10 px-6">
-        <img
-            src="{{ asset('/assets/photos/warkop-ckb-logo.webp') }}"
-            alt="Warkop Cak Kebo"
-            loading="lazy"
-            class="w-8 rounded-sm"
-        />
-
-        <div>
-            <h1 class="text-sm font-bold leading-tight">Warkop Cak Kebo</h1>
-
-            <p class="text-[10px] tracking-wider text-ckb-inverse-on-surface/60">ADMIN PANEL</p>
+    {{-- BRAND --}}
+    <div class="flex h-16 shrink-0 items-center gap-2.5 px-4">
+        <div
+            class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-ckb-secondary-container p-1.5"
+        >
+            <img
+                src="{{ asset('assets/photos/warkop-ckb-logo.webp') }}"
+                alt="Warkop Cak Kebo"
+                class="max-h-full max-w-full object-contain"
+            />
         </div>
-    </div>
-
-    {{-- User --}}
-    <div class="flex items-center border-b border-white/10 px-6 py-4">
-        <img
-            src="https://ui-avatars.com/api/?name={{ urlencode($user->username ?? 'User') }}&background=283044&color=fff"
-            alt="Profile"
-            class="mr-3 h-10 w-10 rounded-full"
-        />
 
         <div class="min-w-0">
-            <p class="truncate text-sm font-semibold">
-                {{
-                    $user->employee->full_name ??
-                        ($user->username ?? "Admin")
-                }}
-            </p>
+            <h1 class="truncate text-sm font-bold leading-tight text-white">
+                Warkop Cak Kebo
+            </h1>
 
-            <span
-                class="mt-1 inline-flex rounded bg-white/10 px-2 py-0.5 text-[10px] uppercase text-ckb-inverse-on-surface/80"
-            >
-                {{ $userRole }}
-            </span>
+            <p
+                class="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-ckb-inverse-on-surface/50"
+            >Admin Workspace</p>
         </div>
     </div>
 
-    {{-- Navigation --}}
-    <nav class="flex-1 overflow-y-auto py-4">
-        @foreach ($menus as $category => $items)
-            @php
-                $visibleItems = array_filter(
-                    $items,
-                    fn($item) => in_array($userRole, $item["roles"]),
-                );
-            @endphp
+    {{-- USER PROFILE --}}
+    <div class="mx-3 shrink-0">
+        <div
+            class="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/5 px-2.5 py-2"
+        >
+            {{-- Avatar --}}
+            <div class="relative shrink-0">
+                <img
+                    src="{{ $avatarUrl }}"
+                    alt="{{ $displayName }}"
+                    class="size-9 rounded-full object-cover"
+                />
 
-            @if (count($visibleItems) > 0)
-                <div class="mb-6">
-                    <p
-                        class="mb-2 px-6 text-xs font-semibold tracking-wider text-ckb-inverse-on-surface/40"
-                    >
-                        {{ $category }}
-                    </p>
+                <span
+                    class="absolute bottom-0 right-0 size-3 rounded-full border-2 border-ckb-inverse-surface bg-blue-400"
+                ></span>
+            </div>
 
-                    <ul class="space-y-0.5">
-                        @foreach ($visibleItems as $item)
-                            {{-- =========================
-                                 NORMAL MENU
-                            ========================== --}}
-                            @if (($item["type"] ?? "link") === "link")
-                                @php
-                                    $isActive = request()->routeIs($item["active"]);
+            {{-- User Information --}}
+            <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-white">
+                    {{ $displayName }}
+                </p>
 
-                                    $routeUrl = Route::has($item["route"]) ? route($item["route"]) : "#";
-                                @endphp
+                <p
+                    class="mt-1 truncate text-[11px] text-ckb-inverse-on-surface/70"
+                >
+                    {{ $roleLabel }}
+                </p>
+            </div>
+        </div>
+    </div>
 
-                                <li>
-                                    <a
-                                        href="{{ $routeUrl }}"
+    {{-- NAVIGATION --}}
+    <nav class="min-h-0 flex-1 overflow-y-auto px-3 pb-3 pt-4">
+        @foreach ($groups as $group)
+            <div class="mb-4">
+                {{-- GROUP TITLE --}}
+                <p
+                    class="mb-1.5 px-2 text-[10px] font-bold tracking-[0.1em] text-ckb-inverse-on-surface/45"
+                >
+                    {{
+                        $group[
+                            "label"
+                        ]
+                    }}
+                </p>
+
+                <ul class="space-y-1">
+                    @foreach ($group["items"] as $item)
+                        @php
+                            $isDropdown = !empty($item["children"]);
+
+                            $isActive = !$isDropdown && AdminNavigation::isActive($item);
+
+                            $itemUrl = AdminNavigation::url($item);
+                        @endphp
+
+                        {{-- NORMAL MENU --}}
+                        @if (!$isDropdown)
+                            <li>
+                                <a
+                                    href="{{ $itemUrl ?? '#' }}"
+                                    @if ($isActive)
+                                        aria-current="page"
+                                    @endif
+                                    class="
+                                        group flex min-h-9 items-center
+                                        gap-2.5 rounded-lg px-3 py-2
+                                        text-[13px] transition-all duration-200
+
+                                        {{ $isActive
+                                            ? 'bg-ckb-secondary-container font-semibold text-ckb-on-secondary-container shadow-sm'
+                                            : 'text-ckb-inverse-on-surface/80 hover:bg-white/5 hover:text-white'
+                                        }}
+                                    "
+                                >
+                                    {{-- ICON --}}
+                                    <i
                                         class="
-                                            group flex items-center
-                                            border-l-4
-                                            px-6 py-2.5
-                                            text-sm
-                                            transition-colors
+                                            {{ $item['icon'] }}
+                                            w-4 shrink-0 text-center text-sm
 
                                             {{ $isActive
-                                                ? 'border-ckb-secondary-container bg-ckb-secondary-container text-ckb-on-secondary-container font-semibold'
-                                                : 'border-transparent text-ckb-inverse-on-surface hover:bg-white/5'
+                                                ? 'text-ckb-on-secondary-container'
+                                                : 'text-ckb-inverse-on-surface/55 group-hover:text-white'
+                                            }}
+                                        "
+                                    ></i>
+
+                                    {{-- LABEL --}}
+                                    <span class="min-w-0 flex-1 truncate">
+                                        {{ $item["label"] }}
+                                    </span>
+
+                                    {{-- BADGE --}}
+                                    @if (($item["badge"] ?? 0) > 0)
+                                        <span
+                                            class="rounded-full bg-ckb-error px-2 py-0.5 text-[10px] font-bold text-ckb-on-error"
+                                        >
+                                            {{ $item["badge"] }}
+                                        </span>
+                                    @endif
+
+                                    {{-- ACTIVE INDICATOR --}}
+                                    {{--                                    @if ($isActive)--}}
+                                    {{--                                        <span--}}
+                                    {{--                                            class="size-2 shrink-0 rounded-full bg-ckb-on-secondary-container"--}}
+                                    {{--                                        ></span>--}}
+                                    {{--                                    @endif--}}
+                                </a>
+                            </li>
+
+                            {{-- DROPDOWN MENU --}}
+                        @else
+                            @php
+                                $isChildActive = collect($item["children"])->contains(
+                                    fn($child) => AdminNavigation::isActive($child),
+                                );
+                            @endphp
+
+                            <li>
+                                <details
+                                    class="group"
+                                    @if ($isChildActive) open @endif
+                                >
+                                    <summary
+                                        class="
+                                            flex min-h-9 cursor-pointer
+                                            list-none items-center gap-2.5
+                                            rounded-lg px-3 py-2
+                                            text-[13px] transition-colors
+
+                                            {{ $isChildActive
+                                                ? 'bg-white/5 font-semibold text-white'
+                                                : 'text-ckb-inverse-on-surface/80 hover:bg-white/5 hover:text-white'
                                             }}
                                         "
                                     >
                                         <i
-                                            class="
-                                                {{ $item['icon'] }}
-                                                mr-3 w-5
-                                                text-center text-lg
-
-                                                {{ $isActive
-                                                    ? 'text-ckb-on-secondary'
-                                                    : 'text-ckb-inverse-on-surface/50 group-hover:text-ckb-inverse-on-surface'
-                                                }}
-                                            "
+                                            class="{{ $item['icon'] }}
+                                                   w-4 shrink-0 text-center
+                                                   text-sm text-ckb-inverse-on-surface/55"
                                         ></i>
 
-                                        <span class="flex-1">
-                                            {{ $item["name"] }}
+                                        <span class="min-w-0 flex-1 truncate">
+                                            {{ $item["label"] }}
                                         </span>
 
-                                        @if (($item["badge"] ?? 0) > 0)
-                                            <span
-                                                class="rounded-full bg-ckb-error px-1.5 py-0.5 text-[10px] font-bold text-ckb-on-error"
-                                            >
-                                                {{ $item["badge"] }}
-                                            </span>
-                                        @endif
-                                    </a>
-                                </li>
-                                {{-- =========================
-                                     DROPDOWN MENU
-                                ========================== --}}
-                            @else
-                                @php
-                                    $isChildActive = false;
+                                        <i
+                                            class="fas fa-chevron-down shrink-0 text-[10px] transition-transform duration-200 group-open:rotate-180"
+                                        ></i>
+                                    </summary>
 
-                                    foreach ($item["children"] as $child) {
-                                        if (request()->routeIs($child["active"])) {
-                                            $isChildActive = true;
-                                            break;
-                                        }
-                                    }
-                                @endphp
+                                    {{-- CHILDREN --}}
+                                    <ul class="mt-1 space-y-0.5">
+                                        @foreach ($item["children"] as $child)
+                                            @php
+                                                $childActive = AdminNavigation::isActive($child);
 
-                                <li>
-                                    <details
-                                        {{
-                                            $isChildActive
-                                                ? "open"
-                                                : ""
-                                        }}
-                                        class="group"
-                                    >
-                                        <summary
-                                            class="
-                                                flex cursor-pointer
-                                                list-none items-center
-                                                border-l-4
-                                                px-6 py-2.5
-                                                text-sm
-                                                transition-colors
+                                                $childUrl = AdminNavigation::url($child);
+                                            @endphp
 
-                                                {{ $isChildActive
-                                                    ? 'border-ckb-secondary-container bg-white/5 text-ckb-inverse-on-surface font-semibold'
-                                                    : 'border-transparent text-ckb-inverse-on-surface hover:bg-white/5'
-                                                }}
-                                            "
-                                        >
-                                            <i
-                                                class="
-                                                    {{ $item['icon'] }}
-                                                    mr-3 w-5
-                                                    text-center text-lg
+                                            <li>
+                                                <a
+                                                    href="{{ $childUrl ?? '#' }}"
+                                                    @if ($childActive)
+                                                        aria-current="page"
+                                                    @endif
+                                                    class="
+                                                        flex min-h-8 items-center
+                                                        rounded-lg py-1.5 pl-9 pr-2.5
+                                                        text-xs transition-colors
 
-                                                    {{ $isChildActive
-                                                        ? 'text-ckb-secondary-container'
-                                                        : 'text-ckb-inverse-on-surface/50'
+                                                        {{ $childActive
+                                                            ? 'bg-ckb-secondary-container font-semibold text-ckb-on-secondary-container'
+                                                            : 'text-ckb-inverse-on-surface/70 hover:bg-white/5 hover:text-white'
+                                                        }}
+                                                    "
+                                                >
+                                                    {{
+                                                        $child[
+                                                            "label"
+                                                        ]
                                                     }}
-                                                "
-                                            ></i>
-                                            <span class="flex-1">
-                                                {{ $item["name"] }}
-                                            </span>
-                                            <i
-                                                class="fas fa-chevron-down text-[10px] transition-transform group-open:rotate-180"
-                                            ></i>
-                                        </summary>
+                                                </a>
+                                            </li>
 
-                                        <ul class="mt-1 space-y-0.5">
-                                            @foreach ($item["children"] as $child)
-                                                @php
-                                                    $childActive =
-                                                        Route::has($child["active"]) && request()->routeIs($child["active"]);
-                                                    $childUrl = Route::has($child["route"]) ? route($child["route"]) : "#";
-                                                @endphp
-                                                <li>
-                                                    <a
-                                                        href="{{ $childUrl }}"
-                                                        class="
-                                                            flex items-center
-                                                            border-l-4
-                                                            py-2 pl-[3.75rem] pr-6
-                                                            text-xs
-                                                            transition-colors
+                                        @endforeach
+                                    </ul>
+                                </details>
+                            </li>
 
-                                                            {{ $childActive
-                                                                ? 'border-ckb-secondary-container bg-ckb-secondary-container/15 text-ckb-secondary-container font-semibold'
-                                                                : 'border-transparent text-ckb-inverse-on-surface/60 hover:bg-white/5 hover:text-ckb-inverse-on-surface'
-                                                            }}
-                                                        "
-                                                    >
-                                                        {{ $child["name"] }}
-                                                    </a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    </details>
-                                </li>
-                            @endif
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+                        @endif
+
+                    @endforeach
+                </ul>
+            </div>
+
         @endforeach
     </nav>
+
+    {{-- LOGOUT --}}
+    <div class="mt-auto shrink-0 px-3 pb-3 pt-2">
+        <div class="border-t border-white/10 pt-3">
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+
+                <button
+                    type="submit"
+                    class="flex min-h-10 w-full items-center gap-2.5 rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-[13px] text-ckb-inverse-on-surface/80 transition-colors hover:bg-white/10 hover:text-white"
+                >
+                    <i class="fas fa-right-from-bracket w-5 text-center"></i>
+
+                    <span>Keluar / Logout</span>
+                </button>
+            </form>
+        </div>
+    </div>
 </aside>
