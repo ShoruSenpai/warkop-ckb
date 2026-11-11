@@ -25,7 +25,6 @@ async function handleApiError(response) {
             title: "Sesi Berakhir",
             text: "Sesi login kamu sudah berakhir. Silakan login kembali.",
             confirmButtonText: "Login",
-            confirmButtonColor: "#6B4423",
         });
 
         if (loginUrl) {

@@ -141,7 +141,7 @@ export function renderRecipeRows() {
                                         text-sm
                                         text-ckb-on-surface
                                         outline-none
-                                        focus:border-ckb-primary
+                                        focus:border-ckb-accent
                                     "
                                     data-index="${index}"
                                 >
@@ -209,7 +209,7 @@ export function renderRecipeRows() {
                                             text-sm
                                             text-ckb-on-surface
                                             outline-none
-                                            focus:border-ckb-primary
+                                            focus:border-ckb-accent
                                         "
                                         data-index="${index}"
                                     >

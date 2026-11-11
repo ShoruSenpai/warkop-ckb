@@ -14,6 +14,5 @@ export async function showApiError(data, title = "Terjadi Kesalahan") {
         title,
         html: validationMessage(data),
         confirmButtonText: "Mengerti",
-        confirmButtonColor: "#6B4423",
     });
 }

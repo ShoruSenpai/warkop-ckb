@@ -150,14 +150,14 @@ function getStatusConfig(status) {
             label: "Diterima",
             icon: "fa-check-circle",
             classes:
-                "bg-ckb-secondary-container/20 text-ckb-on-secondary-container",
+                "bg-ckb-success-container text-ckb-on-success-container",
         },
 
         pending: {
             label: "Pending",
             icon: "fa-clock",
             classes:
-                "bg-ckb-tertiary-container/20 text-ckb-on-tertiary-container",
+                "bg-ckb-warning-container text-ckb-on-warning-container",
         },
     };
 

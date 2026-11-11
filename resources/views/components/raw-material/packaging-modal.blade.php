@@ -1,12 +1,12 @@
 <div
     id="packaging-modal"
-    class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4"
+    class="fixed inset-0 bg-ckb-inverse-surface/50 hidden items-center justify-center z-50 p-4"
 >
     <div
-        class="bg-ckb-background w-full max-w-3xl rounded-2xl shadow-xl overflow-hidden"
+        class="bg-ckb-surface w-full max-w-3xl rounded-2xl shadow-floating overflow-hidden"
     >
         <div
-            class="px-6 py-4 border-b border-gray-200 bg-white flex justify-between items-start"
+            class="px-6 py-4 border-b border-ckb-outline-variant/50 bg-ckb-surface flex justify-between items-start"
         >
             <div>
                 <h3
@@ -18,14 +18,14 @@
 
                 <p
                     id="packaging-modal-description"
-                    class="text-xs text-gray-500 mt-1"
+                    class="text-xs text-ckb-on-surface-variant mt-1"
                 >Ubah informasi bahan dan kelola kemasan pembelian.</p>
             </div>
 
             <button
                 type="button"
                 data-modal-close
-                class="text-gray-400 hover:text-gray-600"
+                class="text-ckb-on-surface-variant hover:text-ckb-on-surface"
             >
                 <i class="fas fa-times text-xl"></i>
             </button>
@@ -35,7 +35,7 @@
             {{-- Material info --}}
             <form
                 id="material-edit-form"
-                class="bg-white border border-gray-200 rounded-xl p-4 mb-5"
+                class="bg-ckb-surface-container-lowest border border-ckb-outline-variant rounded-xl p-4 mb-5"
             >
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
@@ -50,7 +50,7 @@
                             type="text"
                             maxlength="50"
                             required
-                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none"
+                            class="w-full border border-ckb-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-accent focus:outline-none"
                         />
                     </div>
 
@@ -63,7 +63,7 @@
 
                         <div
                             id="packaging-base-unit"
-                            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-500"
+                            class="w-full bg-ckb-surface-container-low border border-ckb-outline-variant rounded-lg px-3 py-2 text-sm text-ckb-on-surface-variant"
                         >
                             -
                         </div>
@@ -74,7 +74,7 @@
                     <button
                         type="submit"
                         id="btn-save-material-edit"
-                        class="px-4 py-2 bg-ckb-primary text-white rounded-lg text-sm font-medium hover:bg-ckb-accent"
+                        class="px-4 py-2 bg-ckb-primary text-ckb-on-primary rounded-lg text-sm font-medium hover:bg-ckb-accent hover:text-ckb-on-accent"
                     >
                         Simpan Perubahan
                     </button>
@@ -84,7 +84,7 @@
             {{-- Packaging form --}}
             <form
                 id="packaging-form"
-                class="bg-white border border-gray-200 rounded-xl p-4 mb-5"
+                class="bg-ckb-surface-container-lowest border border-ckb-outline-variant rounded-xl p-4 mb-5"
             >
                 <input id="packaging-id" type="hidden" />
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -101,7 +101,7 @@
                             maxlength="20"
                             required
                             placeholder="cth: kardus"
-                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none"
+                            class="w-full border border-ckb-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-accent focus:outline-none"
                         />
                     </div>
 
@@ -119,7 +119,7 @@
                             max="999999"
                             required
                             placeholder="cth: 12000"
-                            class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none"
+                            class="w-full border border-ckb-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-accent focus:outline-none"
                         />
                     </div>
 
@@ -132,7 +132,7 @@
 
                         <div
                             id="packaging-base-unit-display"
-                            class="w-full bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-500"
+                            class="w-full bg-ckb-surface-container-low border border-ckb-outline-variant rounded-lg px-3 py-2 text-sm text-ckb-on-surface-variant"
                         >
                             -
                         </div>
@@ -143,14 +143,14 @@
                     <button
                         type="button"
                         id="btn-cancel-packaging-edit"
-                        class="hidden px-3 py-2 border border-gray-300 rounded-lg text-sm text-gray-600 hover:bg-gray-50"
+                        class="hidden px-3 py-2 border border-ckb-outline-variant rounded-lg text-sm text-ckb-on-surface hover:bg-ckb-surface-container-low"
                     >
                         Batal Edit
                     </button>
                     <button
                         type="submit"
                         id="btn-save-packaging"
-                        class="px-4 py-2 bg-ckb-primary text-white rounded-lg text-sm font-medium hover:bg-ckb-accent"
+                        class="px-4 py-2 bg-ckb-primary text-ckb-on-primary rounded-lg text-sm font-medium hover:bg-ckb-accent hover:text-ckb-on-accent"
                     >
                         + Tambah Kemasan
                     </button>
@@ -159,9 +159,9 @@
 
             {{-- Packaging list --}}
             <div
-                class="bg-white border border-gray-200 rounded-xl overflow-hidden"
+                class="bg-ckb-surface border border-ckb-outline-variant rounded-xl overflow-hidden"
             >
-                <div class="px-4 py-3 border-b border-gray-100">
+                <div class="px-4 py-3 border-b border-ckb-outline-variant/50">
                     <h4 class="font-semibold text-sm text-ckb-primary">
                         Daftar Kemasan
                     </h4>
@@ -171,7 +171,7 @@
                     <table class="w-full text-left">
                         <thead>
                             <tr
-                                class="text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-100"
+                                class="text-[10px] text-ckb-on-surface-variant uppercase tracking-wider border-b border-ckb-outline-variant/50"
                             >
                                 <th class="px-4 py-3">Satuan Beli</th>
                                 <th class="px-4 py-3">Konversi</th>
@@ -183,7 +183,7 @@
                             <tr>
                                 <td
                                     colspan="4"
-                                    class="py-6 text-center text-gray-400"
+                                    class="py-6 text-center text-ckb-on-surface-variant"
                                 >
                                     Memuat kemasan...
                                 </td>

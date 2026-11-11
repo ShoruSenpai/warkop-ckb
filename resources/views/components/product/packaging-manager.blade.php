@@ -39,7 +39,7 @@
     class="fixed inset-0 z-50 hidden items-center justify-center bg-ckb-inverse-surface/60 px-4"
 >
     <div
-        class="w-full max-w-md rounded-2xl bg-ckb-surface-container-lowest shadow-xl"
+        class="w-full max-w-md rounded-2xl bg-ckb-surface-container-lowest shadow-floating"
     >
         <div
             class="flex items-center justify-between border-b border-ckb-outline-variant/30 px-5 py-4"
@@ -79,7 +79,7 @@
                     name="purchase_unit"
                     maxlength="20"
                     placeholder="Contoh: dus"
-                    class="w-full rounded-lg border border-ckb-outline-variant/60 px-3 py-2.5 text-sm outline-none focus:border-ckb-primary"
+                    class="w-full rounded-lg border border-ckb-outline-variant/60 px-3 py-2.5 text-sm outline-none focus:border-ckb-accent"
                 />
             </div>
 
@@ -99,7 +99,7 @@
                     max="999999"
                     step="1"
                     placeholder="Contoh: 24"
-                    class="w-full rounded-lg border border-ckb-outline-variant/60 px-3 py-2.5 text-sm outline-none focus:border-ckb-primary"
+                    class="w-full rounded-lg border border-ckb-outline-variant/60 px-3 py-2.5 text-sm outline-none focus:border-ckb-accent"
                 />
 
                 <p class="mt-1 text-[11px] text-ckb-outline">Contoh: 1 dus = 24 pcs.</p>

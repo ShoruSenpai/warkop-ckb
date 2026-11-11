@@ -258,17 +258,13 @@ export async function submitProduct(event) {
             return;
         }
 
-        await Swal.fire({
-            icon: "success",
-            title: isEdit ? "Produk diperbarui" : "Produk dibuat",
+        const indexUrl = $("product-form-wrapper")?.dataset.indexUrl;
 
-            text: data?.message || "Produk berhasil disimpan.",
+        if (!indexUrl) {
+            throw new Error("Alamat halaman daftar produk tidak tersedia.");
+        }
 
-            timer: 1600,
-            showConfirmButton: false,
-        });
-
-        window.location.href = "/products";
+        window.location.assign(indexUrl);
     } catch (error) {
         if (error.message === "UNAUTHORIZED") {
             return;

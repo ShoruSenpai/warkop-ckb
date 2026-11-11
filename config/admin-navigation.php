@@ -87,19 +87,18 @@ return [
 
             "items" => [
                 [
-                    "label" => "Pengaturan",
-                    "route" => "settings",
-                    "active" => ["settings"],
-                    "icon" => "fas fa-cog",
-                    "roles" => ["owner", "admin"],
-                ],
-
-                [
                     "label" => "User & Karyawan",
                     "route" => "users.index",
                     "active" => ["users.*"],
                     "icon" => "fas fa-users-cog",
                     "roles" => ["owner"],
+                ],
+                [
+                    "label" => "Pengaturan",
+                    "route" => "settings",
+                    "active" => ["settings"],
+                    "icon" => "fas fa-cog",
+                    "roles" => ["owner", "admin"],
                 ],
             ],
         ],

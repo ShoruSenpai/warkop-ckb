@@ -5,22 +5,22 @@
                 Input Pembelian Supplier
             </h2>
 
-            <p class="text-sm text-gray-500">Catat nota belanja dan update stok secara otomatis</p>
+            <p class="text-sm text-ckb-on-surface-variant">Catat nota belanja dan update stok secara otomatis</p>
         </div>
     </div>
 
     <form id="form-purchase">
         <x-supplier.invoice-info />
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4">
+        <div class="bg-ckb-surface rounded-xl shadow-surface border border-ckb-outline-variant/50 p-4">
             <div
-                class="flex justify-between items-center mb-4 border-b border-gray-100 pb-2"
+                class="flex justify-between items-center mb-4 border-b border-ckb-outline-variant/50 pb-2"
             >
                 <h3 class="font-bold text-ckb-primary">Daftar Item Belanja</h3>
                 <div class="flex items-center gap-2">
                     <button
                         type="button"
                         id="btn-refresh-purchase"
-                        class="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-50 focus:ring-1 focus:ring-ckb-accent focus:outline-none transition"
+                        class="border border-ckb-outline-variant rounded-lg px-3 py-1.5 text-sm text-ckb-on-surface hover:bg-ckb-surface-container-low focus:ring-1 focus:ring-ckb-accent focus:outline-none transition"
                         title="Refresh Data"
                     >
                         <i class="fas fa-sync-alt"></i>
@@ -28,7 +28,7 @@
                     <button
                         type="button"
                         id="btn-add-row"
-                        class="text-sm font-semibold text-ckb-primary hover:text-ckb-accent bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-200 transition"
+                        class="text-sm font-semibold text-ckb-primary hover:text-ckb-accent bg-ckb-surface-container-low px-3 py-1.5 rounded-lg border border-ckb-outline-variant transition"
                     >
                         + Tambah Baris
                     </button>
@@ -39,7 +39,7 @@
                 <table id="purchase-table" class="w-full text-left">
                     <thead>
                         <tr
-                            class="text-[10px] text-gray-400 uppercase tracking-wider border-b border-gray-100"
+                            class="text-[10px] text-ckb-on-surface-variant uppercase tracking-wider border-b border-ckb-outline-variant/50"
                         >
                             <th class="pb-2 w-64">Nama Barang *</th>
                             <th class="pb-2 w-32">Satuan Beli *</th>

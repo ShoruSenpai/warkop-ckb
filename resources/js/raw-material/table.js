@@ -40,7 +40,7 @@ export function renderTable(items) {
             <tr>
                 <td
                     colspan="7"
-                    class="px-3 py-8 text-center text-xs text-gray-400"
+                    class="px-3 py-8 text-center text-xs text-ckb-on-surface-variant"
                 >
                     Belum ada bahan baku terdaftar.
                 </td>
@@ -66,7 +66,7 @@ export function renderTable(items) {
 
             if (stock <= 0) {
                 status = `
-                    <span class="text-red-700 bg-red-50 px-2 py-1 rounded text-xs font-semibold">
+                    <span class="text-ckb-on-error-container bg-ckb-error-container px-2 py-1 rounded text-xs font-semibold">
                         ● Habis
                     </span>
                 `;
@@ -74,7 +74,7 @@ export function renderTable(items) {
                 isCritical = true;
             } else if (stock <= minimumStock) {
                 status = `
-                    <span class="text-orange-700 bg-orange-50 px-2 py-1 rounded text-xs font-semibold">
+                    <span class="text-ckb-on-warning-container bg-ckb-warning-container px-2 py-1 rounded text-xs font-semibold">
                         ● Menipis
                     </span>
                 `;
@@ -82,7 +82,7 @@ export function renderTable(items) {
                 isCritical = true;
             } else {
                 status = `
-                    <span class="text-green-700 bg-green-50 px-2 py-1 rounded text-xs font-semibold">
+                    <span class="text-ckb-on-success-container bg-ckb-success-container px-2 py-1 rounded text-xs font-semibold">
                         ● Aman
                     </span>
                 `;
@@ -93,18 +93,18 @@ export function renderTable(items) {
             }
 
             return `
-                <tr class="border-b border-gray-50 text-sm">
+                <tr class="border-b border-ckb-outline-variant/30 text-sm">
 
-                    <td class="px-3 py-2.5 text-gray-400 text-[11px] font-mono">
+                    <td class="px-3 py-2.5 text-ckb-on-surface-variant text-[11px] font-mono">
                         #RM-${escapeHtml(item.id)}
                     </td>
 
-                    <td class="px-3 py-2.5 text-xs text-gray-800 font-medium">
+                    <td class="px-3 py-2.5 text-xs text-ckb-on-surface font-medium">
                         ${escapeHtml(item.name)}
                     </td>
 
-                    <td class="px-3 py-2.5 text-xs text-gray-500">
-                        <span class="bg-gray-100 px-2 py-0.5 rounded text-xs">
+                    <td class="px-3 py-2.5 text-xs text-ckb-on-surface-variant">
+                        <span class="bg-ckb-surface-container px-2 py-0.5 rounded text-xs text-ckb-on-surface">
                             ${escapeHtml(item.unit_measurement)}
                         </span>
                     </td>
@@ -114,7 +114,7 @@ export function renderTable(items) {
                         ${escapeHtml(item.unit_measurement)}
                     </td>
 
-                    <td class="px-3 py-2.5 text-xs text-gray-500 font-semibold">
+                    <td class="px-3 py-2.5 text-xs text-ckb-on-surface-variant font-semibold">
                             ${minimumStock.toLocaleString("id-ID")}
                             ${escapeHtml(item.unit_measurement)}
                     </td>
@@ -130,7 +130,7 @@ export function renderTable(items) {
                                 type="button"
                                 data-action="edit"
                                 data-id="${Number(item.id)}"
-                                class="px-2.5 py-1.5 rounded-lg bg-gray-50 text-gray-700 hover:bg-gray-100 text-xs font-semibold"
+                                class="px-2.5 py-1.5 rounded-lg bg-ckb-surface-container-low text-ckb-on-surface hover:bg-ckb-surface-container text-xs font-semibold"
                                 title="Edit"
                             >
                                 <i class="fas fa-edit"></i>
@@ -140,7 +140,7 @@ export function renderTable(items) {
                                 type="button"
                                 data-action="delete"
                                 data-id="${Number(item.id)}"
-                                class="px-2.5 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 text-xs font-semibold"
+                                class="px-2.5 py-1.5 rounded-lg bg-ckb-error-container text-ckb-on-error-container hover:bg-ckb-error/15 text-xs font-semibold"
                                 title="Hapus"
                             >
                                 <i class="fas fa-trash"></i>

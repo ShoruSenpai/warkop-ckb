@@ -2,6 +2,7 @@ import { state } from "./state.js";
 import { apiFetch } from "@/utils/api.js";
 import { $, escapeHtml } from "@/utils/dom.js";
 import { showApiError } from "@/utils/ui.js";
+import { ckbColor } from "@/utils/theme.js";
 
 export async function fetchProducts() {
     try {
@@ -14,7 +15,7 @@ export async function fetchProducts() {
 
         state.products = Array.isArray(data.data) ? data.data : [];
 
-        renderProducts(state.products);
+        applyFilters();
     } catch (error) {
         if (error.message === "UNAUTHORIZED") {
             return;
@@ -83,11 +84,11 @@ function renderCategoryFilter() {
 }
 
 export function applyFilters() {
-    const search = $("search-input").value.toLowerCase().trim();
+    const search = $("search-input")?.value.toLowerCase().trim() ?? "";
 
-    const category = $("category-filter").value;
+    const category = $("category-filter")?.value ?? "";
 
-    const status = $("status-filter").value;
+    const status = $("status-filter")?.value ?? "";
 
     const filtered = state.products.filter((product) => {
         const matchesSearch = product.name.toLowerCase().includes(search);
@@ -150,7 +151,7 @@ export function renderProducts(products) {
 
             const statusClass =
                 product.status === "available"
-                    ? "bg-ckb-secondary-container/20 text-ckb-on-secondary-container"
+                    ? "bg-ckb-success-container text-ckb-on-success-container"
                     : product.status === "sold_out"
                       ? "bg-ckb-error-container text-ckb-on-error-container"
                       : "bg-ckb-surface-container text-ckb-on-surface-variant";
@@ -212,7 +213,7 @@ export function renderProducts(products) {
                                                     mt-1 inline-flex
                                                     items-center gap-1
                                                     text-[11px] font-semibold
-                                                    text-ckb-secondary
+                                                    text-ckb-accent
                                                 ">
                                                     <i class="fas fa-star"></i>
                                                     Rekomendasi
@@ -338,15 +339,28 @@ export async function deleteProduct(id) {
     const confirmed = await Swal.fire({
         icon: "warning",
         title: "Hapus produk?",
-        text: "Produk yang memiliki data terkait atau riwayat transaksi tidak dapat dihapus.",
+        text: "Produk yang masih memiliki resep, kemasan, opsi, diskon, atau riwayat transaksi tidak dapat dihapus.",
         showCancelButton: true,
         confirmButtonText: "Hapus",
         cancelButtonText: "Batal",
-        confirmButtonColor: "#ba1a1a",
+        confirmButtonColor: ckbColor("error"),
+        customClass: { confirmButton: "ckb-swal-error-confirm" },
     });
 
     if (!confirmed.isConfirmed) {
         return;
+    }
+
+    const deleteButton = document.querySelector(
+        `[data-action="delete"][data-id="${Number(id)}"]`,
+    );
+    const deleteIcon = deleteButton?.querySelector("i");
+
+    if (deleteButton) {
+        deleteButton.disabled = true;
+        deleteButton.setAttribute("aria-busy", "true");
+        deleteIcon?.classList.add("fa-spinner", "fa-spin");
+        deleteIcon?.classList.remove("fa-trash");
     }
 
     try {
@@ -360,14 +374,6 @@ export async function deleteProduct(id) {
             return;
         }
 
-        await Swal.fire({
-            icon: "success",
-            title: "Produk dihapus",
-            text: "Produk berhasil dihapus.",
-            timer: 1600,
-            showConfirmButton: false,
-        });
-
         await fetchProducts();
     } catch (error) {
         if (error.message === "UNAUTHORIZED") {
@@ -379,6 +385,13 @@ export async function deleteProduct(id) {
         await showApiError({
             message: error.message || "Produk tidak dapat dihapus.",
         });
+    } finally {
+        if (deleteButton?.isConnected) {
+            deleteButton.disabled = false;
+            deleteButton.removeAttribute("aria-busy");
+            deleteIcon?.classList.remove("fa-spinner", "fa-spin");
+            deleteIcon?.classList.add("fa-trash");
+        }
     }
 }
 
@@ -393,11 +406,29 @@ export function initProductListEvents() {
             title: "Kategori belum tersedia",
             text: "Tambahkan kategori terlebih dahulu sebelum membuat produk.",
             confirmButtonText: "Mengerti",
-            confirmButtonColor: "#6B4423",
         });
     });
 
     $("search-input")?.addEventListener("input", applyFilters);
+
+    $("btn-refresh-products")?.addEventListener("click", async (event) => {
+        const button = event.currentTarget;
+        const icon = button.querySelector("i");
+
+        if (button.disabled) return;
+
+        button.disabled = true;
+        button.setAttribute("aria-busy", "true");
+        icon?.classList.add("fa-spin");
+
+        try {
+            await fetchProducts();
+        } finally {
+            button.disabled = false;
+            button.removeAttribute("aria-busy");
+            icon?.classList.remove("fa-spin");
+        }
+    });
 
     $("category-filter")?.addEventListener("change", applyFilters);
 

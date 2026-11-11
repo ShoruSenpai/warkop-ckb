@@ -4,6 +4,7 @@ import { showApiError } from "@/utils/ui.js";
 import { findById } from "@/utils/data.js";
 import { apiFetch } from "@/utils/api.js";
 import { fetchRawMaterials } from "./table.js";
+import { ckbColor } from "@/utils/theme.js";
 
 export async function openEditMaterialModal(id) {
     const item = findById(state.rawMaterialData, id);
@@ -55,7 +56,7 @@ async function fetchPackagings(materialId) {
         <tr>
             <td
                 colspan="4"
-                class="py-6 text-center text-gray-400"
+                class="py-6 text-center text-ckb-on-surface-variant"
             >
                 <i class="fas fa-spinner fa-spin mr-2"></i>
                 Memuat kemasan...
@@ -98,7 +99,7 @@ function renderPackagingList() {
             <tr>
                 <td
                     colspan="4"
-                    class="py-8 text-center text-gray-400"
+                    class="py-8 text-center text-ckb-on-surface-variant"
                 >
                     <i class="fas fa-box-open text-2xl mb-2"></i>
 
@@ -122,27 +123,27 @@ function renderPackagingList() {
 
             const status = packaging.is_active
                 ? `
-                            <span class="text-green-700 bg-green-50 px-2 py-1 rounded text-xs font-semibold">
+                            <span class="text-ckb-on-success-container bg-ckb-success-container px-2 py-1 rounded text-xs font-semibold">
                                 Aktif
                             </span>
                         `
                 : `
-                            <span class="text-gray-600 bg-gray-100 px-2 py-1 rounded text-xs font-semibold">
+                            <span class="text-ckb-on-surface-variant bg-ckb-surface-container px-2 py-1 rounded text-xs font-semibold">
                                 Nonaktif
                             </span>
                         `;
 
             return `
-                    <tr class="border-b border-gray-50">
+                    <tr class="border-b border-ckb-outline-variant/30">
 
                         <td class="px-4 py-3">
-                            <span class="font-medium text-sm text-gray-800">
+                            <span class="font-medium text-sm text-ckb-on-surface">
                                 ${escapeHtml(packaging.purchase_unit)}
                             </span>
                         </td>
 
                         <td class="px-4 py-3">
-                            <span class="text-sm font-semibold text-ckb-secondary">
+                            <span class="text-sm font-semibold text-ckb-primary">
                                 ${conversion.toLocaleString("id-ID")}
                                 ${escapeHtml(
                                     state.editingMaterial?.unit_measurement ||
@@ -150,7 +151,7 @@ function renderPackagingList() {
                                 )}
                             </span>
 
-                            <span class="text-xs text-gray-400 ml-1">
+                            <span class="text-xs text-ckb-on-surface-variant ml-1">
                                 per 1
                                 ${escapeHtml(packaging.purchase_unit)}
                             </span>
@@ -167,7 +168,7 @@ function renderPackagingList() {
                                     type="button"
                                     data-action="edit-packaging"
                                     data-id="${Number(packaging.id)}"
-                                    class="px-2.5 py-1.5 rounded-lg bg-gray-50 text-gray-700 hover:bg-gray-100 text-xs"
+                                    class="px-2.5 py-1.5 rounded-lg bg-ckb-surface-container-low text-ckb-on-surface hover:bg-ckb-surface-container text-xs"
                                     title="Edit"
                                 >
                                     <i class="fas fa-edit"></i>
@@ -177,7 +178,7 @@ function renderPackagingList() {
                                     type="button"
                                     data-action="delete-packaging"
                                     data-id="${Number(packaging.id)}"
-                                    class="px-2.5 py-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 text-xs"
+                                    class="px-2.5 py-1.5 rounded-lg bg-ckb-error-container text-ckb-on-error-container hover:bg-ckb-error/15 text-xs"
                                     title="Hapus"
                                 >
                                     <i class="fas fa-trash"></i>
@@ -283,7 +284,6 @@ async function submitMaterialEdit(event) {
             title: "Bahan Baku Diperbarui",
             text: "Nama bahan baku berhasil diperbarui.",
             confirmButtonText: "OK",
-            confirmButtonColor: "#6B4423",
         });
 
         await fetchRawMaterials();
@@ -398,7 +398,6 @@ async function submitPackaging(event) {
 
             confirmButtonText: "OK",
 
-            confirmButtonColor: "#6B4423",
         });
     } catch (error) {
         if (error.message === "UNAUTHORIZED") {
@@ -437,7 +436,7 @@ async function deletePackaging(id) {
 
                 <br><br>
 
-                <span class="text-sm text-gray-500">
+                <span class="text-sm text-ckb-on-surface-variant">
                     Jika kemasan sudah pernah digunakan
                     dalam transaksi, sistem dapat menolaknya.
                 </span>
@@ -446,8 +445,8 @@ async function deletePackaging(id) {
         showCancelButton: true,
         confirmButtonText: "Ya, Hapus",
         cancelButtonText: "Batal",
-        confirmButtonColor: "#dc2626",
-        cancelButtonColor: "#6b7280",
+        confirmButtonColor: ckbColor("error"),
+        customClass: { confirmButton: "ckb-swal-error-confirm" },
     });
 
     if (!result.isConfirmed) {
@@ -475,7 +474,6 @@ async function deletePackaging(id) {
             title: "Kemasan Dihapus",
             text: "Kemasan berhasil dihapus.",
             confirmButtonText: "OK",
-            confirmButtonColor: "#6B4423",
         });
     } catch (error) {
         if (error.message === "UNAUTHORIZED") {

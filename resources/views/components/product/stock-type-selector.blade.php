@@ -62,7 +62,7 @@
                 </div>
 
                 <div
-                    class="mt-3 hidden items-center gap-1 text-xs font-semibold text-ckb-secondary peer-checked:flex"
+                    class="mt-3 hidden items-center gap-1 text-xs font-semibold text-ckb-primary peer-checked:flex"
                 >
                     <i class="fas fa-check-circle"></i>
                     Dipilih
