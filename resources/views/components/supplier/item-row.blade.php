@@ -1,8 +1,8 @@
-<tr class="item-row border-b border-gray-50">
+<tr class="item-row border-b border-ckb-outline-variant/30">
     {{-- Barang --}}
     <td class="py-2 pr-2">
         <select
-            class="item-select w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-white focus:ring-1 focus:ring-ckb-primary focus:outline-none transition"
+            class="item-select w-full border border-ckb-outline-variant rounded px-2 py-1.5 text-sm bg-ckb-surface focus:ring-1 focus:ring-ckb-accent focus:outline-none transition"
             required
         >
             <option value="" disabled selected>-- Pilih Barang --</option>
@@ -12,7 +12,7 @@
     {{-- Satuan Beli --}}
     <td class="py-2 pr-2">
         <select
-            class="packaging-select w-full border border-gray-200 rounded px-2 py-1.5 text-sm bg-white focus:ring-1 focus:ring-ckb-primary focus:outline-none transition"
+            class="packaging-select w-full border border-ckb-outline-variant rounded px-2 py-1.5 text-sm bg-ckb-surface focus:ring-1 focus:ring-ckb-accent focus:outline-none transition"
             required
             disabled
         >
@@ -27,7 +27,7 @@
             step="1"
             min="1"
             max="999"
-            class="qty w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none transition"
+            class="qty w-full border border-ckb-outline-variant rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-ckb-accent focus:outline-none transition"
             value="1"
             required
         />
@@ -36,9 +36,9 @@
     {{-- Conversion --}}
     <td class="py-2 pr-2">
         <div
-            class="conversion-display min-h-[34px] flex items-center bg-gray-50 border border-gray-200 rounded px-2 py-1.5"
+            class="conversion-display min-h-[34px] flex items-center bg-ckb-surface-container-low border border-ckb-outline-variant rounded px-2 py-1.5"
         >
-            <span class="conversion-text text-xs text-gray-400">
+            <span class="conversion-text text-xs text-ckb-on-surface-variant">
                 Satuan Beli
             </span>
         </div>
@@ -51,7 +51,7 @@
             min="0"
             max="999999999"
             step="1"
-            class="price w-full border border-gray-200 rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none transition"
+            class="price w-full border border-ckb-outline-variant rounded px-2 py-1.5 text-sm focus:ring-1 focus:ring-ckb-accent focus:outline-none transition"
             value="0"
             required
         />
@@ -61,7 +61,7 @@
     <td class="py-2 pr-2">
         <input
             type="text"
-            class="subtotal w-full border border-transparent bg-gray-50 rounded px-2 py-1.5 text-sm font-semibold text-gray-700"
+            class="subtotal w-full border border-transparent bg-ckb-surface-container-low rounded px-2 py-1.5 text-sm font-semibold text-ckb-on-surface"
             value="Rp 0"
             readonly
         />
@@ -72,7 +72,7 @@
         <button
             type="button"
             data-action="remove-row"
-            class="text-red-400 hover:text-red-600"
+            class="text-ckb-error hover:text-ckb-error"
             title="Hapus baris"
         >
             <i class="fas fa-minus-square"></i>

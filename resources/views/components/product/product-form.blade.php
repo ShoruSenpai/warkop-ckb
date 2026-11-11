@@ -7,6 +7,7 @@
     id="product-form-wrapper"
     data-mode="{{ $mode }}"
     data-product-id="{{ $productId }}"
+    data-index-url="{{ route('products.index') }}"
     class="space-y-4"
 >
     <form id="product-form" class="space-y-4">
@@ -35,7 +36,7 @@
                         maxlength="50"
                         required
                         placeholder="Contoh: Kopi Susu Gula Aren"
-                        class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-primary focus:ring-2 focus:ring-ckb-primary/10"
+                        class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-accent focus:ring-2 focus:ring-ckb-accent/10"
                     />
                 </div>
 
@@ -50,7 +51,7 @@
                     <select
                         id="product-category"
                         required
-                        class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-primary"
+                        class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-accent"
                     >
                         <option value="">Memuat kategori...</option>
                     </select>
@@ -79,7 +80,7 @@
                             step="1"
                             required
                             placeholder="10.000"
-                            class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest py-2.5 pl-10 pr-3 text-sm text-ckb-on-surface outline-none focus:border-ckb-primary focus:ring-2 focus:ring-ckb-primary/10"
+                            class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest py-2.5 pl-10 pr-3 text-sm text-ckb-on-surface outline-none focus:border-ckb-accent focus:ring-2 focus:ring-ckb-accent/10"
                         />
                     </div>
                 </div>
@@ -97,7 +98,7 @@
                         rows="3"
                         maxlength="500"
                         placeholder="Deskripsi produk..."
-                        class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-primary focus:ring-2 focus:ring-ckb-primary/10"
+                        class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-accent focus:ring-2 focus:ring-ckb-accent/10"
                     ></textarea>
                 </div>
 
@@ -131,6 +132,8 @@
                         </div>
                     </div>
                 </div>
+                @else
+                    <div class="hidden md:block" aria-hidden="true"></div>
                 @endif
 
                 <div class="flex items-end">
@@ -140,7 +143,7 @@
                         <input
                             type="checkbox"
                             id="product-recommended"
-                            class="h-4 w-4 rounded border-ckb-outline text-ckb-secondary focus:ring-ckb-secondary"
+                            class="h-4 w-4 rounded border-ckb-outline text-ckb-primary focus:ring-ckb-accent"
                         />
 
                         <span>

@@ -95,7 +95,7 @@ export function onItemChange(select) {
 
     if (!packagings.length) {
         conversion.innerHTML = `
-            <span class="text-red-500">
+            <span class="text-ckb-error">
                 <i class="fas fa-exclamation-circle mr-1"></i>
                 Belum ada kemasan
             </span>
@@ -149,7 +149,7 @@ export function onPackagingChange(select) {
     }
 
     text.innerHTML = `
-        <span class="font-semibold text-ckb-secondary">
+        <span class="font-semibold text-ckb-primary">
             1 ${escapeHtml(purchaseUnit)}
             =
             ${conversion.toLocaleString("id-ID")}

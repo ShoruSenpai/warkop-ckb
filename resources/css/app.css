@@ -106,10 +106,39 @@
        ========================= */
 
     --color-ckb-error: #c7484e;
-    --color-ckb-on-error: #fff8f5;
+    --color-ckb-on-error: #fffdf4;
 
     --color-ckb-error-container: #f9e5e4;
     --color-ckb-on-error-container: #873238;
+
+
+    /* =========================
+       SUCCESS
+       Muted Forest Green
+       ========================= */
+
+    --color-ckb-success: #287a56;
+    --color-ckb-on-success: #fffdf4;
+
+    --color-ckb-success-hover: #226747;
+
+    --color-ckb-success-container: #e4f1e8;
+    --color-ckb-on-success-container: #194c35;
+
+
+    /* =========================
+       WARNING
+       Muted Amber
+       ========================= */
+
+    --color-ckb-warning: #8b5a16;
+    --color-ckb-on-warning: #fffdf4;
+
+    --color-ckb-warning-hover: #754a11;
+
+    --color-ckb-warning-container: #f6ebd1;
+    --color-ckb-on-warning-container: #63400e;
+
 
     /* =========================
        PRIMARY FIXED
@@ -156,4 +185,13 @@
 
     --shadow-surface: 0 4px 14px rgba(20, 39, 71, 0.07);
     --shadow-floating: 0 8px 22px rgba(20, 39, 71, 0.15);
+}
+
+.ckb-swal-error-confirm {
+    color: var(--color-ckb-on-error) !important;
+}
+
+.ckb-swal-cancel {
+    color: var(--color-ckb-on-surface) !important;
+    border: 1px solid var(--color-ckb-outline-variant) !important;
 }

@@ -1,12 +1,12 @@
 <div
     id="material-modal"
-    class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4"
+    class="fixed inset-0 bg-ckb-inverse-surface/50 hidden items-center justify-center z-50 p-4"
 >
     <div
-        class="bg-ckb-background w-full max-w-lg rounded-2xl shadow-xl overflow-hidden"
+        class="bg-ckb-surface w-full max-w-lg rounded-2xl shadow-floating overflow-hidden"
     >
         <div
-            class="px-6 py-4 border-b border-gray-200 bg-ckb-primary flex justify-between items-center"
+            class="px-6 py-4 border-b border-ckb-outline-variant/50 bg-ckb-primary flex justify-between items-center text-ckb-on-primary"
         >
             <div>
                 <h3
@@ -15,13 +15,13 @@
                 >
                     Daftarkan Bahan Baku Baru
                 </h3>
-                <p class="text-xs text-gray-500">Isi informasi dasar bahan baku.</p>
+                <p class="text-xs text-ckb-on-primary/75">Isi informasi dasar bahan baku.</p>
             </div>
 
             <button
                 type="button"
                 data-modal-close
-                class="text-gray-400 hover:text-gray-600"
+                class="text-ckb-on-primary/70 hover:text-ckb-on-primary"
             >
                 <i class="fas fa-times text-xl"></i>
             </button>
@@ -43,7 +43,7 @@
                         required
                         maxlength="50"
                         placeholder="cth: Susu UHT"
-                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none bg-white"
+                        class="w-full border border-ckb-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-accent focus:outline-none bg-ckb-surface"
                     />
                 </div>
 
@@ -56,13 +56,13 @@
                     <select
                         id="rm_unit"
                         required
-                        class="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none bg-white"
+                        class="w-full border border-ckb-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-accent focus:outline-none bg-ckb-surface"
                     >
                         <option value="gram">gram</option>
                         <option value="ml">ml</option>
                         <option value="pcs">pcs</option>
                     </select>
-                    <p class="text-[11px] text-gray-400 mt-1">Satuan ini digunakan untuk menyimpan stok.</p>
+                    <p class="text-[11px] text-ckb-on-surface-variant mt-1">Satuan ini digunakan untuk menyimpan stok.</p>
                 </div>
             </div>
 
@@ -81,18 +81,18 @@
                         min="0"
                         max="999999"
                         placeholder="cth: 10000"
-                        class="w-full border border-gray-200 rounded-lg px-3 py-2 pr-12 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none bg-white"
+                    class="w-full border border-ckb-outline-variant rounded-lg px-3 py-2 pr-12 text-sm focus:ring-1 focus:ring-ckb-accent focus:outline-none bg-ckb-surface"
                     />
 
                     <span
                         id="rm-minimum-stock-unit"
-                        class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400"
+                        class="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-ckb-on-surface-variant"
                     >
                         gram
                     </span>
                 </div>
 
-                <p class="text-[11px] text-gray-400 mt-1">Sistem akan memberi peringatan saat stok mencapai atau berada di bawah batas ini.</p>
+                <p class="text-[11px] text-ckb-on-surface-variant mt-1">Sistem akan memberi peringatan saat stok mencapai atau berada di bawah batas ini.</p>
             </div>
 
             <!-- Packaging -->
@@ -103,7 +103,7 @@
                             Kemasan Pembelian
                         </h4>
 
-                        <p class="text-[11px] text-gray-400">Tentukan satuan pembelian dan jumlah satuan dasar di dalamnya.</p>
+                        <p class="text-[11px] text-ckb-on-surface-variant">Tentukan satuan pembelian dan jumlah satuan dasar di dalamnya.</p>
                     </div>
 
                     <button
@@ -121,11 +121,11 @@
 
                 <div
                     id="material-packaging-empty"
-                    class="border border-dashed border-gray-300 rounded-lg p-4 text-center"
+                    class="border border-dashed border-ckb-outline-variant rounded-lg p-4 text-center"
                 >
-                    <i class="fas fa-box-open text-gray-300 text-xl mb-2"></i>
+                    <i class="fas fa-box-open text-ckb-outline text-xl mb-2"></i>
 
-                    <p class="text-xs text-gray-400">Belum ada kemasan pembelian.</p>
+                    <p class="text-xs text-ckb-on-surface-variant">Belum ada kemasan pembelian.</p>
 
                     <button
                         type="button"
@@ -142,7 +142,7 @@
                 <button
                     type="button"
                     data-modal-close
-                    class="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50"
+                    class="px-4 py-2 border border-ckb-outline-variant rounded-lg text-sm font-medium text-ckb-on-surface hover:bg-ckb-surface-container-low"
                 >
                     Batal
                 </button>
@@ -150,7 +150,7 @@
                 <button
                     type="submit"
                     id="btn-save-material"
-                    class="px-4 py-2 bg-ckb-primary text-white rounded-lg text-sm font-medium hover:bg-ckb-accent flex items-center"
+                    class="px-4 py-2 bg-ckb-primary text-ckb-on-primary rounded-lg text-sm font-medium hover:bg-ckb-accent hover:text-ckb-on-accent flex items-center"
                 >
                     Simpan Bahan Baku
                 </button>
@@ -159,21 +159,21 @@
 
         <template id="material-packaging-template">
             <div
-                class="material-packaging-row border border-gray-200 rounded-lg p-3"
+                class="material-packaging-row border border-ckb-outline-variant rounded-lg p-3"
             >
                 <div
                     class="grid grid-cols-1 md:grid-cols-[1fr_1fr_auto] gap-3 items-end"
                 >
                     <div>
                         <label
-                            class="block text-[11px] font-semibold text-gray-500 mb-1"
+                            class="block text-[11px] font-semibold text-ckb-on-surface-variant mb-1"
                         >
                             Satuan Beli *
                         </label>
 
                         <input
                             type="text"
-                            class="material-packaging-unit w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none"
+                            class="material-packaging-unit w-full border border-ckb-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-accent focus:outline-none"
                             placeholder="cth: kardus"
                             maxlength="20"
                             required
@@ -182,14 +182,14 @@
 
                     <div>
                         <label
-                            class="block text-[11px] font-semibold text-gray-500 mb-1"
+                            class="block text-[11px] font-semibold text-ckb-on-surface-variant mb-1"
                         >
                             Isi dalam Satuan Dasar *
                         </label>
 
                         <input
                             type="number"
-                            class="material-packaging-conversion w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-primary focus:outline-none"
+                            class="material-packaging-conversion w-full border border-ckb-outline-variant rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-ckb-accent focus:outline-none"
                             min="1"
                             max="999999"
                             placeholder="cth: 12000"
@@ -200,7 +200,7 @@
                     <button
                         type="button"
                         data-action="remove-packaging"
-                        class="h-[38px] w-[38px] rounded-lg bg-red-50 text-red-600 hover:bg-red-100"
+                        class="h-[38px] w-[38px] rounded-lg bg-ckb-error-container text-ckb-on-error-container hover:bg-ckb-error/15"
                         title="Hapus kemasan"
                     >
                         <i class="fas fa-trash"></i>
@@ -208,7 +208,7 @@
                 </div>
 
                 <p
-                    class="material-packaging-preview text-[11px] text-gray-400 mt-2"
+                    class="material-packaging-preview text-[11px] text-ckb-on-surface-variant mt-2"
                 >Masukkan jumlah konversi.</p>
             </div>
         </template>

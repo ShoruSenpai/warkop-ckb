@@ -4,6 +4,7 @@ import { $, escapeHtml, toggleModal } from "@/utils/dom.js";
 import { showApiError } from "@/utils/ui.js";
 import { apiFetch } from "@/utils/api.js";
 import { fetchRawMaterials } from "./table.js";
+import { ckbColor } from "@/utils/theme.js";
 
 export function openAddMaterialModal() {
     state.editingMaterial = null;
@@ -130,7 +131,6 @@ async function validatePackagings(packagings) {
             title: "Kemasan Belum Diatur",
             text: "Tambahkan minimal satu kemasan pembelian agar bahan baku dapat digunakan pada Pembelian Supplier.",
             confirmButtonText: "Mengerti",
-            confirmButtonColor: "#6B4423",
         });
 
         return false;
@@ -147,7 +147,6 @@ async function validatePackagings(packagings) {
                 title: "Satuan Beli Belum Diisi",
                 text: `Satuan beli pada kemasan ke-${line} wajib diisi.`,
                 confirmButtonText: "Mengerti",
-                confirmButtonColor: "#6B4423",
             });
 
             return false;
@@ -162,7 +161,6 @@ async function validatePackagings(packagings) {
                 title: "Konversi Tidak Valid",
                 text: `Nilai konversi pada kemasan ke-${line} harus lebih besar dari 0.`,
                 confirmButtonText: "Mengerti",
-                confirmButtonColor: "#6B4423",
             });
 
             return false;
@@ -179,7 +177,6 @@ async function validatePackagings(packagings) {
             title: "Satuan Beli Duplikat",
             text: "Satuan beli yang sama tidak boleh didaftarkan dua kali.",
             confirmButtonText: "Mengerti",
-            confirmButtonColor: "#6B4423",
         });
 
         return false;
@@ -276,7 +273,6 @@ export async function submitMaterial(event) {
             title: "Bahan Baku Ditambahkan",
             text: "Bahan baku dan kemasan pembelian berhasil disimpan.",
             confirmButtonText: "Selesai",
-            confirmButtonColor: "#6B4423",
         });
 
         await fetchRawMaterials();
@@ -316,15 +312,15 @@ export async function deleteMaterial(id) {
 
                 <br><br>
 
-                <span class="text-red-600 text-sm">
+                <span class="text-ckb-error text-sm">
                     Pastikan bahan ini memang tidak lagi digunakan.
                 </span>
             `,
         showCancelButton: true,
         confirmButtonText: "Ya, Hapus",
         cancelButtonText: "Batal",
-        confirmButtonColor: "#dc2626",
-        cancelButtonColor: "#6b7280",
+        confirmButtonColor: ckbColor("error"),
+        customClass: { confirmButton: "ckb-swal-error-confirm" },
     });
 
     if (!result.isConfirmed) {
@@ -347,7 +343,6 @@ export async function deleteMaterial(id) {
             title: "Bahan Baku Dihapus",
             text: "Data bahan baku berhasil dihapus.",
             confirmButtonText: "OK",
-            confirmButtonColor: "#6B4423",
         });
 
         await fetchRawMaterials();

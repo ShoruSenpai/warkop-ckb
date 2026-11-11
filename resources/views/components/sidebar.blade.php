@@ -15,11 +15,6 @@
     $roleLabel = $roleLabels[$userRole] ?? ucfirst($userRole);
 
     $groups = AdminNavigation::visibleGroups($userRole);
-
-    $avatarUrl =
-        "https://ui-avatars.com/api/?name=" .
-        urlencode($displayName) .
-        "&background=DBE6F5&color=14294A&bold=true";
 @endphp
 
 <aside
@@ -28,22 +23,24 @@
     {{-- BRAND --}}
     <div class="flex h-16 shrink-0 items-center gap-2.5 px-4">
         <div
-            class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-ckb-secondary-container p-1.5"
+            class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-ckb-secondary"
         >
             <img
                 src="{{ asset('assets/photos/warkop-ckb-logo.webp') }}"
                 alt="Warkop Cak Kebo"
-                class="max-h-full max-w-full object-contain"
+                class="max-h-full max-w-full object-contain rounded-lg"
             />
         </div>
 
         <div class="min-w-0">
-            <h1 class="truncate text-sm font-bold leading-tight text-white">
+            <h1
+                class="truncate text-sm font-bold leading-tight text-ckb-inverse-on-surface"
+            >
                 Warkop Cak Kebo
             </h1>
 
             <p
-                class="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-ckb-inverse-on-surface/50"
+                class="mt-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-ckb-inverse-on-surface/70"
             >Admin Workspace</p>
         </div>
     </div>
@@ -51,24 +48,24 @@
     {{-- USER PROFILE --}}
     <div class="mx-3 shrink-0">
         <div
-            class="flex items-center gap-2.5 rounded-xl border border-white/15 bg-white/5 px-2.5 py-2"
+            class="flex items-center gap-2.5 rounded-xl border border-ckb-inverse-on-surface/15 bg-ckb-inverse-on-surface/5 px-2.5 py-2"
         >
             {{-- Avatar --}}
             <div class="relative shrink-0">
                 <img
-                    src="{{ $avatarUrl }}"
+                    data-ckb-avatar="{{ $displayName }}"
                     alt="{{ $displayName }}"
                     class="size-9 rounded-full object-cover"
                 />
 
                 <span
-                    class="absolute bottom-0 right-0 size-3 rounded-full border-2 border-ckb-inverse-surface bg-blue-400"
+                    class="absolute bottom-0 right-0 size-3 rounded-full border-2 border-ckb-inverse-surface bg-ckb-success"
                 ></span>
             </div>
 
             {{-- User Information --}}
             <div class="min-w-0 flex-1">
-                <p class="truncate text-sm font-semibold text-white">
+                <p class="truncate text-sm font-semibold text-ckb-inverse-on-surface">
                     {{ $displayName }}
                 </p>
 
@@ -87,7 +84,7 @@
             <div class="mb-4">
                 {{-- GROUP TITLE --}}
                 <p
-                    class="mb-1.5 px-2 text-[10px] font-bold tracking-[0.1em] text-ckb-inverse-on-surface/45"
+                    class="mb-1.5 px-2 text-[10px] font-bold tracking-[0.1em] text-ckb-inverse-on-surface/70"
                 >
                     {{
                         $group[
@@ -120,8 +117,8 @@
                                         text-[13px] transition-all duration-200
 
                                         {{ $isActive
-                                            ? 'bg-ckb-secondary-container font-semibold text-ckb-on-secondary-container shadow-sm'
-                                            : 'text-ckb-inverse-on-surface/80 hover:bg-white/5 hover:text-white'
+                                            ? 'bg-ckb-secondary-container font-semibold text-ckb-on-secondary-container shadow-surface'
+                                            : 'text-ckb-inverse-on-surface/80 hover:bg-ckb-inverse-on-surface/5 hover:text-ckb-inverse-on-surface'
                                         }}
                                     "
                                 >
@@ -133,7 +130,7 @@
 
                                             {{ $isActive
                                                 ? 'text-ckb-on-secondary-container'
-                                                : 'text-ckb-inverse-on-surface/55 group-hover:text-white'
+                                                : 'text-ckb-inverse-on-surface/70 group-hover:text-ckb-inverse-on-surface'
                                             }}
                                         "
                                     ></i>
@@ -182,15 +179,15 @@
                                             text-[13px] transition-colors
 
                                             {{ $isChildActive
-                                                ? 'bg-white/5 font-semibold text-white'
-                                                : 'text-ckb-inverse-on-surface/80 hover:bg-white/5 hover:text-white'
+                                                ? 'bg-ckb-inverse-on-surface/5 font-semibold text-ckb-inverse-on-surface'
+                                                : 'text-ckb-inverse-on-surface/80 hover:bg-ckb-inverse-on-surface/5 hover:text-ckb-inverse-on-surface'
                                             }}
                                         "
                                     >
                                         <i
                                             class="{{ $item['icon'] }}
                                                    w-4 shrink-0 text-center
-                                                   text-sm text-ckb-inverse-on-surface/55"
+                                                   text-sm text-ckb-inverse-on-surface/70"
                                         ></i>
 
                                         <span class="min-w-0 flex-1 truncate">
@@ -224,7 +221,7 @@
 
                                                         {{ $childActive
                                                             ? 'bg-ckb-secondary-container font-semibold text-ckb-on-secondary-container'
-                                                            : 'text-ckb-inverse-on-surface/70 hover:bg-white/5 hover:text-white'
+                                                            : 'text-ckb-inverse-on-surface/70 hover:bg-ckb-inverse-on-surface/5 hover:text-ckb-inverse-on-surface'
                                                         }}
                                                     "
                                                 >
@@ -252,13 +249,13 @@
 
     {{-- LOGOUT --}}
     <div class="mt-auto shrink-0 px-3 pb-3 pt-2">
-        <div class="border-t border-white/10 pt-3">
+        <div class="border-t border-ckb-inverse-on-surface/10 pt-3">
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
 
                 <button
                     type="submit"
-                    class="flex min-h-10 w-full items-center gap-2.5 rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-[13px] text-ckb-inverse-on-surface/80 transition-colors hover:bg-white/10 hover:text-white"
+                    class="flex min-h-10 w-full items-center gap-2.5 rounded-lg border border-ckb-inverse-on-surface/15 bg-ckb-inverse-on-surface/5 px-3 py-2 text-[13px] text-ckb-inverse-on-surface/80 transition-colors hover:bg-ckb-inverse-on-surface/10 hover:text-ckb-inverse-on-surface"
                 >
                     <i class="fas fa-right-from-bracket w-5 text-center"></i>
 

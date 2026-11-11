@@ -40,29 +40,41 @@
         {{-- Filter --}}
         <div>
             <div class="grid grid-cols-1 gap-3 md:grid-cols-[1fr_auto_auto]">
-                <div class="relative">
-                    <i
-                        class="fas fa-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ckb-outline"
-                    ></i>
+                <div class="flex gap-2">
+                    <div class="relative min-w-0 flex-1">
+                        <i
+                            class="fas fa-search pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm text-ckb-outline"
+                        ></i>
 
-                    <input
-                        type="text"
-                        id="search-input"
-                        placeholder="Cari produk..."
-                        class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest py-2.5 pl-9 pr-3 text-sm text-ckb-on-surface outline-none focus:border-ckb-primary focus:ring-2 focus:ring-ckb-primary/10"
-                    />
+                        <input
+                            type="text"
+                            id="search-input"
+                            placeholder="Cari produk..."
+                            class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest py-2.5 pl-9 pr-3 text-sm text-ckb-on-surface outline-none focus:border-ckb-accent focus:ring-2 focus:ring-ckb-accent/10"
+                        />
+                    </div>
+
+                    <button
+                        type="button"
+                        id="btn-refresh-products"
+                        title="Muat ulang produk"
+                        aria-label="Muat ulang produk"
+                        class="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest text-ckb-primary transition hover:bg-ckb-primary-container disabled:cursor-wait disabled:opacity-60"
+                    >
+                        <i class="fas fa-rotate-right" aria-hidden="true"></i>
+                    </button>
                 </div>
 
                 <select
                     id="category-filter"
-                    class="rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-primary"
+                    class="rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-accent"
                 >
                     <option value="">Semua Kategori</option>
                 </select>
 
                 <select
                     id="status-filter"
-                    class="rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-primary"
+                    class="rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-accent"
                 >
                     <option value="">Semua Status</option>
                     <option value="available">Tersedia</option>

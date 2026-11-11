@@ -126,9 +126,6 @@ export async function submitPurchase(event) {
 
         cancelButtonText: "Periksa Lagi",
 
-        confirmButtonColor: "#6B4423",
-
-        cancelButtonColor: "#6b7280",
     });
 
     if (!result.isConfirmed) {
@@ -164,7 +161,6 @@ export async function submitPurchase(event) {
             title: "Pembelian Berhasil",
             text: "Pembelian telah dicatat dan stok berhasil diperbarui.",
             confirmButtonText: "Selesai",
-            confirmButtonColor: "#6B4423",
         });
 
         window.location.reload();
