@@ -1,9 +1,13 @@
 <div
     id="material-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-labelledby="material-modal-title"
     class="fixed inset-0 bg-ckb-inverse-surface/50 hidden items-center justify-center z-50 p-4"
 >
     <div
-        class="bg-ckb-surface w-full max-w-lg rounded-2xl shadow-floating overflow-hidden"
+        class="max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-2xl bg-ckb-surface shadow-floating"
     >
         <div
             class="px-6 py-4 border-b border-ckb-outline-variant/50 bg-ckb-primary flex justify-between items-center text-ckb-on-primary"
@@ -21,7 +25,8 @@
             <button
                 type="button"
                 data-modal-close
-                class="text-ckb-on-primary/70 hover:text-ckb-on-primary"
+                aria-label="Tutup dialog bahan baku"
+                class="flex size-11 items-center justify-center rounded-lg text-ckb-on-primary/70 hover:bg-ckb-on-primary/10 hover:text-ckb-on-primary"
             >
                 <i class="fas fa-times text-xl"></i>
             </button>
@@ -33,6 +38,7 @@
             <div class="space-y-4">
                 <div>
                     <label
+                        for="rm_name"
                         class="block text-xs font-semibold text-ckb-primary mb-1"
                     >
                         Nama Bahan Baku *
@@ -49,6 +55,7 @@
 
                 <div>
                     <label
+                        for="rm_unit"
                         class="block text-xs font-semibold text-ckb-primary mb-1"
                     >
                         Satuan Dasar *
@@ -68,6 +75,7 @@
 
             <div>
                 <label
+                    for="rm_minimum_stock"
                     class="block text-xs font-semibold text-ckb-primary mb-1"
                 >
                     Batas Stok Minimum *
@@ -142,7 +150,7 @@
                 <button
                     type="button"
                     data-modal-close
-                    class="px-4 py-2 border border-ckb-outline-variant rounded-lg text-sm font-medium text-ckb-on-surface hover:bg-ckb-surface-container-low"
+                    class="min-h-11 px-4 py-2 border border-ckb-outline-variant rounded-lg text-sm font-medium text-ckb-on-surface hover:bg-ckb-surface-container-low"
                 >
                     Batal
                 </button>
@@ -166,7 +174,7 @@
                 >
                     <div>
                         <label
-                            class="block text-[11px] font-semibold text-ckb-on-surface-variant mb-1"
+                            class="material-packaging-unit-label block text-[11px] font-semibold text-ckb-on-surface-variant mb-1"
                         >
                             Satuan Beli *
                         </label>
@@ -182,7 +190,7 @@
 
                     <div>
                         <label
-                            class="block text-[11px] font-semibold text-ckb-on-surface-variant mb-1"
+                            class="material-packaging-conversion-label block text-[11px] font-semibold text-ckb-on-surface-variant mb-1"
                         >
                             Isi dalam Satuan Dasar *
                         </label>
@@ -200,7 +208,7 @@
                     <button
                         type="button"
                         data-action="remove-packaging"
-                        class="h-[38px] w-[38px] rounded-lg bg-ckb-error-container text-ckb-on-error-container hover:bg-ckb-error/15"
+                        class="size-11 rounded-lg bg-ckb-error-container text-ckb-on-error-container hover:bg-ckb-error/15"
                         title="Hapus kemasan"
                     >
                         <i class="fas fa-trash"></i>

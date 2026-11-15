@@ -1,20 +1,24 @@
 <x-layout title="Tambah Produk">
     <div class="mx-auto max-w-5xl space-y-4">
-        <div class="flex items-center gap-3">
+        <div class="mb-4 flex items-start gap-3">
             <a
                 href="{{ route('products.index') }}"
-                class="flex h-9 w-9 items-center justify-center rounded-lg text-ckb-primary hover:bg-ckb-primary-container"
+                class="flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-ckb-outline-variant bg-ckb-surface text-xs text-ckb-primary transition hover:bg-ckb-surface-container-low motion-reduce:transition-none"
                 title="Kembali"
+                aria-label="Kembali ke manajemen produk"
             >
-                <i class="fas fa-arrow-left"></i>
+                <i class="fas fa-arrow-left" aria-hidden="true"></i>
             </a>
 
-            <div>
-                <h2 class="text-xl font-bold text-ckb-primary">
+            <div class="min-w-0">
+                <p class="mb-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-ckb-on-surface-variant">Inventori Operasional</p>
+                <h2
+                    class="text-xl font-bold leading-tight text-ckb-primary sm:text-2xl"
+                >
                     Tambah Produk
                 </h2>
 
-                <p class="mt-1 text-sm text-ckb-on-surface-variant">Daftarkan produk baru ke sistem.</p>
+                <p class="mt-1 text-xs text-ckb-on-surface-variant">Daftarkan produk baru ke sistem.</p>
             </div>
         </div>
 

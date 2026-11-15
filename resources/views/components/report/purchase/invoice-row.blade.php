@@ -1,0 +1,34 @@
+<tr
+    class="border-b border-ckb-outline-variant/30 text-xs last:border-0 hover:bg-ckb-surface-container-low sm:text-sm"
+>
+    <td
+        data-field="invoice_number"
+        class="whitespace-nowrap px-3 py-2.5 font-semibold text-ckb-primary"
+    ></td>
+    <td
+        data-field="supplier_name"
+        class="min-w-48 px-3 py-2.5 text-ckb-on-surface"
+    ></td>
+    <td
+        data-field="purchase_date"
+        class="whitespace-nowrap px-3 py-2.5 text-ckb-on-surface-variant"
+    ></td>
+    <td
+        data-field="items_count"
+        class="whitespace-nowrap px-3 py-2.5 text-ckb-on-surface-variant"
+    ></td>
+    <td
+        data-field="total_cost"
+        class="whitespace-nowrap px-3 py-2.5 text-right font-semibold text-ckb-primary"
+    ></td>
+    <td class="whitespace-nowrap px-3 py-2.5 text-right">
+        <a
+            data-invoice-link
+            href="{{ route('reports.purchases.index') }}"
+            class="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg bg-ckb-primary px-3 text-xs font-semibold text-ckb-on-primary transition hover:bg-ckb-accent active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent motion-reduce:transition-none"
+        >
+            Detail
+            <i class="fas fa-chevron-right text-[10px]" aria-hidden="true"></i>
+        </a>
+    </td>
+</tr>

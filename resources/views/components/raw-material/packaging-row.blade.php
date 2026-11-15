@@ -9,7 +9,7 @@
             <button
                 type="button"
                 id="btn-get-materials"
-                class="flex size-9 shrink-0 items-center justify-center rounded-lg border border-ckb-outline-variant text-xs text-ckb-on-surface hover:bg-ckb-surface-container-low focus:ring-1 focus:ring-ckb-accent focus:outline-none transition"
+                class="flex size-11 shrink-0 items-center justify-center rounded-lg border border-ckb-outline-variant text-xs text-ckb-on-surface hover:bg-ckb-surface-container-low focus:ring-1 focus:ring-ckb-accent focus:outline-none transition"
                 title="Refresh Data"
             >
                 <i class="fas fa-sync-alt"></i>

@@ -3,9 +3,101 @@ import Swal from "sweetalert2";
 import { ckbColor, ckbColorWithAlpha } from "./utils/theme.js";
 
 import { library, dom } from "@fortawesome/fontawesome-svg-core";
-import { fas } from "@fortawesome/free-solid-svg-icons";
+import {
+    faArrowLeft,
+    faArrowRight,
+    faBan,
+    faBars,
+    faBox,
+    faBoxOpen,
+    faCashRegister,
+    faCheckCircle,
+    faChevronDown,
+    faChevronRight,
+    faCircle,
+    faCircleCheck,
+    faCircleExclamation,
+    faClock,
+    faChartPie,
+    faCog,
+    faCubes,
+    faEdit,
+    faExclamationCircle,
+    faExclamationTriangle,
+    faFileInvoiceDollar,
+    faEye,
+    faEyeSlash,
+    faFlask,
+    faHeadset,
+    faIdBadge,
+    faInfoCircle,
+    faLock,
+    faMinusSquare,
+    faPen,
+    faPlus,
+    faRightFromBracket,
+    faRotateRight,
+    faSave,
+    faSearch,
+    faShieldHalved,
+    faSpinner,
+    faStar,
+    faSyncAlt,
+    faTags,
+    faTimes,
+    faTrash,
+    faTruckLoading,
+    faUtensils,
+    faUsersCog,
+} from "@fortawesome/free-solid-svg-icons";
 
-library.add(fas);
+library.add(
+    faArrowLeft,
+    faArrowRight,
+    faBan,
+    faBars,
+    faBox,
+    faBoxOpen,
+    faCashRegister,
+    faCheckCircle,
+    faChevronDown,
+    faChevronRight,
+    faCircle,
+    faCircleCheck,
+    faCircleExclamation,
+    faClock,
+    faChartPie,
+    faCog,
+    faCubes,
+    faEdit,
+    faExclamationCircle,
+    faExclamationTriangle,
+    faFileInvoiceDollar,
+    faEye,
+    faEyeSlash,
+    faFlask,
+    faHeadset,
+    faIdBadge,
+    faInfoCircle,
+    faLock,
+    faMinusSquare,
+    faPen,
+    faPlus,
+    faRightFromBracket,
+    faRotateRight,
+    faSave,
+    faSearch,
+    faShieldHalved,
+    faSpinner,
+    faStar,
+    faSyncAlt,
+    faTags,
+    faTimes,
+    faTrash,
+    faTruckLoading,
+    faUtensils,
+    faUsersCog,
+);
 
 dom.watch();
 const themedSwal = Swal.mixin({
@@ -36,6 +128,77 @@ themedSwal.fire = (options = {}) =>
     });
 
 window.Swal = themedSwal;
+
+const sidebar = document.getElementById("admin-sidebar");
+const sidebarToggle = document.getElementById("sidebar-toggle");
+const sidebarBackdrop = document.getElementById("sidebar-backdrop");
+const desktopSidebarQuery = window.matchMedia("(min-width: 64rem)");
+
+function setSidebarOpen(isOpen, restoreFocus = false) {
+    if (!sidebar || !sidebarToggle) return;
+
+    const wasOpen = sidebarToggle.getAttribute("aria-expanded") === "true";
+    const isMobile = !desktopSidebarQuery.matches;
+    const shouldOpen = isOpen && isMobile;
+
+    sidebar.classList.toggle("-translate-x-full", !shouldOpen);
+    if (isMobile) {
+        sidebar.setAttribute("aria-hidden", String(!shouldOpen));
+    } else {
+        sidebar.removeAttribute("aria-hidden");
+    }
+    sidebar.inert = !shouldOpen && isMobile;
+    sidebarBackdrop?.classList.toggle("hidden", !shouldOpen);
+    sidebarBackdrop?.setAttribute("aria-hidden", String(!shouldOpen));
+    sidebarToggle.setAttribute("aria-expanded", String(shouldOpen));
+    sidebarToggle.setAttribute(
+        "aria-label",
+        shouldOpen ? "Tutup menu navigasi" : "Buka menu navigasi",
+    );
+
+    if (!shouldOpen && wasOpen && restoreFocus) {
+        sidebarToggle.focus();
+    }
+}
+
+setSidebarOpen(false);
+
+sidebarToggle?.addEventListener("click", () => {
+    setSidebarOpen(sidebarToggle.getAttribute("aria-expanded") !== "true");
+});
+
+sidebarBackdrop?.addEventListener("click", () => setSidebarOpen(false, true));
+
+document.addEventListener("pointerdown", (event) => {
+    const isOpen = sidebarToggle?.getAttribute("aria-expanded") === "true";
+    const target = event.target;
+
+    if (
+        isOpen &&
+        target instanceof Node &&
+        !sidebar?.contains(target) &&
+        !sidebarToggle?.contains(target)
+    ) {
+        setSidebarOpen(false);
+    }
+});
+
+sidebar?.addEventListener("click", (event) => {
+    if (event.target.closest("a") && !desktopSidebarQuery.matches) {
+        setSidebarOpen(false);
+    }
+});
+
+document.addEventListener("keydown", (event) => {
+    if (
+        event.key === "Escape" &&
+        sidebarToggle?.getAttribute("aria-expanded") === "true"
+    ) {
+        setSidebarOpen(false, true);
+    }
+});
+
+desktopSidebarQuery.addEventListener("change", () => setSidebarOpen(false));
 
 document.querySelectorAll("[data-ckb-avatar]").forEach((avatar) => {
     const imageUrl = new URL("https://ui-avatars.com/api/");

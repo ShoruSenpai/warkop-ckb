@@ -40,20 +40,20 @@
                     Warkop Cak Kebo
                 </h1>
 
-                <p class="hidden sm:block text-[9px] text-ckb-on-surface-variant leading-none">POS & Inventori</p>
+                <p class="hidden text-[13px] leading-none text-ckb-on-surface-variant sm:block">POS & Inventori</p>
             </div>
         </div>
 
         <div
-            class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-ckb-surface-container-low text-[9px] sm:text-[10px] font-semibold text-ckb-on-surface-variant"
+            class="flex items-center gap-1.5 rounded-full bg-ckb-surface-container-low px-2.5 py-1.5 text-[13px] font-semibold text-ckb-on-surface-variant"
         >
             <i
                 class="fa-solid fa-circle text-[5px] text-ckb-success"
             ></i>
 
-            <span class="hidden sm:inline"> Online - Cloud Sync Active </span>
+            <span class="hidden sm:inline">Portal Admin</span>
 
-            <span class="sm:hidden"> Online </span>
+            <span class="sm:hidden">Admin</span>
         </div>
     </header>
 
@@ -63,7 +63,7 @@
     >
         {{-- ================= LOGIN CARD ================= --}}
         <div
-            class="relative w-full max-w-[500px] max-h-full bg-ckb-surface rounded-2xl sm:rounded-3xl border border-ckb-outline-variant/50 shadow-floating overflow-hidden"
+            class="relative max-h-full w-full max-w-[500px] overflow-y-auto rounded-2xl border border-ckb-outline-variant/50 bg-ckb-surface shadow-floating sm:rounded-3xl"
         >
             {{-- Accent --}}
             <div
@@ -72,20 +72,20 @@
 
             <div class="px-5 py-5 sm:px-7 sm:py-6 lg:px-8 lg:py-7">
                 {{-- Status --}}
-                <div class="flex items-center justify-between mb-4 sm:mb-5">
+                <div class="mb-4 flex items-center justify-between sm:mb-5">
                     <div
-                        class="flex items-center gap-1.5 rounded-full bg-ckb-surface-container-low px-2.5 py-1.5 text-[9px] sm:text-[10px] font-semibold text-ckb-on-surface-variant"
+                        class="flex items-center gap-1.5 rounded-full bg-ckb-surface-container-low px-2.5 py-1.5 text-[13px] font-semibold text-ckb-on-surface-variant"
                     >
                         <i
                             class="fa-solid fa-circle text-[5px] text-ckb-success"
                         ></i>
-                        Status: Online
+                        Portal Admin
                     </div>
 
                     <span
-                        class="px-2 py-1 rounded-md bg-ckb-surface-container text-[9px] font-bold text-ckb-on-surface-variant"
+                        class="rounded-md bg-ckb-surface-container px-2 py-1 text-[13px] font-bold text-ckb-on-surface-variant"
                     >
-                        POS • v2.4
+                        Warkop Cak Kebo
                     </span>
                 </div>
 
@@ -118,7 +118,7 @@
                 {{-- Error --}}
                 @if ($errors->any())
                     <div
-                        class="mb-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-ckb-error-container/60 border border-ckb-error/20 text-ckb-on-error-container text-[10px]"
+                        class="mb-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-ckb-error-container/60 border border-ckb-error/20 text-ckb-on-error-container text-[13px]"
                     >
                         <i class="fa-solid fa-circle-exclamation"></i>
                         <span>{{ $errors->first() }}</span>
@@ -128,7 +128,7 @@
                 {{-- Success --}}
                 @if (session("success"))
                     <div
-                        class="mb-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-ckb-success-container border border-ckb-success/20 text-ckb-on-success-container text-[10px]"
+                        class="mb-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-ckb-success-container border border-ckb-success/20 text-ckb-on-success-container text-[13px]"
                     >
                         <i class="fa-solid fa-circle-check"></i>
                         <span>{{
@@ -158,7 +158,7 @@
                             </label>
 
                             <span
-                                class="hidden sm:block text-[9px] text-ckb-on-surface-variant"
+                                class="hidden text-[13px] text-ckb-on-surface-variant sm:block"
                             >
                                 Akun Resmi
                             </span>
@@ -194,7 +194,7 @@
 
                             <a
                                 href="#"
-                                class="text-[10px] sm:text-xs font-semibold text-ckb-accent hover:text-ckb-primary transition"
+                                class="text-[13px] font-semibold text-ckb-accent hover:text-ckb-primary transition"
                             >
                                 Lupa kata sandi?
                             </a>
@@ -220,6 +220,8 @@
                                 onclick="togglePasswordVisibility()"
                                 class="absolute right-3.5 top-1/2 -translate-y-1/2 text-ckb-on-surface-variant hover:text-ckb-on-surface transition"
                                 aria-label="Tampilkan Password"
+                                aria-controls="password"
+                                aria-pressed="false"
                             >
                                 <i
                                     id="eye-open"
@@ -249,7 +251,7 @@
                 <div class="mt-4 text-center">
                     <a
                         href="#"
-                        class="inline-flex items-center gap-1.5 text-[10px] sm:text-xs font-medium text-ckb-on-surface-variant hover:text-ckb-on-surface transition"
+                        class="inline-flex items-center gap-1.5 text-[13px] font-medium text-ckb-on-surface-variant hover:text-ckb-on-surface transition"
                     >
                         <i class="fa-solid fa-headset"></i>
                         Butuh Bantuan Dukungan Teknis?
@@ -258,11 +260,11 @@
 
                 {{-- Security --}}
                 <div
-                    class="mt-2.5 flex items-center justify-center gap-1.5 text-[8px] sm:text-[10px] font-semibold text-ckb-on-surface-variant"
+                    class="mt-2.5 flex items-center justify-center gap-1.5 text-[13px] font-semibold text-ckb-on-surface-variant"
                 >
                     <i class="fa-solid fa-shield-halved text-ckb-accent"></i>
 
-                    Enkripsi End-to-End 256-Bit • Sesi Terproteksi
+                    Gunakan akun resmi untuk masuk.
                 </div>
             </div>
         </div>
@@ -273,15 +275,13 @@
         class="h-10 shrink-0 bg-ckb-surface border-t border-ckb-outline-variant/50 px-4 sm:px-6 lg:px-8 flex items-center justify-between"
     >
         <div
-            class="flex items-center gap-1.5 text-[8px] sm:text-[9px] font-medium text-ckb-on-surface-variant"
+            class="flex items-center gap-1.5 text-[13px] font-medium text-ckb-on-surface-variant"
         >
-            <i class="fa-solid fa-lock text-ckb-accent"></i>
-
-            <span> SSL/TLS 256-bit Terverifikasi </span>
+            <span>Akses khusus akun terdaftar</span>
         </div>
 
         <div
-            class="text-[8px] sm:text-[9px] font-semibold text-ckb-on-surface-variant text-right"
+            class="text-[13px] font-semibold text-ckb-on-surface-variant text-right"
         >
             Warkop Cak Kebo POS • Terminal Admin
         </div>
@@ -294,8 +294,14 @@
             const eyeClosed = document.getElementById("eye-closed");
 
             const showPassword = password.type === "password";
+            const toggle = document.querySelector('[aria-controls="password"]');
 
             password.type = showPassword ? "text" : "password";
+            toggle.setAttribute("aria-pressed", String(showPassword));
+            toggle.setAttribute(
+                "aria-label",
+                showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi",
+            );
 
             eyeOpen.classList.toggle("hidden", showPassword);
             eyeClosed.classList.toggle("hidden", !showPassword);

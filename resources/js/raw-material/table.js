@@ -130,7 +130,8 @@ export function renderTable(items) {
                                 type="button"
                                 data-action="edit"
                                 data-id="${Number(item.id)}"
-                                class="px-2.5 py-1.5 rounded-lg bg-ckb-surface-container-low text-ckb-on-surface hover:bg-ckb-surface-container text-xs font-semibold"
+                                aria-label="Edit bahan baku ${escapeHtml(item.name)}"
+                                class="flex min-h-11 min-w-11 items-center justify-center rounded-lg bg-ckb-surface-container-low text-ckb-on-surface hover:bg-ckb-surface-container text-xs font-semibold"
                                 title="Edit"
                             >
                                 <i class="fas fa-edit"></i>
@@ -140,7 +141,8 @@ export function renderTable(items) {
                                 type="button"
                                 data-action="delete"
                                 data-id="${Number(item.id)}"
-                                class="px-2.5 py-1.5 rounded-lg bg-ckb-error-container text-ckb-on-error-container hover:bg-ckb-error/15 text-xs font-semibold"
+                                aria-label="Hapus bahan baku ${escapeHtml(item.name)}"
+                                class="flex min-h-11 min-w-11 items-center justify-center rounded-lg bg-ckb-error-container text-ckb-on-error-container hover:bg-ckb-error/15 text-xs font-semibold"
                                 title="Hapus"
                             >
                                 <i class="fas fa-trash"></i>

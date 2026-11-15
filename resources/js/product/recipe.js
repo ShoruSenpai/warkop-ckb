@@ -122,7 +122,7 @@ export function renderRecipeRows() {
                                 for="recipe-material-${index}"
                                     class="
                                         mb-1 block
-                                        text-[11px]
+                                        text-xs
                                         font-semibold
                                         text-ckb-primary
                                     "
@@ -134,11 +134,11 @@ export function renderRecipeRows() {
                                     id="recipe-material-${index}"
                                     class="
                                         recipe-material
-                                        w-full rounded-lg
+                                        min-h-11 w-full rounded-lg
                                         border border-ckb-outline-variant/50
                                         bg-ckb-surface-container-lowest
                                         px-3 py-2
-                                        text-sm
+                                        text-xs sm:text-sm
                                         text-ckb-on-surface
                                         outline-none
                                         focus:border-ckb-accent
@@ -182,7 +182,7 @@ export function renderRecipeRows() {
                                     for="recipe-amount-${index}"
                                     class="
                                         mb-1 block
-                                        text-[11px]
+                                        text-xs
                                         font-semibold
                                         text-ckb-primary
                                     "
@@ -201,12 +201,12 @@ export function renderRecipeRows() {
                                         value="${row.amount_needed ?? ""}"
                                         class="
                                             recipe-amount
-                                            w-full rounded-lg
+                                            min-h-11 w-full rounded-lg
                                             border border-ckb-outline-variant/50
                                             bg-ckb-surface-container-lowest
                                             px-3 py-2
                                             pr-16
-                                            text-sm
+                                            text-xs sm:text-sm
                                             text-ckb-on-surface
                                             outline-none
                                             focus:border-ckb-accent
@@ -238,11 +238,11 @@ export function renderRecipeRows() {
                                 data-index="${index}"
                                 title="Hapus bahan"
                                 class="
-                                    flex h-10 w-10
+                                    flex min-h-11 min-w-11 cursor-pointer
                                     items-center justify-center
                                     rounded-lg
                                     text-ckb-error
-                                    hover:bg-ckb-error-container
+                                    transition hover:bg-ckb-error-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent motion-reduce:transition-none
                                 "
                             >
                                 <i class="fas fa-trash"></i>

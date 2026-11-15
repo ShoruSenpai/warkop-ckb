@@ -2,7 +2,7 @@
 
 @php
     $breadcrumbs = [
-        "dashboard" => ["Dashboard"],
+        "dashboard.index" => ["Dashboard"],
 
         "products.index" => ["Product Management"],
 
@@ -36,7 +36,18 @@
     class="flex h-14 shrink-0 items-center justify-between border-b border-ckb-outline-variant/40 bg-ckb-surface-container-lowest px-4 sm:px-5"
 >
     {{-- Current Route --}}
-    <div class="flex min-w-0 items-center">
+    <div class="flex min-w-0 items-center gap-3">
+        <button
+            type="button"
+            id="sidebar-toggle"
+            aria-label="Buka menu navigasi"
+            aria-controls="admin-sidebar"
+            aria-expanded="false"
+            class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-ckb-surface-container-low text-ckb-primary transition hover:bg-ckb-surface-container lg:hidden"
+        >
+            <i class="fas fa-bars" aria-hidden="true"></i>
+        </button>
+
         @foreach ($currentBreadcrumbs as $index => $breadcrumb)
             @if ($index > 0)
                 <i
@@ -60,17 +71,21 @@
         @endforeach
     </div>
 
-    <div class="flex shrink-0 items-center gap-2">
+    <div class="flex shrink-0 items-center">
         <button
             type="button"
             aria-label="Notifikasi"
             class="relative flex size-9 items-center justify-center rounded-xl bg-ckb-surface-container-low text-sm text-ckb-primary transition hover:bg-ckb-surface-container"
         >
             <i class="fas fa-bell"></i>
-            <span class="absolute right-2 top-2 size-1.5 rounded-full bg-ckb-error"></span>
+            <span
+                class="absolute right-2 top-2 size-1.5 rounded-full bg-ckb-error"
+            ></span>
         </button>
 
-        <div class="inline-flex h-9 items-center gap-2 rounded-xl bg-ckb-secondary-container px-3 text-xs font-semibold text-ckb-on-secondary-container">
+        <div
+            class="inline-flex h-9 items-center gap-2 rounded-xl bg-ckb-secondary-container px-3 text-xs font-semibold text-ckb-on-secondary-container"
+        >
             <span class="size-1.5 rounded-full bg-ckb-primary"></span>
             <span class="hidden sm:inline">Toko Buka</span>
             <span class="sm:hidden">Buka</span>

@@ -1,28 +1,42 @@
 <div
     id="category-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-labelledby="category-modal-title"
     class="hidden fixed inset-0 z-50 flex items-center justify-center px-4"
 >
     {{-- Modal backdrop --}}
     <div
         class="absolute inset-0 bg-ckb-inverse-surface/40"
         data-action="close-category-modal"
+        data-modal-close
     ></div>
 
     {{-- Modal content --}}
-    <div class="relative w-full max-w-md rounded-2xl bg-ckb-surface shadow-floating">
+    <div
+        class="relative w-full max-w-md rounded-2xl bg-ckb-surface shadow-floating"
+    >
         {{-- Header --}}
         <div
             class="flex items-center justify-between px-6 py-4 border-b border-ckb-outline-variant/50"
         >
             <div>
-                <h2 class="text-lg font-bold text-ckb-on-surface">Tambah Kategori</h2>
+                <h2
+                    id="category-modal-title"
+                    class="text-lg font-bold text-ckb-on-surface"
+                >
+                    Tambah Kategori
+                </h2>
                 <p class="text-xs text-ckb-on-surface-variant mt-1">Tambahkan kategori baru untuk produk.</p>
             </div>
 
             <button
                 type="button"
                 data-action="close-category-modal"
-                class="w-8 h-8 flex items-center justify-center rounded-lg text-ckb-on-surface-variant hover:text-ckb-on-surface hover:bg-ckb-surface-container transition-colors"
+                data-modal-close
+                aria-label="Tutup dialog kategori"
+                class="flex size-11 items-center justify-center rounded-lg text-ckb-on-surface-variant hover:text-ckb-on-surface hover:bg-ckb-surface-container transition-colors"
             >
                 <i class="fas fa-times"></i>
             </button>
@@ -33,7 +47,7 @@
             <div class="px-6 py-5">
                 <label
                     for="category-name"
-                    class="block text-sm font-semibold text-ckb-on-surface mb-2"
+                    class="mb-1 block text-xs font-semibold text-ckb-primary"
                 >
                     Nama Kategori
                 </label>
@@ -46,7 +60,7 @@
                     autocomplete="off"
                     required
                     placeholder="Contoh: Makanan"
-                    class="w-full rounded-xl border border-ckb-outline-variant px-4 py-2.5 text-sm outline-none transition focus:border-ckb-accent focus:ring-2 focus:ring-ckb-accent/20"
+                    class="min-h-11 w-full rounded-lg border border-ckb-outline-variant bg-ckb-surface px-3 py-2 text-xs text-ckb-on-surface outline-none transition focus:border-ckb-accent focus:ring-1 focus:ring-ckb-accent sm:text-sm motion-reduce:transition-none"
                 />
 
                 <p
@@ -62,7 +76,8 @@
                 <button
                     type="button"
                     data-action="close-category-modal"
-                    class="px-4 py-2 rounded-lg border border-ckb-outline-variant text-sm font-medium text-ckb-on-surface hover:bg-ckb-surface-container-low transition-colors"
+                    data-modal-close
+                    class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-lg border border-ckb-outline-variant bg-ckb-surface px-4 py-2 text-xs font-semibold text-ckb-on-surface transition-colors hover:bg-ckb-surface-container-low focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent sm:text-sm motion-reduce:transition-none"
                 >
                     Batal
                 </button>
@@ -70,7 +85,7 @@
                 <button
                     type="submit"
                     id="btn-save-category"
-                    class="px-4 py-2 rounded-lg bg-ckb-primary text-ckb-on-primary text-sm font-medium hover:bg-ckb-accent hover:text-ckb-on-accent transition-colors"
+                    class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-lg bg-ckb-primary px-4 py-2 text-xs font-semibold text-ckb-on-primary transition-colors hover:bg-ckb-accent hover:text-ckb-on-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent sm:text-sm motion-reduce:transition-none"
                 >
                     <i class="fas fa-save mr-2"></i>
                     Simpan

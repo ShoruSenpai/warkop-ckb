@@ -8,8 +8,8 @@ return [
             "items" => [
                 [
                     "label" => "Dashboard",
-                    "route" => "dashboard",
-                    "active" => ["dashboard"],
+                    "route" => "dashboard.index",
+                    "active" => ["dashboard.index"],
                     "icon" => "fas fa-chart-pie",
                     "roles" => ["owner", "admin"],
                 ],
@@ -73,12 +73,12 @@ return [
                     "icon" => "fas fa-file-invoice-dollar",
                 ],
 
-                [
-                    "label" => "Laporan Stok",
-                    "route" => "reports.stock",
-                    "active" => ["reports.stock*"],
-                    "icon" => "fas fa-file-invoice-dollar",
-                ],
+                //                [
+                //                    "label" => "Laporan Stok",
+                //                    "route" => "reports.stock",
+                //                    "active" => ["reports.stock*"],
+                //                    "icon" => "fas fa-file-invoice-dollar",
+                //                ],
             ],
         ],
 
@@ -89,7 +89,7 @@ return [
                 [
                     "label" => "User & Karyawan",
                     "route" => "users.index",
-                    "active" => ["users.*"],
+                    "active" => ["users"],
                     "icon" => "fas fa-users-cog",
                     "roles" => ["owner"],
                 ],

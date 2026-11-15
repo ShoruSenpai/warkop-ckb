@@ -195,3 +195,13 @@
     color: var(--color-ckb-on-surface) !important;
     border: 1px solid var(--color-ckb-outline-variant) !important;
 }
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+.outline-none:focus-visible {
+    outline: 2px solid var(--color-ckb-accent);
+    outline-offset: 2px;
+}

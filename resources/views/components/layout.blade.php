@@ -16,6 +16,14 @@
     @vite (["resources/css/app.css", "resources/js/app.js"])
 </head>
 <body class="bg-ckb-background flex h-dvh overflow-hidden font-sans">
+    <button
+        type="button"
+        id="sidebar-backdrop"
+        aria-label="Tutup menu navigasi"
+        tabindex="-1"
+        class="fixed inset-0 z-30 hidden bg-ckb-inverse-surface/50 lg:hidden"
+    ></button>
+
     <x-sidebar />
 
     <div

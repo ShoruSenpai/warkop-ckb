@@ -6,6 +6,8 @@ import { apiFetch } from "@/utils/api.js";
 import { fetchRawMaterials } from "./table.js";
 import { ckbColor } from "@/utils/theme.js";
 
+let packagingRowIndex = 0;
+
 export function openAddMaterialModal() {
     state.editingMaterial = null;
     state.packagingData = [];
@@ -41,6 +43,16 @@ export function addMaterialPackagingRow(data = null) {
     const clone = template.content.cloneNode(true);
 
     const row = clone.querySelector(".material-packaging-row");
+    const rowId = ++packagingRowIndex;
+
+    row.querySelector(".material-packaging-unit-label").htmlFor =
+        `material-packaging-unit-${rowId}`;
+    row.querySelector(".material-packaging-unit").id =
+        `material-packaging-unit-${rowId}`;
+    row.querySelector(".material-packaging-conversion-label").htmlFor =
+        `material-packaging-conversion-${rowId}`;
+    row.querySelector(".material-packaging-conversion").id =
+        `material-packaging-conversion-${rowId}`;
 
     row.dataset.packagingId = data?.id ?? "";
 

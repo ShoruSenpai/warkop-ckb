@@ -19,7 +19,7 @@ Route::middleware("guest")->group(function () {
 
 Route::get("/", function () {
     return Auth::check()
-        ? redirect()->route("dashboard")
+        ? redirect()->route("dashboard.index")
         : redirect()->route("login");
 })->name("home");
 
@@ -60,21 +60,15 @@ Route::middleware(["auth", "role:owner,admin"])->group(function () {
     );
 
     // Reports.
-    Route::get("/reports/transactions", fn() => view("reports.transactions.index"),
-    )->name("reports.transactions");
-    Route::get("/reports/sales", fn() => view("reports.sales.index"))->name(
-        "reports.sales",
-    );
-    Route::get(
-        "/reports/purchases",
-        fn() => view("reports.purchases.index"),
-    )->name("reports.purchases.index");
-    Route::get("/reports/stock", fn() => view("reports.stock.index"))->name(
-        "reports.stock",
-    );
+    Route::get("/reports/transactions", fn() => view("reports.transactions.index"),)->name("reports.transactions");
+    Route::get("/reports/sales", fn() => view("reports.sales.index"))->name("reports.sales",);
+    Route::get("/reports/purchases", fn() => view("reports.purchases.index"),)->name("reports.purchases.index");
+    Route::get("/reports/purchases/invoices", fn() => view("reports.purchases.invoices"),)->name("reports.purchases.invoices");
+    Route::get("/reports/purchases/invoices/{purchase}", fn($purchase) => view("reports.purchases.show", ["purchaseId" => $purchase]))->whereNumber("purchase")->name("reports.purchases.show");
 
-    Route::get("/settings", fn() => view("users.index"))->name("users.index");
-    Route::get("/settings", fn() => view("notification.index"))->name(
+
+    Route::get("/users", fn() => view("users.index"))->name("users.index");
+    Route::get("/notification", fn() => view("notification.index"))->name(
         "notification.index",
     );
     Route::get("/settings", fn() => view("settings.index"))->name("settings");

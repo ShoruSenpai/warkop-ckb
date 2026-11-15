@@ -18,7 +18,9 @@
 @endphp
 
 <aside
-    class="sticky top-0 flex h-dvh w-56 shrink-0 flex-col overflow-hidden bg-ckb-inverse-surface text-ckb-inverse-on-surface xl:w-60 2xl:w-64"
+    id="admin-sidebar"
+    aria-label="Navigasi utama"
+    class="fixed inset-y-0 left-0 z-40 flex h-dvh w-56 shrink-0 -translate-x-full flex-col overflow-hidden bg-ckb-inverse-surface text-ckb-inverse-on-surface transition-transform duration-200 lg:sticky lg:top-0 lg:translate-x-0"
 >
     {{-- BRAND --}}
     <div class="flex h-16 shrink-0 items-center gap-2.5 px-4">
@@ -112,7 +114,7 @@
                                         aria-current="page"
                                     @endif
                                     class="
-                                        group flex min-h-9 items-center
+                                        group flex min-h-11 items-center
                                         gap-2.5 rounded-lg px-3 py-2
                                         text-[13px] transition-all duration-200
 
@@ -173,7 +175,7 @@
                                 >
                                     <summary
                                         class="
-                                            flex min-h-9 cursor-pointer
+                                            flex min-h-11 cursor-pointer
                                             list-none items-center gap-2.5
                                             rounded-lg px-3 py-2
                                             text-[13px] transition-colors
@@ -215,7 +217,7 @@
                                                         aria-current="page"
                                                     @endif
                                                     class="
-                                                        flex min-h-8 items-center
+                                                        flex min-h-11 items-center
                                                         rounded-lg py-1.5 pl-9 pr-2.5
                                                         text-xs transition-colors
 

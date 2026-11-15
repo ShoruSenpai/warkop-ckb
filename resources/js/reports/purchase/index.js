@@ -1,224 +1,175 @@
 import { apiFetch } from "@/utils/api.js";
 
-let purchaseReports = [];
+const root = document.querySelector("[data-purchase-invoices]");
 
-document.addEventListener("DOMContentLoaded", () => {
-    fetchPurchaseReports();
-});
+if (root) {
+    const list = root.querySelector("[data-invoice-list]");
+    const periodControl = root.querySelector("[data-invoice-period]");
+    const pagination = root.querySelector("[data-invoice-pagination]");
+    const paginationStatus = root.querySelector("[data-pagination-status]");
+    const previousButton = root.querySelector("[data-previous-page]");
+    const nextButton = root.querySelector("[data-next-page]");
+    const template = document.getElementById("invoice-row-template");
+    const detailUrlTemplate = root.dataset.detailUrlTemplate;
+    const cursors = [null];
+    let cursorIndex = 0;
+    let nextCursor = null;
+    let previousCursor = null;
 
-async function fetchPurchaseReports() {
-    try {
-        const { response, data } = await apiFetch("/api/reports/purchases");
+    periodControl?.addEventListener("change", () => {
+        cursors.splice(1);
+        cursorIndex = 0;
+        nextCursor = null;
+        previousCursor = null;
+        loadInvoices();
+    });
 
-        if (!response.ok) {
-            renderPurchaseReportsError(
-                data?.message || "Laporan pembelian tidak dapat dimuat.",
+    previousButton?.addEventListener("click", () => {
+        if (!previousCursor || cursorIndex === 0) return;
+        cursorIndex -= 1;
+        loadInvoices();
+    });
+
+    nextButton?.addEventListener("click", () => {
+        if (!nextCursor) return;
+        cursors[cursorIndex + 1] = nextCursor;
+        cursorIndex += 1;
+        loadInvoices();
+    });
+
+    loadInvoices();
+
+    async function loadInvoices() {
+        renderMessage("Memuat invoice pembelian...");
+        list?.setAttribute("aria-busy", "true");
+
+        try {
+            const query = new URLSearchParams({
+                period: periodControl?.value || "month",
+                per_page: "20",
+            });
+            const cursor = cursors[cursorIndex];
+            if (cursor) query.set("cursor", cursor);
+
+            const { response, data } = await apiFetch(
+                `/api/reports/purchases?${query}`,
             );
 
+            if (!response.ok || !data?.success) {
+                throw new Error(
+                    data?.message || "Invoice pembelian tidak dapat dimuat.",
+                );
+            }
+
+            renderInvoices(Array.isArray(data.data) ? data.data : []);
+            nextCursor = data.meta?.next_cursor || null;
+            previousCursor = data.meta?.previous_cursor || null;
+            renderPagination(data.meta ?? {}, data.data?.length ?? 0);
+        } catch (error) {
+            if (error.message === "UNAUTHORIZED") return;
+
+            renderMessage(
+                error.message || "Invoice pembelian tidak dapat dimuat.",
+            );
+            root.querySelector("[data-invoice-summary]").textContent =
+                "Gagal memuat invoice.";
+            pagination.hidden = true;
+        } finally {
+            list?.setAttribute("aria-busy", "false");
+        }
+    }
+
+    function renderInvoices(invoices) {
+        if (!list) return;
+        list.replaceChildren();
+
+        if (!invoices.length) {
+            renderMessage("Belum ada invoice pada periode ini.");
+            root.querySelector("[data-invoice-summary]").textContent =
+                "Belum ada pembelian pada periode terpilih.";
             return;
         }
 
-        purchaseReports = Array.isArray(data.data) ? data.data : [];
+        invoices.forEach((invoice) => {
+            const row = template.content.firstElementChild.cloneNode(true);
+            setField(row, "invoice_number", invoice.invoice_number || "-");
+            setField(
+                row,
+                "supplier_name",
+                invoice.supplier_name || "Nama supplier tidak tersedia",
+            );
+            setField(row, "purchase_date", formatDate(invoice.purchase_date));
+            setField(
+                row,
+                "items_count",
+                `${formatNumber(invoice.items_count)} item`,
+            );
+            setField(row, "total_cost", formatRupiah(invoice.total_cost));
 
-        renderPurchaseReports(purchaseReports);
-    } catch (error) {
-        if (error.message === "UNAUTHORIZED") {
-            return;
+            const link = row.querySelector("[data-invoice-link]");
+            if (link && detailUrlTemplate) {
+                link.href = detailUrlTemplate.replace(
+                    "__PURCHASE__",
+                    encodeURIComponent(invoice.id),
+                );
+            }
+
+            list.append(row);
+        });
+
+        root.querySelector("[data-invoice-summary]").textContent =
+            `${formatNumber(invoices.length)} invoice ditampilkan pada periode terpilih.`;
+    }
+
+    function renderPagination(meta, count) {
+        if (!pagination) return;
+        pagination.hidden = !nextCursor && cursorIndex === 0;
+        if (paginationStatus) {
+            paginationStatus.textContent = `${count} invoice pada halaman ini`;
         }
-
-        console.error("Gagal mengambil laporan pembelian:", error);
-
-        renderPurchaseReportsError("Laporan pembelian tidak dapat dimuat.");
-    }
-}
-
-function renderPurchaseReports(data) {
-    const tbody = document.getElementById("purchase-report-list");
-
-    const summary = document.getElementById("summary-text");
-
-    if (!tbody) return;
-
-    if (summary) {
-        summary.innerText = `${data.length} transaksi pembelian`;
+        if (previousButton)
+            previousButton.disabled = cursorIndex === 0 || !previousCursor;
+        if (nextButton) nextButton.disabled = !meta.has_more || !nextCursor;
     }
 
-    if (!data.length) {
-        tbody.innerHTML = `
-            <tr>
-                <td
-                    colspan="4"
-                    class="
-                        px-4 py-10
-                        text-center
-                        text-sm
-                        text-ckb-outline
-                    "
-                >
-                    Belum ada riwayat pembelian.
-                </td>
-            </tr>
-        `;
-
-        return;
+    function renderMessage(message) {
+        if (!list) return;
+        const cell = document.createElement("td");
+        cell.colSpan = 6;
+        cell.className =
+            "px-3 py-6 text-center text-xs text-ckb-on-surface-variant";
+        cell.textContent = message;
+        const row = document.createElement("tr");
+        row.append(cell);
+        list.replaceChildren(row);
     }
 
-    tbody.innerHTML = data
-        .map((purchase) => {
-            const status = getStatusConfig(purchase.status);
-
-            return `
-                <tr
-                    class="
-                        border-b
-                        border-ckb-outline-variant/20
-                        text-sm
-                        transition-colors
-                        hover:bg-ckb-surface-container-low
-                    "
-                >
-
-                    <td class="px-3 py-3">
-                        <span
-                            class="
-                                font-semibold
-                                text-ckb-on-surface
-                            "
-                        >
-                            ${escapeHtml(purchase.supplier_name ?? "-")}
-                        </span>
-                    </td>
-
-                    <td
-                        class="
-                            px-3 py-3
-                            text-ckb-on-surface-variant
-                        "
-                    >
-                        ${formatDate(purchase.purchase_date)}
-                    </td>
-
-                    <td class="px-3 py-3">
-                        <span
-                            class="
-                                rounded-md
-                                bg-ckb-surface-container
-                                px-2 py-1
-                                font-mono
-                                text-xs
-                                font-semibold
-                                text-ckb-primary
-                            "
-                        >
-                            ${escapeHtml(purchase.invoice_number ?? "-")}
-                        </span>
-                    </td>
-
-                    <td class="px-3 py-3">
-                        <span
-                            class="
-                                inline-flex
-                                items-center
-                                gap-1.5
-                                rounded-full
-                                px-2.5 py-1
-                                text-xs
-                                font-semibold
-                                ${status.classes}
-                            "
-                        >
-                            <i
-                                class="
-                                    fas
-                                    ${status.icon}
-                                "
-                            ></i>
-
-                            ${escapeHtml(status.label)}
-                        </span>
-                    </td>
-
-                </tr>
-            `;
-        })
-        .join("");
-}
-
-function getStatusConfig(status) {
-    const configs = {
-        received: {
-            label: "Diterima",
-            icon: "fa-check-circle",
-            classes:
-                "bg-ckb-success-container text-ckb-on-success-container",
-        },
-
-        pending: {
-            label: "Pending",
-            icon: "fa-clock",
-            classes:
-                "bg-ckb-warning-container text-ckb-on-warning-container",
-        },
-    };
-
-    return (
-        configs[status] || {
-            label: status || "Tidak diketahui",
-            icon: "fa-circle",
-            classes: "bg-ckb-surface-container text-ckb-on-surface-variant",
-        }
-    );
-}
-
-function formatDate(dateString) {
-    if (!dateString) return "-";
-
-    const date = new Date(`${dateString}T00:00:00`);
-
-    if (Number.isNaN(date.getTime())) {
-        return "-";
+    function setField(row, name, value) {
+        const field = row.querySelector(`[data-field="${name}"]`);
+        if (field) field.textContent = value;
     }
 
-    return date.toLocaleDateString("id-ID", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-    });
-}
-
-function renderPurchaseReportsError(message) {
-    const tbody = document.getElementById("purchase-report-list");
-
-    const summary = document.getElementById("summary-text");
-
-    if (summary) {
-        summary.innerText = "Gagal memuat data";
+    function formatRupiah(value) {
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0,
+        }).format(Number(value) || 0);
     }
 
-    if (!tbody) return;
+    function formatNumber(value) {
+        return new Intl.NumberFormat("id-ID").format(Number(value) || 0);
+    }
 
-    tbody.innerHTML = `
-        <tr>
-            <td
-                colspan="4"
-                class="
-                    px-4 py-10
-                    text-center
-                    text-sm
-                    text-ckb-error
-                "
-            >
-                ${escapeHtml(message)}
-            </td>
-        </tr>
-    `;
-}
-
-function escapeHtml(value) {
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+    function formatDate(value) {
+        if (!value) return "-";
+        const date = new Date(`${value}T00:00:00`);
+        return Number.isNaN(date.getTime())
+            ? "-"
+            : date.toLocaleDateString("id-ID", {
+                  day: "2-digit",
+                  month: "short",
+                  year: "numeric",
+              });
+    }
 }

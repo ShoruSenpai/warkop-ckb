@@ -13,15 +13,17 @@
     <form id="product-form" class="space-y-4">
         {{-- Informasi utama --}}
         <section
-            class="rounded-xl border border-ckb-outline-variant/40 bg-ckb-surface-container-lowest p-4"
+            class="rounded-xl border border-ckb-outline-variant/50 bg-ckb-surface p-4 shadow-surface"
         >
-            <div class="mb-5">
-                <h3 class="font-bold text-ckb-primary">Informasi Produk</h3>
+            <div class="mb-4">
+                <h3 class="text-sm font-bold text-ckb-primary">
+                    Informasi Produk
+                </h3>
 
                 <p class="mt-1 text-xs text-ckb-on-surface-variant">Informasi dasar yang akan ditampilkan pada sistem.</p>
             </div>
 
-            <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div class="md:col-span-2">
                     <label
                         for="product-name"
@@ -36,7 +38,7 @@
                         maxlength="50"
                         required
                         placeholder="Contoh: Kopi Susu Gula Aren"
-                        class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-accent focus:ring-2 focus:ring-ckb-accent/10"
+                        class="min-h-11 w-full rounded-lg border border-ckb-outline-variant bg-ckb-surface px-3 py-2 text-xs text-ckb-on-surface outline-none transition focus:border-ckb-accent focus:ring-1 focus:ring-ckb-accent sm:text-sm motion-reduce:transition-none"
                     />
                 </div>
 
@@ -51,7 +53,7 @@
                     <select
                         id="product-category"
                         required
-                        class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-accent"
+                        class="min-h-11 w-full rounded-lg border border-ckb-outline-variant bg-ckb-surface px-3 py-2 text-xs text-ckb-on-surface outline-none transition focus:border-ckb-accent focus:ring-1 focus:ring-ckb-accent sm:text-sm motion-reduce:transition-none"
                     >
                         <option value="">Memuat kategori...</option>
                     </select>
@@ -80,7 +82,7 @@
                             step="1"
                             required
                             placeholder="10.000"
-                            class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest py-2.5 pl-10 pr-3 text-sm text-ckb-on-surface outline-none focus:border-ckb-accent focus:ring-2 focus:ring-ckb-accent/10"
+                            class="min-h-11 w-full rounded-lg border border-ckb-outline-variant bg-ckb-surface py-2 pl-10 pr-3 text-xs text-ckb-on-surface outline-none transition focus:border-ckb-accent focus:ring-1 focus:ring-ckb-accent sm:text-sm motion-reduce:transition-none"
                         />
                     </div>
                 </div>
@@ -98,47 +100,47 @@
                         rows="3"
                         maxlength="500"
                         placeholder="Deskripsi produk..."
-                        class="w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface outline-none focus:border-ckb-accent focus:ring-2 focus:ring-ckb-accent/10"
+                        class="min-h-11 w-full rounded-lg border border-ckb-outline-variant bg-ckb-surface px-3 py-2 text-xs text-ckb-on-surface outline-none transition focus:border-ckb-accent focus:ring-1 focus:ring-ckb-accent sm:text-sm motion-reduce:transition-none"
                     ></textarea>
                 </div>
 
                 @if ($mode === "create")
-                <div>
                     <div>
-                        <label
-                            for="product-image"
-                            class="block text-sm font-semibold text-ckb-on-surface mb-2"
-                        >
-                            Gambar Produk
-                        </label>
+                        <div>
+                            <label
+                                for="product-image"
+                                class="mb-1 block text-xs font-semibold text-ckb-primary"
+                            >
+                                Gambar Produk
+                            </label>
 
-                        <input
-                            type="file"
-                            id="product-image"
-                            name="image"
-                            accept="image/jpeg,image/png,image/webp"
-                            class="block w-full rounded-lg border border-ckb-outline-variant/60 bg-ckb-surface-container-lowest px-3 py-2.5 text-sm text-ckb-on-surface"
-                        />
-
-                        <p class="mt-1 text-xs text-ckb-on-surface-variant">Format JPG, PNG, atau WebP.</p>
-
-                        <div id="product-image-preview" class="hidden mt-3">
-                            <img
-                                id="product-image-preview-img"
-                                src=""
-                                alt="Preview gambar produk"
-                                class="h-32 w-32 rounded-xl object-cover border border-ckb-outline-variant/40"
+                            <input
+                                type="file"
+                                id="product-image"
+                                name="image"
+                                accept="image/jpeg,image/png,image/webp"
+                                class="block min-h-11 w-full rounded-lg border border-ckb-outline-variant bg-ckb-surface px-3 py-2 text-xs text-ckb-on-surface sm:text-sm"
                             />
+
+                            <p class="mt-1 text-xs text-ckb-on-surface-variant">Format JPG, PNG, atau WebP.</p>
+
+                            <div id="product-image-preview" class="mt-3 hidden">
+                                <img
+                                    id="product-image-preview-img"
+                                    src=""
+                                    alt="Preview gambar produk"
+                                    class="h-32 w-32 rounded-xl border border-ckb-outline-variant/50 object-cover"
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
                 @else
                     <div class="hidden md:block" aria-hidden="true"></div>
                 @endif
 
                 <div class="flex items-end">
                     <label
-                        class="flex w-full cursor-pointer items-center gap-3 rounded-lg border border-ckb-outline-variant/40 bg-ckb-surface-container-low px-3 py-3"
+                        class="flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-lg border border-ckb-outline-variant/50 bg-ckb-surface-container-low px-3 py-2"
                     >
                         <input
                             type="checkbox"
@@ -148,7 +150,7 @@
 
                         <span>
                             <span
-                                class="block text-sm font-semibold text-ckb-primary"
+                                class="block text-xs font-semibold text-ckb-primary sm:text-sm"
                             >
                                 Produk rekomendasi
                             </span>
@@ -177,7 +179,7 @@
         <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
             <a
                 href="{{ route('products.index') }}"
-                class="rounded-lg border border-ckb-outline-variant bg-ckb-surface-container-lowest px-5 py-2.5 text-center text-sm font-semibold text-ckb-on-surface-variant hover:bg-ckb-surface-container"
+                class="inline-flex min-h-11 cursor-pointer items-center justify-center rounded-lg border border-ckb-outline-variant bg-ckb-surface px-4 py-2 text-xs font-semibold text-ckb-on-surface-variant transition hover:bg-ckb-surface-container-low focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent sm:text-sm motion-reduce:transition-none"
             >
                 Batal
             </a>
@@ -185,7 +187,7 @@
             <button
                 type="submit"
                 id="btn-save-product"
-                class="inline-flex items-center justify-center gap-2 rounded-lg bg-ckb-primary px-5 py-2.5 text-sm font-semibold text-ckb-on-primary hover:opacity-90"
+                class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg bg-ckb-primary px-4 py-2 text-xs font-semibold text-ckb-on-primary transition hover:bg-ckb-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent sm:text-sm motion-reduce:transition-none"
             >
                 <i class="fas fa-save"></i>
                 <span>Simpan Produk</span>
