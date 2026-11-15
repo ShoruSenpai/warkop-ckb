@@ -1,60 +1,63 @@
 <x-layout title="Laporan Pembelian">
-    <div class="space-y-4">
-        {{-- Header --}}
-        <div>
-            <h2 class="text-xl font-bold text-ckb-primary">
-                Laporan Pembelian
-            </h2>
-
-            <p
-                id="summary-text"
-                class="mt-1 text-sm text-ckb-on-surface-variant"
-            >Memuat data pembelian...</p>
-        </div>
-
-        {{-- Table --}}
-        <div
-            class="overflow-hidden rounded-xl border border-ckb-outline-variant/40 bg-ckb-surface-container-lowest"
+    <div class="mx-auto w-full max-w-[1440px] space-y-4" data-purchase-overview>
+        <header
+            class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
         >
-            <div class="overflow-x-auto">
-                <table class="w-full min-w-[700px]">
-                    <thead
-                        class="border-b border-ckb-outline-variant/40 bg-ckb-surface-container-low"
-                    >
-                        <tr
-                            class="text-left text-xs uppercase tracking-wider text-ckb-on-surface-variant"
-                        >
-                            <th class="px-3 py-2.5 text-xs font-semibold">
-                                Nama Supplier
-                            </th>
-
-                            <th class="px-3 py-2.5 text-xs font-semibold">
-                                Tanggal Pembelian
-                            </th>
-
-                            <th class="px-3 py-2.5 text-xs font-semibold">
-                                Invoice Number
-                            </th>
-
-                            <th class="px-3 py-2.5 text-xs font-semibold">Status</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="purchase-report-list">
-                        <tr>
-                            <td
-                                colspan="4"
-                                class="px-4 py-10 text-center text-sm text-ckb-outline"
-                            >
-                                <i class="fas fa-spinner fa-spin mr-2"></i>
-                                Memuat data pembelian...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div class="min-w-0">
+                <p class="text-[10px] font-bold uppercase tracking-[0.14em] text-ckb-on-surface-variant">Biaya operasional</p>
+                <h1
+                    class="text-xl font-bold leading-tight text-ckb-primary sm:text-2xl"
+                >
+                    Laporan Pembelian
+                </h1>
+                <p class="mt-1 text-xs text-ckb-on-surface-variant">Pantau pengeluaran dan invoice pembelian bahan baku.</p>
             </div>
+            <x-report.purchase.period-filter
+                name="overview"
+                label="Periode laporan"
+                :options="[
+                    'week' => '7 Hari Terakhir',
+                    'month' => 'Bulan Ini',
+                    'year' => 'Tahun Ini',
+                ]"
+                selected="month"
+            />
+        </header>
+
+        <section
+            class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3"
+            aria-label="Ringkasan pembelian"
+        >
+            <x-report.purchase.metric-card
+                label="Total pembelian"
+                value="Memuat..."
+                note="Pada periode terpilih"
+                icon="fa-file-invoice-dollar"
+                data-key="total_purchases"
+            />
+            <x-report.purchase.metric-card
+                label="Invoice diproses"
+                value="Memuat..."
+                note="Termasuk semua status"
+                icon="fa-truck-loading"
+                data-key="invoice_count"
+            />
+            <x-report.purchase.metric-card
+                label="Rata-rata pembelian"
+                value="Memuat..."
+                note="Per invoice pada periode ini"
+                icon="fa-chart-pie"
+                data-key="average_purchase"
+            />
+        </section>
+
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <x-report.purchase.spending-chart />
+            <x-report.purchase.top-suppliers />
         </div>
     </div>
 
-    @vite ("resources/js/reports/purchase/index.js")
+    <x-slot:script>
+        @vite ("resources/js/reports/purchase/overview.js")
+    </x-slot:script>
 </x-layout>

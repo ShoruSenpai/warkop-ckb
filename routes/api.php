@@ -36,35 +36,103 @@ Route::middleware(["auth:sanctum", ExtendTokenActivity::class])->group(
             // Categories: only owner may create; owner/admin may read.
             Route::get("/categories", [CategoryController::class, "index"]);
             Route::middleware("api-role:owner")->group(function () {
-                Route::post("/categories", [CategoryController::class, "store"]);
+                Route::post("/categories", [
+                    CategoryController::class,
+                    "store",
+                ]);
             });
 
             // Products and product purchase packaging.
             Route::get("/products", [ProductController::class, "index"]);
             Route::post("/products", [ProductController::class, "store"]);
-            Route::get("/products/{product}", [ProductController::class, "show"]);
-            Route::put("/products/{product}", [ProductController::class, "update"]);
-            Route::delete("/products/{product}", [ProductController::class, "destroy"]);
-            Route::get("/products/{product}/packagings", [ProductController::class, "packagingIndex"]);
-            Route::post("/products/{product}/packagings", [ProductController::class, "packagingStore"]);
-            Route::put("/products/{product}/packagings/{packaging}", [ProductController::class, "packagingUpdate"]);
-            Route::delete("/products/{product}/packagings/{packaging}", [ProductController::class, "packagingDestroy"]);
+            Route::get("/products/{product}", [
+                ProductController::class,
+                "show",
+            ]);
+            Route::put("/products/{product}", [
+                ProductController::class,
+                "update",
+            ]);
+            Route::delete("/products/{product}", [
+                ProductController::class,
+                "destroy",
+            ]);
+            Route::get("/products/{product}/packagings", [
+                ProductController::class,
+                "packagingIndex",
+            ]);
+            Route::post("/products/{product}/packagings", [
+                ProductController::class,
+                "packagingStore",
+            ]);
+            Route::put("/products/{product}/packagings/{packaging}", [
+                ProductController::class,
+                "packagingUpdate",
+            ]);
+            Route::delete("/products/{product}/packagings/{packaging}", [
+                ProductController::class,
+                "packagingDestroy",
+            ]);
 
             // Raw materials and their purchase packaging.
-            Route::get("/raw-materials", [RawMaterialController::class, "index"]);
-            Route::post("/raw-materials", [RawMaterialController::class, "store"]);
-            Route::put("/raw-materials/{rawMaterial}", [RawMaterialController::class, "update"]);
-            Route::delete("/raw-materials/{rawMaterial}", [RawMaterialController::class, "destroy"]);
-            Route::get("/raw-materials/{rawMaterial}/packagings", [RawMaterialController::class, "packagingIndex"]);
-            Route::post("/raw-materials/{rawMaterial}/packagings", [RawMaterialController::class, "packagingStore"]);
-            Route::put("/raw-materials/{rawMaterial}/packagings/{packaging}", [RawMaterialController::class, "packagingUpdate"]);
-            Route::delete("/raw-materials/{rawMaterial}/packagings/{packaging}", [RawMaterialController::class, "packagingDestroy"]);
+            Route::get("/raw-materials", [
+                RawMaterialController::class,
+                "index",
+            ]);
+            Route::post("/raw-materials", [
+                RawMaterialController::class,
+                "store",
+            ]);
+            Route::put("/raw-materials/{rawMaterial}", [
+                RawMaterialController::class,
+                "update",
+            ]);
+            Route::delete("/raw-materials/{rawMaterial}", [
+                RawMaterialController::class,
+                "destroy",
+            ]);
+            Route::get("/raw-materials/{rawMaterial}/packagings", [
+                RawMaterialController::class,
+                "packagingIndex",
+            ]);
+            Route::post("/raw-materials/{rawMaterial}/packagings", [
+                RawMaterialController::class,
+                "packagingStore",
+            ]);
+            Route::put("/raw-materials/{rawMaterial}/packagings/{packaging}", [
+                RawMaterialController::class,
+                "packagingUpdate",
+            ]);
+            Route::delete(
+                "/raw-materials/{rawMaterial}/packagings/{packaging}",
+                [RawMaterialController::class, "packagingDestroy"],
+            );
 
             // Supplier purchases and purchase reports.
-            Route::get("/inventory-items", [SupplierPurchaseController::class, "getInventoryItems"]);
-            Route::get("/supplier-suggestions", [SupplierPurchaseController::class, "getSupplierSuggestions"]);
-            Route::post("/supplier-purchases", [SupplierPurchaseController::class, "store"]);
-            Route::get("/reports/purchases", [PurchaseReportController::class, "index"]);
+            Route::get("/inventory-items", [
+                SupplierPurchaseController::class,
+                "getInventoryItems",
+            ]);
+            Route::get("/supplier-suggestions", [
+                SupplierPurchaseController::class,
+                "getSupplierSuggestions",
+            ]);
+            Route::post("/supplier-purchases", [
+                SupplierPurchaseController::class,
+                "store",
+            ]);
+            Route::get("/reports/purchases/summary", [
+                PurchaseReportController::class,
+                "summary",
+            ]);
+            Route::get("/reports/purchases", [
+                PurchaseReportController::class,
+                "index",
+            ]);
+            Route::get("/reports/purchases/{purchase}", [
+                PurchaseReportController::class,
+                "show",
+            ])->whereNumber("purchase");
         });
     },
 );

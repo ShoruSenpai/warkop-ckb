@@ -30,7 +30,7 @@ export async function fetchProducts() {
                 <tr>
                     <td
                         colspan="7"
-                        class="px-4 py-10 text-center text-sm text-ckb-error"
+                        class="px-3 py-8 text-center text-xs text-ckb-error"
                     >
                         Gagal memuat data produk.
                     </td>
@@ -118,7 +118,7 @@ export function renderProducts(products) {
             <tr>
                 <td
                     colspan="7"
-                    class="px-4 py-10 text-center text-sm text-ckb-outline"
+                    class="px-3 py-8 text-center text-xs text-ckb-on-surface-variant"
                 >
                     Belum ada produk.
                 </td>
@@ -160,11 +160,11 @@ export function renderProducts(products) {
                     <tr class="
                         border-b
                         border-ckb-outline-variant/20
-                        text-sm
+                        text-xs
                         last:border-0
                     ">
 
-                        <td class="px-3 py-3">
+                        <td class="px-3 py-2.5">
 
                             <div class="flex items-center gap-3">
 
@@ -212,7 +212,7 @@ export function renderProducts(products) {
                                                 <span class="
                                                     mt-1 inline-flex
                                                     items-center gap-1
-                                                    text-[11px] font-semibold
+                                                    text-xs font-semibold
                                                     text-ckb-accent
                                                 ">
                                                     <i class="fas fa-star"></i>
@@ -228,7 +228,7 @@ export function renderProducts(products) {
                         </td>
 
                         <td class="
-                            px-3 py-3
+                            px-3 py-2.5
                             text-ckb-on-surface-variant
                         ">
                             ${
@@ -239,7 +239,7 @@ export function renderProducts(products) {
                         </td>
 
                         <td class="
-                            px-3 py-3
+                            px-3 py-2.5
                             font-semibold
                             text-ckb-primary
                         ">
@@ -248,7 +248,7 @@ export function renderProducts(products) {
                             )}
                         </td>
 
-                        <td class="px-3 py-3">
+                        <td class="px-3 py-2.5">
 
                             <span class="
                                 inline-flex items-center
@@ -264,14 +264,14 @@ export function renderProducts(products) {
                         </td>
 
                         <td class="
-                            px-3 py-3
+                            px-3 py-2.5
                             font-semibold
                             text-ckb-primary
                         ">
                             ${stock}
                         </td>
 
-                        <td class="px-3 py-3">
+                        <td class="px-3 py-2.5">
 
                             <span class="
                                 inline-flex items-center
@@ -285,19 +285,20 @@ export function renderProducts(products) {
 
                         </td>
 
-                        <td class="px-3 py-3">
+                        <td class="px-3 py-2.5">
 
                             <div class="flex justify-end gap-2">
 
                                 <a
                                     href="/products/${Number(product.id)}/edit"
                                     title="Edit Produk"
+                                    aria-label="Edit ${escapeHtml(product.name)}"
                                     class="
-                                        flex h-8 w-8
+                                        flex min-h-11 min-w-11 cursor-pointer
                                         items-center justify-center
                                         rounded-lg
                                         text-ckb-primary
-                                        hover:bg-ckb-primary-container
+                                        transition hover:bg-ckb-primary-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent motion-reduce:transition-none
                                     "
                                 >
                                     <i class="fas fa-pen"></i>
@@ -308,12 +309,13 @@ export function renderProducts(products) {
                                     data-action="delete"
                                     data-id="${Number(product.id)}"
                                     title="Hapus Produk"
+                                    aria-label="Hapus ${escapeHtml(product.name)}"
                                     class="
-                                        flex h-8 w-8
+                                        flex min-h-11 min-w-11 cursor-pointer
                                         items-center justify-center
                                         rounded-lg
                                         text-ckb-error
-                                        hover:bg-ckb-error-container
+                                        transition hover:bg-ckb-error-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent motion-reduce:transition-none
                                     "
                                 >
                                     <i class="fas fa-trash"></i>

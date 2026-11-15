@@ -1,6 +1,6 @@
 import { apiFetch } from "@/utils/api.js";
 import { fetchCategories } from "./list.js";
-import { $ } from "@/utils/dom.js";
+import { $, toggleModal } from "@/utils/dom.js";
 import { showApiError } from "@/utils/ui.js";
 
 const modal = () => $("category-modal");
@@ -21,12 +21,12 @@ function openCategoryModal() {
         errorElement().classList.add("hidden");
     }
 
-    modalElement.classList.remove("hidden");
+    toggleModal("category-modal", true);
     input()?.focus();
 }
 
 function closeCategoryModal() {
-    modal()?.classList.add("hidden");
+    toggleModal("category-modal", false);
 }
 
 function showCategoryError(message) {

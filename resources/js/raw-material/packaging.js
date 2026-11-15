@@ -168,7 +168,8 @@ function renderPackagingList() {
                                     type="button"
                                     data-action="edit-packaging"
                                     data-id="${Number(packaging.id)}"
-                                    class="px-2.5 py-1.5 rounded-lg bg-ckb-surface-container-low text-ckb-on-surface hover:bg-ckb-surface-container text-xs"
+                                    aria-label="Edit kemasan ${escapeHtml(packaging.purchase_unit)}"
+                                    class="flex min-h-11 min-w-11 items-center justify-center rounded-lg bg-ckb-surface-container-low text-ckb-on-surface hover:bg-ckb-surface-container text-xs"
                                     title="Edit"
                                 >
                                     <i class="fas fa-edit"></i>
@@ -178,7 +179,8 @@ function renderPackagingList() {
                                     type="button"
                                     data-action="delete-packaging"
                                     data-id="${Number(packaging.id)}"
-                                    class="px-2.5 py-1.5 rounded-lg bg-ckb-error-container text-ckb-on-error-container hover:bg-ckb-error/15 text-xs"
+                                    aria-label="Hapus kemasan ${escapeHtml(packaging.purchase_unit)}"
+                                    class="flex min-h-11 min-w-11 items-center justify-center rounded-lg bg-ckb-error-container text-ckb-on-error-container hover:bg-ckb-error/15 text-xs"
                                     title="Hapus"
                                 >
                                     <i class="fas fa-trash"></i>

@@ -1,9 +1,13 @@
 <div
     id="packaging-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-hidden="true"
+    aria-labelledby="packaging-modal-title"
     class="fixed inset-0 bg-ckb-inverse-surface/50 hidden items-center justify-center z-50 p-4"
 >
     <div
-        class="bg-ckb-surface w-full max-w-3xl rounded-2xl shadow-floating overflow-hidden"
+        class="max-h-[calc(100dvh-2rem)] w-full max-w-3xl overflow-y-auto rounded-2xl bg-ckb-surface shadow-floating"
     >
         <div
             class="px-6 py-4 border-b border-ckb-outline-variant/50 bg-ckb-surface flex justify-between items-start"
@@ -25,7 +29,8 @@
             <button
                 type="button"
                 data-modal-close
-                class="text-ckb-on-surface-variant hover:text-ckb-on-surface"
+                aria-label="Tutup dialog kemasan bahan baku"
+                class="flex size-11 items-center justify-center rounded-lg text-ckb-on-surface-variant hover:bg-ckb-surface-container-low hover:text-ckb-on-surface"
             >
                 <i class="fas fa-times text-xl"></i>
             </button>
@@ -40,6 +45,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label
+                            for="edit-rm-name"
                             class="block text-xs font-semibold text-ckb-primary mb-1"
                         >
                             Nama Bahan Baku
@@ -90,6 +96,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label
+                            for="packaging-unit"
                             class="block text-xs font-semibold text-ckb-primary mb-1"
                         >
                             Satuan Beli *
@@ -107,6 +114,7 @@
 
                     <div>
                         <label
+                            for="packaging-conversion"
                             class="block text-xs font-semibold text-ckb-primary mb-1"
                         >
                             Konversi *

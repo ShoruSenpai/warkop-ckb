@@ -1,8 +1,8 @@
 <section
-    class="rounded-xl border border-ckb-outline-variant/40 bg-ckb-surface-container-lowest p-4"
+    class="rounded-xl border border-ckb-outline-variant/50 bg-ckb-surface p-4 shadow-surface"
 >
-    <div class="mb-5">
-        <h3 class="font-bold text-ckb-primary">Jenis Stok Produk</h3>
+    <div class="mb-4">
+        <h3 class="text-sm font-bold text-ckb-primary">Jenis Stok Produk</h3>
 
         <p class="mt-1 text-xs text-ckb-on-surface-variant">Tentukan bagaimana stok produk dikelola.</p>
     </div>
@@ -30,7 +30,7 @@
             ]
             as $type)
             <label
-                class="stock-type-card cursor-pointer rounded-xl border border-ckb-outline-variant/50 p-4 transition hover:bg-ckb-surface-container-low"
+                class="stock-type-card min-h-11 cursor-pointer rounded-xl border border-ckb-outline-variant/50 p-4 transition hover:bg-ckb-surface-container-low"
             >
                 <input
                     type="radio"
@@ -47,7 +47,7 @@
                     </div>
 
                     <div>
-                        <p class="font-semibold text-ckb-primary">
+                        <p class="text-xs font-semibold text-ckb-primary sm:text-sm">
                             {{ $type["title"] }}
                         </p>
 

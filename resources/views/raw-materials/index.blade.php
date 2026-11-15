@@ -11,7 +11,7 @@
         <button
             type="button"
             id="btn-add-material"
-            class="inline-flex shrink-0 items-center justify-center rounded-lg bg-ckb-primary px-3.5 py-2 text-xs font-semibold text-ckb-on-primary transition hover:bg-ckb-accent hover:text-ckb-on-accent sm:text-sm"
+            class="inline-flex min-h-11 shrink-0 items-center justify-center rounded-lg bg-ckb-primary px-3.5 py-2 text-xs font-semibold text-ckb-on-primary transition hover:bg-ckb-accent hover:text-ckb-on-accent sm:text-sm"
         >
             + Tambah Bahan Baku
         </button>

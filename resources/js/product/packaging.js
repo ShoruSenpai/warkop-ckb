@@ -30,13 +30,13 @@ export function renderPackagingList() {
                             gap-4 rounded-lg
                             border border-ckb-outline-variant/30
                             bg-ckb-surface-container-low
-                            px-4 py-3
+                            px-3 py-2.5
                         "
                     >
 
                         <div>
                             <p class="
-                                text-sm font-semibold
+                                text-xs font-semibold sm:text-sm
                                 text-ckb-primary
                             ">
                                 ${escapeHtml(packaging.purchase_unit)}
@@ -66,12 +66,13 @@ export function renderPackagingList() {
                                 type="button"
                                 data-action="edit-packaging"
                                 data-id="${escapeHtml(String(packaging.id))}"
+                                aria-label="Edit satuan ${escapeHtml(packaging.purchase_unit)}"
                                 class="
-                                    flex h-8 w-8
+                                    flex min-h-11 min-w-11 cursor-pointer
                                     items-center justify-center
                                     rounded-lg
                                     text-ckb-primary
-                                    hover:bg-ckb-primary-container
+                                    transition hover:bg-ckb-primary-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent motion-reduce:transition-none
                                 "
                                 title="Edit"
                             >
@@ -82,12 +83,13 @@ export function renderPackagingList() {
                                 type="button"
                                 data-action="delete-packaging"
                                 data-id="${escapeHtml(String(packaging.id))}"
+                                aria-label="Hapus satuan ${escapeHtml(packaging.purchase_unit)}"
                                 class="
-                                    flex h-8 w-8
+                                    flex min-h-11 min-w-11 cursor-pointer
                                     items-center justify-center
                                     rounded-lg
                                     text-ckb-error
-                                    hover:bg-ckb-error-container
+                                    transition hover:bg-ckb-error-container focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent motion-reduce:transition-none
                                 "
                                 title="Hapus"
                             >
@@ -157,9 +159,8 @@ export async function savePackaging() {
         const hasDuplicate = state.productPackagings.some(
             (packaging) =>
                 String(packaging.id) !== String(id) &&
-                packaging.purchase_unit
-                    .trim()
-                    .toLocaleLowerCase("id-ID") === normalizedUnit,
+                packaging.purchase_unit.trim().toLocaleLowerCase("id-ID") ===
+                    normalizedUnit,
         );
 
         if (hasDuplicate) {
