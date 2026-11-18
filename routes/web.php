@@ -60,7 +60,7 @@ Route::middleware(["auth", "role:owner,admin"])->group(function () {
     );
 
     // Reports.
-    Route::get("/reports/transactions", fn() => view("reports.transactions.index"),)->name("reports.transactions");
+    Route::get("/reports/transactions", fn() => redirect()->route("reports.sales"))->name("reports.transactions");
     Route::get("/reports/sales", fn() => view("reports.sales.index"))->name("reports.sales",);
     Route::get("/reports/purchases", fn() => view("reports.purchases.index"),)->name("reports.purchases.index");
     Route::get("/reports/purchases/invoices", fn() => view("reports.purchases.invoices"),)->name("reports.purchases.invoices");
@@ -68,10 +68,9 @@ Route::middleware(["auth", "role:owner,admin"])->group(function () {
 
 
     Route::get("/users", fn() => view("users.index"))->name("users.index");
-    Route::get("/notification", fn() => view("notification.index"))->name(
-        "notification.index",
-    );
-    Route::get("/settings", fn() => view("settings.index"))->name("settings");
+    Route::get("/notification", fn() => view("notification.index"))->name("notification.index",);
+    Route::get("/settings", fn() => view("settings.index"))->name("settings.index");
 
+    Route::get('/testing-503', fn() => view("testing.503"))->name("testing.index");
     // Add owner-only pages in a nested role:owner group when needed.
 });

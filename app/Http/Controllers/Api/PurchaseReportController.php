@@ -57,38 +57,28 @@ class PurchaseReportController extends Controller
         $filters = $request->validate([
             "period" => "sometimes|in:week,month,year",
             "chart_period" => "sometimes|in:month,year",
+            "section" => "sometimes|in:all,overview,metrics,chart",
         ]);
 
-        $period = $filters["period"] ?? "month";
-        [$from, $to] = $this->periodRange($period);
+        $section = $filters["section"] ?? "all";
+        $data = [];
 
-        $purchases = SupplierPurchase::query()->whereBetween("purchase_date", [
-            $from,
-            $to,
-        ]);
+        if (in_array($section, ["all", "overview", "metrics"], true)) {
+            $period = $filters["period"] ?? "month";
+            [$from, $to] = $this->periodRange($period);
 
-        $total = (clone $purchases)->sum("total_cost");
-        $invoiceCount = (clone $purchases)->count();
-        $receivedCount = (clone $purchases)
-            ->where("status", "received")
-            ->count();
+            $purchases = SupplierPurchase::query()->whereBetween(
+                "purchase_date",
+                [$from, $to],
+            );
 
-        $topSuppliers = (clone $purchases)
-            ->selectRaw(
-                "supplier_name, SUM(total_cost) as total_cost, COUNT(*) as invoice_count",
-            )
-            ->groupBy("supplier_name")
-            ->orderByDesc("total_cost")
-            ->limit(5)
-            ->get();
+            $total = (clone $purchases)->sum("total_cost");
+            $invoiceCount = (clone $purchases)->count();
+            $receivedCount = (clone $purchases)
+                ->where("status", "received")
+                ->count();
 
-        $chartPeriod = $filters["chart_period"] ?? "month";
-        $chart = $this->spendingChart($chartPeriod);
-
-        return response()->json([
-            "success" => true,
-            "message" => "Get Purchase Report Summary",
-            "data" => [
+            $data = [
                 "period" => $period,
                 "metrics" => [
                     "total_purchases" => (int) $total,
@@ -98,9 +88,29 @@ class PurchaseReportController extends Controller
                         ? (int) round($total / $invoiceCount)
                         : 0,
                 ],
-                "chart" => $chart,
-                "top_suppliers" => $topSuppliers,
-            ],
+            ];
+
+            if (in_array($section, ["all", "overview"], true)) {
+                $data["top_suppliers"] = (clone $purchases)
+                    ->selectRaw(
+                        "supplier_name, SUM(total_cost) as total_cost, COUNT(*) as invoice_count",
+                    )
+                    ->groupBy("supplier_name")
+                    ->orderByDesc("total_cost")
+                    ->limit(5)
+                    ->get();
+            }
+        }
+
+        if (in_array($section, ["all", "chart"], true)) {
+            $chartPeriod = $filters["chart_period"] ?? "month";
+            $data["chart"] = $this->spendingChart($chartPeriod);
+        }
+
+        return response()->json([
+            "success" => true,
+            "message" => "Get Purchase Report Summary",
+            "data" => $data,
         ]);
     }
 

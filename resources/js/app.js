@@ -1,6 +1,6 @@
 // import './bootstrap';
-import Swal from "sweetalert2";
-import { ckbColor, ckbColorWithAlpha } from "./utils/theme.js";
+import { ckbColor } from "./utils/theme.js";
+import "./utils/alert.js";
 
 import { library, dom } from "@fortawesome/fontawesome-svg-core";
 import {
@@ -49,6 +49,10 @@ import {
     faTruckLoading,
     faUtensils,
     faUsersCog,
+    faWallet,
+    faChartLine,
+    faBell,
+    faRoadBarrier,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -97,37 +101,27 @@ library.add(
     faTruckLoading,
     faUtensils,
     faUsersCog,
+    faWallet,
+    faChartLine,
+    faBell,
+    faRoadBarrier,
 );
 
-dom.watch();
-const themedSwal = Swal.mixin({
-    background: ckbColor("surface"),
-    color: ckbColor("on-surface"),
-    backdrop: ckbColorWithAlpha("inverse-surface", 0.4),
-    confirmButtonColor: ckbColor("primary"),
-    cancelButtonColor: ckbColor("surface-container"),
-    customClass: { cancelButton: "ckb-swal-cancel" },
-});
-const fireSwal = themedSwal.fire.bind(themedSwal);
-const swalIconColors = {
-    error: ckbColor("error"),
-    warning: ckbColor("warning"),
-    success: ckbColor("success"),
-    info: ckbColor("accent"),
-    question: ckbColor("accent"),
-};
+function initializeFontAwesome() {
+    dom.watch();
 
-themedSwal.fire = (options = {}) =>
-    fireSwal({
-        ...options,
-        customClass: {
-            cancelButton: "ckb-swal-cancel",
-            ...options.customClass,
-        },
-        iconColor: swalIconColors[options.icon] ?? options.iconColor,
+    void dom.i2svg({ node: document }).catch((error) => {
+        console.error("Font Awesome icons could not be rendered.", error);
     });
+}
 
-window.Swal = themedSwal;
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initializeFontAwesome, {
+        once: true,
+    });
+} else {
+    initializeFontAwesome();
+}
 
 const sidebar = document.getElementById("admin-sidebar");
 const sidebarToggle = document.getElementById("sidebar-toggle");

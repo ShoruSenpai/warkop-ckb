@@ -1,6 +1,7 @@
 <section
     class="min-w-0 rounded-xl border border-ckb-outline-variant/50 bg-ckb-surface p-4 shadow-surface sm:col-span-2 xl:col-span-2"
     aria-labelledby="spending-chart-title"
+    data-purchase-report-card="spending-chart"
 >
     <div class="flex flex-wrap items-start justify-between gap-3">
         <div>
@@ -12,8 +13,8 @@
                 Pengeluaran pembelian
             </h3>
         </div>
-        <x-report.purchase.period-filter
-            name="chart"
+        <x-report.segmented-filter
+            group="purchase-chart-period"
             label="Periode grafik"
             :options="['month' => '6 Bulan', 'year' => 'Tahun Ini']"
             selected="month"

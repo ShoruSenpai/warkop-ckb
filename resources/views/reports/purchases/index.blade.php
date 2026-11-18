@@ -12,22 +12,25 @@
                 </h1>
                 <p class="mt-1 text-xs text-ckb-on-surface-variant">Pantau pengeluaran dan invoice pembelian bahan baku.</p>
             </div>
-            <x-report.purchase.period-filter
-                name="overview"
-                label="Periode laporan"
-                :options="[
-                    'week' => '7 Hari Terakhir',
-                    'month' => 'Bulan Ini',
-                    'year' => 'Tahun Ini',
-                ]"
-                selected="month"
-            />
         </header>
 
         <section
             class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3"
             aria-label="Ringkasan pembelian"
+            data-purchase-report-card="overview-metrics"
         >
+            <div class="col-span-full flex justify-end">
+                <x-report.segmented-filter
+                    group="purchase-metrics-period"
+                    label="Periode metrik pembelian"
+                    :options="[
+                        'week' => '7 Hari Terakhir',
+                        'month' => 'Bulan Ini',
+                        'year' => 'Tahun Ini',
+                    ]"
+                    selected="month"
+                />
+            </div>
             <x-report.purchase.metric-card
                 label="Total pembelian"
                 value="Memuat..."

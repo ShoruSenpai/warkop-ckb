@@ -20,6 +20,7 @@ export default defineConfig({
                 "resources/js/reports/purchase/index.js",
                 "resources/js/reports/purchase/overview.js",
                 "resources/js/reports/purchase/show.js",
+                "resources/js/reports/sales/index.js",
             ],
             refresh: true,
             fonts: [

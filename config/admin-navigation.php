@@ -52,25 +52,25 @@ return [
             //            "roles" => ["owner", "admin"],
 
             "items" => [
-                [
-                    "label" => "Riwayat Transaksi",
-                    "route" => "reports.transactions",
-                    "active" => ["reports.transactions*"],
-                    "icon" => "fas fa-file-invoice-dollar",
-                ],
+                //                [
+                //                    "label" => "Riwayat Transaksi",
+                //                    "route" => "reports.transactions",
+                //                    "active" => ["reports.transactions*"],
+                //                    "icon" => "fas fa-file-invoice-dollar",
+                //                ],
 
                 [
                     "label" => "Laporan Penjualan",
                     "route" => "reports.sales",
                     "active" => ["reports.sales*"],
-                    "icon" => "fas fa-file-invoice-dollar",
+                    "icon" => "fas fa-chart-line",
                 ],
 
                 [
                     "label" => "Laporan Pembelian",
                     "route" => "reports.purchases.index",
                     "active" => ["reports.purchases*"],
-                    "icon" => "fas fa-file-invoice-dollar",
+                    "icon" => "fas fa-wallet",
                 ],
 
                 //                [
@@ -95,9 +95,23 @@ return [
                 ],
                 [
                     "label" => "Pengaturan",
-                    "route" => "settings",
-                    "active" => ["settings"],
+                    "route" => "settings.index",
+                    "active" => ["settings.*"],
                     "icon" => "fas fa-cog",
+                    "roles" => ["owner", "admin"],
+                ],
+            ],
+        ],
+
+        [
+            "label" => "TESTING",
+
+            "items" => [
+                [
+                    "label" => "Testing 503",
+                    "route" => "testing.index",
+                    "active" => ["testing.*"],
+                    "icon" => "fas fa-road-barrier",
                     "roles" => ["owner", "admin"],
                 ],
             ],

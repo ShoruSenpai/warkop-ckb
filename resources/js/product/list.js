@@ -1,8 +1,12 @@
 import { state } from "./state.js";
 import { apiFetch } from "@/utils/api.js";
 import { $, escapeHtml } from "@/utils/dom.js";
+import Swal from "@/utils/alert.js";
 import { showApiError } from "@/utils/ui.js";
 import { ckbColor } from "@/utils/theme.js";
+
+const pendingProductDeletes = new Set();
+const initializedProductLists = new WeakSet();
 
 export async function fetchProducts() {
     try {
@@ -10,15 +14,16 @@ export async function fetchProducts() {
 
         if (!response.ok) {
             await showApiError(data, "Gagal Memuat Produk");
-            return;
+            return false;
         }
 
         state.products = Array.isArray(data.data) ? data.data : [];
 
         applyFilters();
+        return true;
     } catch (error) {
         if (error.message === "UNAUTHORIZED") {
-            return;
+            return false;
         }
 
         console.error("Gagal mengambil products:", error);
@@ -37,6 +42,8 @@ export async function fetchProducts() {
                 </tr>
             `;
         }
+
+        return false;
     }
 }
 
@@ -332,29 +339,26 @@ export function renderProducts(products) {
 }
 
 export async function deleteProduct(id) {
-    const product = state.products.find(
-        (item) => Number(item.id) === Number(id),
-    );
+    const productId = Number(id);
 
-    if (!product) return;
-
-    const confirmed = await Swal.fire({
-        icon: "warning",
-        title: "Hapus produk?",
-        text: "Produk yang masih memiliki resep, kemasan, opsi, diskon, atau riwayat transaksi tidak dapat dihapus.",
-        showCancelButton: true,
-        confirmButtonText: "Hapus",
-        cancelButtonText: "Batal",
-        confirmButtonColor: ckbColor("error"),
-        customClass: { confirmButton: "ckb-swal-error-confirm" },
-    });
-
-    if (!confirmed.isConfirmed) {
+    if (!Number.isSafeInteger(productId) || productId <= 0) {
+        await Swal.fire({
+            icon: "error",
+            title: "Produk tidak valid",
+            text: "ID produk tidak tersedia. Muat ulang daftar produk lalu coba lagi.",
+            confirmButtonText: "Mengerti",
+        });
         return;
     }
 
-    const deleteButton = document.querySelector(
-        `[data-action="delete"][data-id="${Number(id)}"]`,
+    if (pendingProductDeletes.has(productId)) return;
+    pendingProductDeletes.add(productId);
+
+    const product = state.products.find(
+        (item) => Number(item.id) === productId,
+    );
+    const deleteButton = $("product-list")?.querySelector(
+        `button[data-action="delete"][data-id="${productId}"]`,
     );
     const deleteIcon = deleteButton?.querySelector("i");
 
@@ -366,17 +370,57 @@ export async function deleteProduct(id) {
     }
 
     try {
-        const { response, data } = await apiFetch(`/api/products/${id}`, {
-            method: "DELETE",
+        const confirmed = await Swal.fire({
+            icon: "warning",
+            title: "Hapus produk?",
+            text: product
+                ? `Hapus ${product.name}? Produk yang masih memiliki resep, kemasan, opsi, diskon, atau riwayat transaksi tidak dapat dihapus.`
+                : `Hapus produk dengan ID ${productId}? Produk yang masih memiliki resep, kemasan, opsi, diskon, atau riwayat transaksi tidak dapat dihapus.`,
+            showCancelButton: true,
+            confirmButtonText: "Hapus",
+            cancelButtonText: "Batal",
+            confirmButtonColor: ckbColor("error"),
+            customClass: { confirmButton: "ckb-swal-error-confirm" },
         });
 
-        if (!response.ok) {
-            await showApiError(data, "Gagal Menghapus Produk");
+        if (!confirmed.isConfirmed) return;
 
+        const { response, data } = await apiFetch(
+            `/api/products/${productId}`,
+            {
+                method: "DELETE",
+            },
+        );
+
+        if (response.status === 404) {
+            await fetchProducts();
+            await Swal.fire({
+                icon: "info",
+                title: "Produk sudah tidak tersedia",
+                text: "Daftar produk telah diperbarui dari server.",
+                confirmButtonText: "Mengerti",
+            });
             return;
         }
 
-        await fetchProducts();
+        if (!response.ok) {
+            await showApiError(data, "Gagal Menghapus Produk");
+            await fetchProducts();
+            return;
+        }
+
+        const listRefreshed = await fetchProducts();
+
+        await Swal.fire({
+            icon: listRefreshed ? "success" : "warning",
+            title: listRefreshed
+                ? "Produk berhasil dihapus"
+                : "Produk dihapus, daftar belum diperbarui",
+            text: listRefreshed
+                ? "Data produk telah disinkronkan dengan server."
+                : "Penghapusan berhasil, tetapi daftar produk gagal dimuat. Silakan muat ulang.",
+            confirmButtonText: "Mengerti",
+        });
     } catch (error) {
         if (error.message === "UNAUTHORIZED") {
             return;
@@ -384,10 +428,16 @@ export async function deleteProduct(id) {
 
         console.error(error);
 
+        await fetchProducts();
         await showApiError({
-            message: error.message || "Produk tidak dapat dihapus.",
+            message:
+                error.message === "NETWORK_ERROR"
+                    ? "Jaringan bermasalah. Produk tidak dapat dihapus saat ini."
+                    : error.message || "Produk tidak dapat dihapus.",
         });
     } finally {
+        pendingProductDeletes.delete(productId);
+
         if (deleteButton?.isConnected) {
             deleteButton.disabled = false;
             deleteButton.removeAttribute("aria-busy");
@@ -398,6 +448,11 @@ export async function deleteProduct(id) {
 }
 
 export function initProductListEvents() {
+    const productList = $("product-list");
+
+    if (!productList || initializedProductLists.has(productList)) return;
+    initializedProductLists.add(productList);
+
     $("btn-add-product")?.addEventListener("click", async (event) => {
         if (state.categories.length) return;
 
@@ -436,13 +491,15 @@ export function initProductListEvents() {
 
     $("status-filter")?.addEventListener("change", applyFilters);
 
-    $("product-list")?.addEventListener("click", async (event) => {
-        const button = event.target.closest("[data-action]");
+    productList.addEventListener("click", async (event) => {
+        const target = event.target;
 
-        if (!button) return;
+        if (!(target instanceof Element)) return;
 
-        if (button.dataset.action === "delete") {
-            await deleteProduct(Number(button.dataset.id));
-        }
+        const button = target.closest('button[data-action="delete"]');
+
+        if (!button || !productList.contains(button) || button.disabled) return;
+
+        await deleteProduct(button.dataset.id);
     });
 }

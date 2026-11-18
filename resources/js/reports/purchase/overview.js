@@ -6,6 +6,9 @@ const root = document.querySelector("[data-purchase-overview]");
 if (root) {
     const state = { period: "month", chartPeriod: "month" };
     let spendingChart;
+    let overviewRequest = 0;
+    let metricsRequest = 0;
+    let chartRequest = 0;
     const metricValues = new Map(
         [...root.querySelectorAll("[data-report-value]")].map((node) => [
             node.dataset.reportValue,
@@ -20,50 +23,38 @@ if (root) {
     );
 
     root.addEventListener("click", (event) => {
-        const control = event.target.closest("[data-period-control]");
+        const control = event.target.closest("[data-filter-group]");
 
         if (!control) return;
 
-        const group = control.dataset.periodControl;
+        const group = control.dataset.filterGroup;
 
-        if (group === "overview") {
-            state.period = control.dataset.period;
-        } else if (group === "chart") {
-            state.chartPeriod = control.dataset.period;
+        if (group === "purchase-metrics-period") {
+            state.period = control.dataset.filterValue;
+        } else if (group === "purchase-chart-period") {
+            state.chartPeriod = control.dataset.filterValue;
         } else {
             return;
         }
 
-        root.querySelectorAll(`[data-period-control="${group}"]`).forEach(
-            (button) => {
-                const isSelected = button === control;
-                button.setAttribute("aria-pressed", String(isSelected));
-                button.classList.toggle("bg-ckb-primary", isSelected);
-                button.classList.toggle("text-ckb-on-primary", isSelected);
-                button.classList.toggle("shadow-surface", isSelected);
-                button.classList.toggle(
-                    "text-ckb-on-secondary-container",
-                    !isSelected,
-                );
-            },
-        );
+        setPeriodFilterState(group, control);
 
-        loadSummary();
+        if (group === "purchase-metrics-period") loadMetrics();
+        if (group === "purchase-chart-period") loadChart();
     });
 
-    loadSummary();
+    loadOverview();
+    loadChart();
 
-    async function loadSummary() {
-        const chart = root.querySelector("[data-spending-chart]");
-        const chartState = root.querySelector("[data-chart-state]");
-
-        chart?.setAttribute("aria-busy", "true");
-        if (chartState) chartState.textContent = "Memuat tren pengeluaran...";
+    async function loadOverview() {
+        const requestId = ++overviewRequest;
+        const requestedPeriod = state.period;
+        setMetricsBusy(true);
 
         try {
             const query = new URLSearchParams({
+                section: "overview",
                 period: state.period,
-                chart_period: state.chartPeriod,
             });
             const { response, data } = await apiFetch(
                 `/api/reports/purchases/summary?${query}`,
@@ -75,16 +66,121 @@ if (root) {
                 );
             }
 
-            renderMetrics(data.data?.metrics ?? {});
+            if (requestId !== overviewRequest) return;
+
+            if (state.period === requestedPeriod) {
+                renderMetrics(data.data?.metrics ?? {});
+            }
             renderSuppliers(data.data?.top_suppliers ?? []);
+        } catch (error) {
+            if (error.message === "UNAUTHORIZED") return;
+            if (requestId !== overviewRequest) return;
+
+            if (requestedPeriod === state.period) {
+                renderMetricsError(error.message);
+            }
+            renderSuppliersError(error.message);
+        } finally {
+            if (
+                requestId === overviewRequest &&
+                requestedPeriod === state.period &&
+                metricsRequest === 0
+            ) {
+                setMetricsBusy(false);
+            }
+        }
+    }
+
+    async function loadMetrics() {
+        const requestId = ++metricsRequest;
+        setMetricsBusy(true);
+
+        try {
+            const query = new URLSearchParams({
+                section: "metrics",
+                period: state.period,
+            });
+            const { response, data } = await apiFetch(
+                `/api/reports/purchases/summary?${query}`,
+            );
+
+            if (!response.ok || !data?.success) {
+                throw new Error(
+                    data?.message || "Metrik pembelian tidak dapat dimuat.",
+                );
+            }
+
+            if (requestId !== metricsRequest) return;
+
+            renderMetrics(data.data?.metrics ?? {});
+        } catch (error) {
+            if (error.message === "UNAUTHORIZED") return;
+            if (requestId !== metricsRequest) return;
+
+            renderMetricsError(error.message);
+        } finally {
+            if (requestId === metricsRequest) setMetricsBusy(false);
+        }
+    }
+
+    async function loadChart() {
+        const requestId = ++chartRequest;
+        const chart = root.querySelector("[data-spending-chart]");
+        const chartState = root.querySelector("[data-chart-state]");
+
+        chart?.setAttribute("aria-busy", "true");
+        if (chartState) chartState.textContent = "Memuat tren pengeluaran...";
+
+        try {
+            const query = new URLSearchParams({
+                section: "chart",
+                chart_period: state.chartPeriod,
+            });
+            const { response, data } = await apiFetch(
+                `/api/reports/purchases/summary?${query}`,
+            );
+
+            if (!response.ok || !data?.success) {
+                throw new Error(
+                    data?.message || "Grafik pengeluaran tidak dapat dimuat.",
+                );
+            }
+
+            if (requestId !== chartRequest) return;
+
             renderChart(data.data?.chart ?? {});
         } catch (error) {
             if (error.message === "UNAUTHORIZED") return;
+            if (requestId !== chartRequest) return;
 
-            renderError(error.message);
+            renderChartError(error.message);
         } finally {
-            chart?.setAttribute("aria-busy", "false");
+            if (requestId === chartRequest) {
+                chart?.setAttribute("aria-busy", "false");
+            }
         }
+    }
+
+    function setPeriodFilterState(group, selectedControl) {
+        root
+            .querySelectorAll(`[data-filter-group="${group}"]`)
+            .forEach((button) => {
+                const isSelected = button === selectedControl;
+                button.setAttribute("aria-pressed", String(isSelected));
+                button.classList.toggle("bg-ckb-primary", isSelected);
+                button.classList.toggle("text-ckb-on-primary", isSelected);
+                button.classList.toggle("shadow-surface", isSelected);
+                button.classList.toggle(
+                    "text-ckb-on-secondary-container",
+                    !isSelected,
+                );
+            });
+    }
+
+    function setMetricsBusy(isBusy) {
+        root
+            .querySelector('[data-purchase-report-card="overview-metrics"]')
+            ?.setAttribute("aria-busy", String(isBusy));
     }
 
     function renderMetrics(metrics) {
@@ -254,23 +350,34 @@ if (root) {
         chart?.setAttribute("aria-busy", "false");
     }
 
-    function renderError(message) {
+    function renderMetricsError(message) {
         setMetric("total_purchases", "Tidak tersedia");
         setMetric("invoice_count", "Tidak tersedia");
         setMetric("average_purchase", "Tidak tersedia");
+        const receivedNote = metricNotes.get("invoice_count");
+        if (receivedNote) receivedNote.textContent = message;
+    }
 
+    function renderSuppliersError(message) {
         const list = root.querySelector("[data-top-suppliers]");
         list?.replaceChildren(
-            makeMessage(message || "Ringkasan pembelian tidak dapat dimuat."),
+            makeMessage(message || "Supplier teratas tidak dapat dimuat."),
         );
+    }
 
+    function renderChartError(message) {
         const chartState = root.querySelector("[data-chart-state]");
+        root
+            .querySelector("[data-spending-chart]")
+            ?.setAttribute("data-chart-state", "error");
         if (spendingChart) {
             spendingChart.data.labels = [];
             spendingChart.data.datasets[0].data = [];
             spendingChart.update();
         }
-        if (chartState) chartState.textContent = "Grafik tidak dapat dimuat.";
+        if (chartState) {
+            chartState.textContent = message || "Grafik tidak dapat dimuat.";
+        }
     }
 
     function makeMessage(message) {
