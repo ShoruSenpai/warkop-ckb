@@ -19,7 +19,7 @@
     ></td>
     <td class="px-3 py-3">
         <span
-            data-transaction-field="payment_status"
+            data-transaction-field="status"
             class="inline-flex min-h-7 items-center rounded-lg bg-ckb-success-container px-2 text-[10px] font-semibold text-ckb-on-success-container"
         ></span>
     </td>

@@ -1,5 +1,6 @@
 import { Chart } from "@/utils/chart.js";
 import { ckbColor, ckbColorWithAlpha } from "@/utils/theme.js";
+import { apiFetch } from "@/utils/api.js";
 
 const root = document.querySelector("[data-sales-report]");
 
@@ -13,7 +14,11 @@ if (root) {
         chartData: { labels: [], revenue: [], transactions: [] },
         page: 1,
         pageSize: 10,
+        transactionLoading: false,
+        meta: { total: 0, last_page: 1, has_more: false, current_page: 1 },
     };
+    const requests = { metrics: 0, "trend-chart": 0, "top-products": 0, "transaction-history": 0, detail: 0 };
+    let searchTimer;
     const chartCanvas = root.querySelector("[data-sales-chart]");
     const chartPanel = root.querySelector("[data-chart-panel]");
     const chartStatus = root.querySelector("[data-chart-status]");
@@ -111,7 +116,7 @@ if (root) {
 
         if (
             target.matches(
-                "[data-filter-start], [data-filter-end], [data-filter-status], [data-filter-payment], [data-filter-cashier], [data-page-size]",
+                "[data-filter-start], [data-filter-end], [data-filter-status], [data-filter-payment-status], [data-filter-payment], [data-filter-cashier], [data-page-size]",
             )
         ) {
             if (target.matches("[data-page-size]")) {
@@ -119,7 +124,8 @@ if (root) {
                 state.page = 1;
             }
 
-            renderTransactions();
+            state.page = 1;
+            loadTransactions();
         }
 
         if (target.matches("[data-period-start], [data-period-end]")) {
@@ -130,7 +136,8 @@ if (root) {
     root.addEventListener("input", (event) => {
         if (event.target.matches("[data-filter-search]")) {
             state.page = 1;
-            renderTransactions();
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(loadTransactions, 250);
         }
     });
 
@@ -141,6 +148,7 @@ if (root) {
         const previousButton = event.target.closest("[data-page-previous]");
         const nextButton = event.target.closest("[data-page-next]");
         const detailButton = event.target.closest("[data-transaction-detail]");
+        const retryButton = event.target.closest("[data-sales-retry]");
         const closeButton = event.target.closest("[data-detail-close]");
 
         if (filterGroup === "sales-trend-period") {
@@ -173,33 +181,45 @@ if (root) {
         }
 
         if (resetButton) {
+            clearTimeout(searchTimer);
             root.querySelector("[data-filter-search]").value = "";
             root.querySelector("[data-filter-start]").value = "";
             root.querySelector("[data-filter-end]").value = "";
             root.querySelector("[data-filter-status]").value = "";
+            root.querySelector("[data-filter-payment-status]").value = "";
             root.querySelector("[data-filter-payment]").value = "";
             root.querySelector("[data-filter-cashier]").value = "";
             state.page = 1;
-            renderTransactions();
+            loadTransactions();
         }
 
         if (previousButton && state.page > 1) {
             state.page -= 1;
-            renderTransactions();
+            loadTransactions();
         }
 
-        if (nextButton) {
+        if (nextButton && state.meta.has_more && !state.transactionLoading) {
             state.page += 1;
-            renderTransactions();
+            loadTransactions();
         }
 
         if (detailButton) {
-            const transaction = state.transactions.find(
-                (item) =>
-                    String(item.id) === detailButton.dataset.transactionId,
-            );
+            loadTransactionDetail(detailButton.dataset.transactionId);
+        }
 
-            if (transaction) openTransactionDetail(transaction);
+        const detailRetryButton = event.target.closest("[data-detail-retry]");
+        if (detailRetryButton) {
+            loadTransactionDetail(detailRetryButton.dataset.detailRetry);
+        }
+
+        if (retryButton) {
+            const target = retryButton.dataset.salesRetry;
+            if (target === "transaction-history") loadTransactions();
+            if (target === "metrics") loadSummarySection("metrics", "metrics", "month");
+            if (target === "trend-chart")
+                loadSummarySection("chart", "trend-chart", state.period);
+            if (target === "top-products")
+                loadSummarySection("top-products", "top-products", state.period);
         }
 
         if (closeButton) {
@@ -214,9 +234,12 @@ if (root) {
                 event.currentTarget.close();
         },
     );
+    root.querySelector("[data-transaction-dialog]")?.addEventListener("close", () => {
+        requests.detail += 1;
+    });
 
     root.addEventListener("sales-report:data", (event) => {
-        const { target, data = {} } = event.detail ?? {};
+        const { target, data = {}, meta = {} } = event.detail ?? {};
         const card = findReportCard(target);
 
         if (!card) return;
@@ -224,6 +247,7 @@ if (root) {
         card.setAttribute("aria-busy", "false");
 
         if (target === "metrics") {
+            root.querySelector("[data-metrics-error]").hidden = true;
             const metrics = { ...(data.metrics ?? data) };
 
             if (
@@ -271,6 +295,9 @@ if (root) {
         }
 
         if (target === "top-products") {
+            root.querySelector('[data-sales-retry="top-products"]').hidden = true;
+            const summary = root.querySelector("[data-product-list-summary]");
+            if (summary) summary.textContent = "Maksimal lima produk";
             state.products = Array.isArray(data.products)
                 ? data.products.slice(0, 5)
                 : [];
@@ -279,9 +306,12 @@ if (root) {
         }
 
         if (target === "transaction-history") {
+            state.transactionLoading = false;
             state.transactions = Array.isArray(data.transactions)
                 ? data.transactions
                 : [];
+            state.meta = meta;
+            updateTransactionFilterOptions(meta.filters ?? {});
             root.querySelector("[data-transaction-panel]").hidden = false;
             root.querySelector("[data-transaction-loading]").classList.add(
                 "hidden",
@@ -306,7 +336,20 @@ if (root) {
             root.querySelector("[data-chart-error]").hidden = true;
         }
 
+        if (event.detail.target === "metrics") root.querySelector("[data-metrics-error]").hidden = true;
+        if (event.detail.target === "metrics") {
+            root.querySelectorAll("[data-sales-kpi-note]").forEach((node) => {
+                node.textContent = "Memuat ringkasan penjualan...";
+            });
+        }
+        if (event.detail.target === "top-products") {
+            root.querySelector('[data-sales-retry="top-products"]').hidden = true;
+            const summary = root.querySelector("[data-product-list-summary]");
+            if (summary) summary.textContent = "Memuat produk terlaris...";
+        }
+
         if (event.detail.target === "transaction-history") {
+            state.transactionLoading = true;
             root.querySelector("[data-transaction-panel]").hidden = true;
             root
                 .querySelector("[data-transaction-loading]")
@@ -325,13 +368,18 @@ if (root) {
         const message = event.detail?.message || "Data tidak dapat dimuat.";
         card.setAttribute("aria-busy", "false");
 
-        if (target === "metrics") resetMetrics();
+        if (target === "metrics") {
+            resetMetrics();
+            root.querySelector("[data-metrics-error-message]").textContent = message;
+            root.querySelector("[data-metrics-error]").hidden = false;
+        }
 
         if (target === "top-products") {
             state.products = [];
             renderProducts();
             const summary = root.querySelector("[data-product-list-summary]");
             if (summary) summary.textContent = message;
+            root.querySelector('[data-sales-retry="top-products"]').hidden = false;
         }
 
         if (target === "trend-chart") {
@@ -351,8 +399,7 @@ if (root) {
             root
                 .querySelector("[data-transaction-loading]")
                 .classList.add("hidden");
-            root.querySelector("[data-transaction-error]").textContent =
-                message;
+            root.querySelector("[data-transaction-error-message]").textContent = message;
             root
                 .querySelector("[data-transaction-error]")
                 .classList.remove("hidden");
@@ -362,6 +409,137 @@ if (root) {
     updateChartPeriod();
     renderProducts();
     renderTransactions();
+    loadSummarySection("metrics", "metrics", "month");
+    loadSummarySection("chart", "trend-chart", state.period);
+    loadSummarySection("top-products", "top-products", state.period);
+    loadTransactions();
+
+    root.addEventListener("sales-report:period-change", () => {
+        if (state.period === "custom") {
+            const start = root.querySelector("[data-period-start]").value;
+            const end = root.querySelector("[data-period-end]").value;
+            if (!start || !end) return;
+        }
+        loadSummarySection("chart", "trend-chart", state.period);
+        loadSummarySection("top-products", "top-products", state.period);
+    });
+
+    async function loadSummarySection(section, target, period) {
+        const requestId = ++requests[target];
+        const params = new URLSearchParams({ section, period });
+
+        if (period === "custom") {
+            const start = root.querySelector("[data-period-start]").value;
+            const end = root.querySelector("[data-period-end]").value;
+            if (!start || !end) return;
+            params.set("start_date", start);
+            params.set("end_date", end);
+        }
+
+        root.dispatchEvent(new CustomEvent("sales-report:loading", { detail: { target } }));
+
+        try {
+            const { response, data } = await apiFetch(`/api/reports/sales/summary?${params}`);
+            if (requestId !== requests[target]) return;
+            if (!response.ok || data.success !== true) {
+                throw new Error(data.message || "Data laporan tidak dapat dimuat.");
+            }
+
+            const payload = data.data ?? {};
+            const result = section === "chart"
+                ? payload.chart ?? {}
+                : section === "top-products"
+                  ? { products: payload.products ?? [] }
+                  : payload.metrics ?? {};
+            root.dispatchEvent(new CustomEvent("sales-report:data", {
+                detail: { target, data: result },
+            }));
+        } catch (error) {
+            if (requestId !== requests[target] || error.message === "UNAUTHORIZED") return;
+            root.dispatchEvent(new CustomEvent("sales-report:error", {
+                detail: { target, message: apiErrorMessage(error) },
+            }));
+        }
+    }
+
+    async function loadTransactions() {
+        const requestId = ++requests["transaction-history"];
+        state.transactionLoading = true;
+        const params = new URLSearchParams();
+        const filters = [
+            ["start_date", "[data-filter-start]"],
+            ["end_date", "[data-filter-end]"],
+            ["status", "[data-filter-status]"],
+            ["payment_status", "[data-filter-payment-status]"],
+            ["payment_method", "[data-filter-payment]"],
+            ["cashier_id", "[data-filter-cashier]"],
+            ["search", "[data-filter-search]"],
+        ];
+        filters.forEach(([key, selector]) => {
+            const value = root.querySelector(selector)?.value?.trim();
+            if (value) params.set(key, value);
+        });
+        params.set("per_page", String(state.pageSize));
+        params.set("page", String(state.page));
+
+        root.dispatchEvent(new CustomEvent("sales-report:loading", {
+            detail: { target: "transaction-history" },
+        }));
+
+        try {
+            const { response, data } = await apiFetch(`/api/reports/sales?${params}`);
+            if (requestId !== requests["transaction-history"]) return;
+            if (!response.ok || data.success !== true) {
+                throw new Error(data.message || "Riwayat transaksi tidak dapat dimuat.");
+            }
+            state.transactionLoading = false;
+            root.dispatchEvent(new CustomEvent("sales-report:data", {
+                detail: {
+                    target: "transaction-history",
+                    data: data.data ?? {},
+                    meta: data.meta ?? {},
+                },
+            }));
+        } catch (error) {
+            if (requestId !== requests["transaction-history"] || error.message === "UNAUTHORIZED") return;
+            state.transactionLoading = false;
+            root.dispatchEvent(new CustomEvent("sales-report:error", {
+                detail: {
+                    target: "transaction-history",
+                    message: apiErrorMessage(error),
+                },
+            }));
+        }
+    }
+
+    async function loadTransactionDetail(orderId) {
+        const requestId = ++requests.detail;
+        const dialog = root.querySelector("[data-transaction-dialog]");
+        root.querySelector("[data-detail-invoice]").textContent = "Memuat detail transaksi...";
+        root.querySelector("[data-detail-error]").hidden = true;
+        if (dialog && !dialog.open) dialog.showModal();
+
+        try {
+            const { response, data } = await apiFetch(`/api/reports/sales/${encodeURIComponent(orderId)}`);
+            if (requestId !== requests.detail) return;
+            if (!response.ok || data.success !== true || !data.data) {
+                throw new Error(data.message || "Detail transaksi tidak dapat dimuat.");
+            }
+            openTransactionDetail(data.data);
+        } catch (error) {
+            if (requestId !== requests.detail || error.message === "UNAUTHORIZED") return;
+            root.querySelector("[data-detail-invoice]").textContent = apiErrorMessage(error);
+            root.querySelector("[data-detail-items]").replaceChildren();
+            const retry = root.querySelector("[data-detail-error]");
+            retry.dataset.detailRetry = String(orderId);
+            retry.hidden = false;
+        }
+    }
+
+    function apiErrorMessage(error) {
+        if (error.message === "NETWORK_ERROR") return "Koneksi gagal. Periksa jaringan lalu coba lagi.";
+        return error.message || "Data tidak dapat dimuat. Silakan coba lagi.";
+    }
 
     function updateChartPeriod() {
         if (!chart) return;
@@ -610,18 +788,7 @@ if (root) {
         const template = document.getElementById(
             "sales-transaction-row-template",
         );
-        const filtered = filteredTransactions();
-        renderCashierOptions();
-        const totalPages = Math.max(
-            1,
-            Math.ceil(filtered.length / state.pageSize),
-        );
-        state.page = Math.min(state.page, totalPages);
-        const startIndex = (state.page - 1) * state.pageSize;
-        const pageItems = filtered.slice(
-            startIndex,
-            startIndex + state.pageSize,
-        );
+        const pageItems = state.transactions;
         const emptyRow = root.querySelector("[data-transaction-empty]");
 
         if (!list || !template) return;
@@ -652,28 +819,29 @@ if (root) {
                 if (node) node.textContent = value;
             });
 
-            const statusNode = row.querySelector(
-                '[data-transaction-field="payment_status"]',
-            );
+            const paymentStatusNode = row.querySelector('[data-transaction-field="payment_status"]');
+            if (paymentStatusNode) {
+                paymentStatusNode.textContent = formatPaymentStatus(transaction.payment_status);
+            }
+
+            const statusNode = row.querySelector('[data-transaction-field="status"]');
             if (statusNode) {
-                statusNode.textContent = formatPaymentStatus(
-                    transaction.payment_status,
-                );
+                statusNode.textContent = formatOrderStatus(transaction.status);
                 statusNode.classList.toggle(
                     "bg-ckb-success-container",
-                    transaction.payment_status === "paid",
+                    transaction.status === "completed",
                 );
                 statusNode.classList.toggle(
                     "text-ckb-on-success-container",
-                    transaction.payment_status === "paid",
+                    transaction.status === "completed",
                 );
                 statusNode.classList.toggle(
                     "bg-ckb-secondary-container",
-                    transaction.payment_status !== "paid",
+                    transaction.status !== "completed",
                 );
                 statusNode.classList.toggle(
                     "text-ckb-on-secondary-container",
-                    transaction.payment_status !== "paid",
+                    transaction.status !== "completed",
                 );
             }
 
@@ -686,102 +854,47 @@ if (root) {
         const paginationStatus = root.querySelector("[data-pagination-status]");
         const previousButton = root.querySelector("[data-page-previous]");
         const nextButton = root.querySelector("[data-page-next]");
-        const currentFilters = hasTransactionFilters();
+        const total = Number(state.meta.total ?? 0);
+        const from = Number(state.meta.from ?? 0);
+        const to = Number(state.meta.to ?? 0);
 
         if (summary) {
-            summary.textContent = filtered.length
-                ? `${formatNumber(filtered.length)} transaksi sesuai filter.`
-                : currentFilters && state.transactions.length
-                  ? "Tidak ada transaksi yang sesuai dengan filter."
-                  : "Data transaksi belum tersedia dari backend.";
+            summary.textContent = total
+                ? `${formatNumber(total)} transaksi sesuai filter.`
+                : "Tidak ada transaksi untuk filter ini.";
         }
-
         if (paginationStatus) {
-            paginationStatus.textContent = filtered.length
-                ? `Menampilkan ${startIndex + 1}–${Math.min(startIndex + state.pageSize, filtered.length)} dari ${formatNumber(filtered.length)} transaksi`
+            paginationStatus.textContent = total
+                ? `Menampilkan ${formatNumber(from)}–${formatNumber(to)} dari ${formatNumber(total)} transaksi`
                 : "0 transaksi";
         }
-
-        if (previousButton) previousButton.disabled = state.page <= 1;
-        if (nextButton) nextButton.disabled = state.page >= totalPages;
-        root.dataset.reportState = state.transactions.length
-            ? "ready"
-            : "empty";
+        if (previousButton) previousButton.disabled = state.meta.current_page <= 1;
+        if (nextButton) nextButton.disabled = !state.meta.has_more;
+        root.dataset.reportState = total ? "ready" : "empty";
     }
 
-    function renderCashierOptions() {
+    function updateTransactionFilterOptions(filters) {
+        replaceSelectOptions("[data-filter-status]", "Semua status", filters.statuses ?? [], formatOrderStatus);
+        replaceSelectOptions("[data-filter-payment-status]", "Semua status pembayaran", filters.payment_statuses ?? [], formatPaymentStatus);
+        replaceSelectOptions("[data-filter-payment]", "Semua metode", filters.payment_methods ?? [], formatPaymentMethod);
+
         const select = root.querySelector("[data-filter-cashier]");
         if (!select) return;
-
         const selected = select.value;
-        const cashiers = new Map();
-
-        state.transactions.forEach((transaction) => {
-            const cashierId = transaction.cashier_id ?? transaction.cashier?.id;
-            const cashierName =
-                transaction.cashier?.name || transaction.cashier_name;
-            const cashierValue = cashierId ?? cashierName;
-            if (cashierValue && cashierName) {
-                cashiers.set(String(cashierValue), cashierName);
-            }
-        });
-
         select.replaceChildren(new Option("Semua kasir", ""));
-        [...cashiers.entries()]
-            .sort((first, second) => first[1].localeCompare(second[1], "id"))
-            .forEach(([id, name]) => select.add(new Option(name, id)));
-        select.value = cashiers.has(selected) ? selected : "";
-    }
-
-    function filteredTransactions() {
-        const search = root
-            .querySelector("[data-filter-search]")
-            .value.trim()
-            .toLocaleLowerCase("id-ID");
-        const start = root.querySelector("[data-filter-start]").value;
-        const end = root.querySelector("[data-filter-end]").value;
-        const status = root.querySelector("[data-filter-status]").value;
-        const payment = root.querySelector("[data-filter-payment]").value;
-        const cashier = root.querySelector("[data-filter-cashier]").value;
-
-        return state.transactions.filter((transaction) => {
-            const cashierName =
-                transaction.cashier?.name || transaction.cashier_name || "";
-            const searchMatches =
-                !search ||
-                `${transaction.invoice_code || ""} ${cashierName}`
-                    .toLocaleLowerCase("id-ID")
-                    .includes(search);
-            const transactionDate =
-                transaction.transaction_time?.slice(0, 10) || "";
-
-            return (
-                searchMatches &&
-                (!start || transactionDate >= start) &&
-                (!end || transactionDate <= end) &&
-                (!status || transaction.payment_status === status) &&
-                (!payment || transaction.payment_method === payment) &&
-                (!cashier ||
-                    String(
-                        transaction.cashier_id ??
-                            transaction.cashier?.id ??
-                            transaction.cashier?.name ??
-                            transaction.cashier_name ??
-                            "",
-                    ) === cashier)
-            );
+        (filters.cashiers ?? []).forEach((cashier) => {
+            select.add(new Option(cashier.name || "Kasir", String(cashier.id)));
         });
+        select.value = [...select.options].some((option) => option.value === selected) ? selected : "";
     }
 
-    function hasTransactionFilters() {
-        return Boolean(
-            root.querySelector("[data-filter-search]").value ||
-            root.querySelector("[data-filter-start]").value ||
-            root.querySelector("[data-filter-end]").value ||
-            root.querySelector("[data-filter-status]").value ||
-            root.querySelector("[data-filter-payment]").value ||
-            root.querySelector("[data-filter-cashier]").value,
-        );
+    function replaceSelectOptions(selector, firstLabel, values, formatLabel) {
+        const select = root.querySelector(selector);
+        if (!select) return;
+        const selected = select.value;
+        select.replaceChildren(new Option(firstLabel, ""));
+        values.forEach((value) => select.add(new Option(formatLabel(value), value)));
+        select.value = values.includes(selected) ? selected : "";
     }
 
     function openTransactionDetail(transaction) {
@@ -792,6 +905,7 @@ if (root) {
                 transaction.cashier?.name || transaction.cashier_name || "—",
             order_type: transaction.order_type || "—",
             payment_method: formatPaymentMethod(transaction.payment_method),
+            status: formatOrderStatus(transaction.status),
             payment_status: formatPaymentStatus(transaction.payment_status),
             discount_amount: formatRupiah(transaction.discount_amount),
         };
@@ -815,16 +929,17 @@ if (root) {
                 const row =
                     itemTemplate.content.firstElementChild.cloneNode(true);
                 const values = {
-                    name:
-                        item.product?.name ||
-                        item.product_name ||
-                        "Nama produk tidak tersedia",
+                    name: [
+                        item.product_name_snapshot || item.product_name || "Nama produk tidak tersedia",
+                        item.variant_summary_snapshot,
+                        (item.options ?? []).map((option) => `${option.option_group_name_snapshot}: ${option.option_name_snapshot}`).join(", "),
+                    ].filter(Boolean).join(" · "),
                     quantity: formatNumber(item.quantity),
                     unit_price: formatRupiah(
                         Number(item.unit_price || 0) +
                             Number(item.option_price || 0),
                     ),
-                    subtotal: formatRupiah(item.subtotal),
+                    subtotal: formatRupiah(item.final_subtotal ?? item.subtotal),
                 };
 
                 Object.entries(values).forEach(([field, value]) => {
@@ -861,7 +976,7 @@ if (root) {
             transaction.final_amount,
         );
 
-        dialog?.showModal();
+        if (dialog && !dialog.open) dialog.showModal();
     }
 
     function setPressedState(selector, activeControl) {
@@ -1003,6 +1118,7 @@ if (root) {
             : new Intl.DateTimeFormat("id-ID", {
                   dateStyle: "medium",
                   timeStyle: "short",
+                  timeZone: "Asia/Jakarta",
               }).format(date);
     }
 
@@ -1019,6 +1135,21 @@ if (root) {
     }
 
     function formatPaymentStatus(value) {
-        return value === "paid" ? "Lunas" : value || "—";
+        return (
+            {
+                paid: "Lunas",
+                unpaid: "Belum dibayar",
+                cancelled: "Dibatalkan",
+            }[value] || value || "—"
+        );
+    }
+
+    function formatOrderStatus(value) {
+        return (
+            {
+                completed: "Selesai",
+                cancelled: "Dibatalkan",
+            }[value] || value || "—"
+        );
     }
 }

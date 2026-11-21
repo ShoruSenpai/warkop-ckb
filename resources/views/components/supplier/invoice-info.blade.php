@@ -7,7 +7,7 @@
         Informasi Nota Pembelian
     </h3>
 
-    <div class="grid grid-cols-1 gap-3 md:grid-cols-3">
+    <div class="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
         <div>
             <label
                 for="invoice_number"
@@ -19,7 +19,7 @@
             <input
                 type="text"
                 id="invoice_number"
-                maxlength="20"
+                maxlength="50"
                 placeholder="cth: INV-0106-0047"
                 class="min-h-11 w-full rounded-lg border border-ckb-outline-variant bg-ckb-surface px-3 py-2 text-xs text-ckb-on-surface outline-none transition focus:border-ckb-accent focus:ring-1 focus:ring-ckb-accent sm:text-sm motion-reduce:transition-none"
                 required
@@ -37,7 +37,7 @@
             <input
                 type="text"
                 id="supplier_name"
-                maxlength="50"
+                maxlength="100"
                 list="supplier-suggestions"
                 placeholder="Pilih / Ketik Nama Supplier"
                 class="min-h-11 w-full rounded-lg border border-ckb-outline-variant bg-ckb-surface px-3 py-2 text-xs text-ckb-on-surface outline-none transition focus:border-ckb-accent focus:ring-1 focus:ring-ckb-accent sm:text-sm motion-reduce:transition-none"
@@ -62,6 +62,18 @@
                 max="{{ date('Y-m-d') }}"
                 class="min-h-11 w-full rounded-lg border border-ckb-outline-variant bg-ckb-surface px-3 py-2 text-xs text-ckb-on-surface outline-none transition focus:border-ckb-accent focus:ring-1 focus:ring-ckb-accent sm:text-sm motion-reduce:transition-none"
             />
+        </div>
+
+        <div>
+            <label for="status" class="mb-1 block text-xs font-semibold text-ckb-primary">Status *</label>
+            <select
+                id="status"
+                required
+                class="min-h-11 w-full cursor-pointer rounded-lg border border-ckb-outline-variant bg-ckb-surface px-3 py-2 text-xs text-ckb-on-surface outline-none transition focus:border-ckb-accent focus:ring-1 focus:ring-ckb-accent sm:text-sm motion-reduce:transition-none"
+            >
+                <option value="pending" selected>Menunggu</option>
+                <option value="received">Diterima</option>
+            </select>
         </div>
     </div>
 </div>

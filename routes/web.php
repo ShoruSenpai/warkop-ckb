@@ -60,11 +60,12 @@ Route::middleware(["auth", "role:owner,admin"])->group(function () {
     );
 
     // Reports.
-    Route::get("/reports/transactions", fn() => redirect()->route("reports.sales"))->name("reports.transactions");
-    Route::get("/reports/sales", fn() => view("reports.sales.index"))->name("reports.sales",);
+//    Route::get("/reports/transactions", fn() => redirect()->route("reports.sales"))->name("reports.transactions");
+    Route::get("/reports/sales", fn() => view("reports.sales.index"))->name("reports.sales.index",);
     Route::get("/reports/purchases", fn() => view("reports.purchases.index"),)->name("reports.purchases.index");
     Route::get("/reports/purchases/invoices", fn() => view("reports.purchases.invoices"),)->name("reports.purchases.invoices");
     Route::get("/reports/purchases/invoices/{purchase}", fn($purchase) => view("reports.purchases.show", ["purchaseId" => $purchase]))->whereNumber("purchase")->name("reports.purchases.show");
+    Route::get("/reports/attendance", fn() => view("reports.attendance.index"),)->name("reports.attendance.index");
 
 
     Route::get("/users", fn() => view("users.index"))->name("users.index");

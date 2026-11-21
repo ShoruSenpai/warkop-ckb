@@ -48,6 +48,10 @@
                 data-key="sales_average"
             />
         </section>
+        <div data-metrics-error hidden class="flex items-center justify-end gap-2 text-xs text-ckb-on-error-container">
+            <span data-metrics-error-message>Ringkasan penjualan tidak dapat dimuat.</span>
+            <button type="button" data-sales-retry="metrics" class="min-h-9 cursor-pointer rounded-lg border border-ckb-outline-variant px-3 font-semibold">Coba lagi</button>
+        </div>
 
         <section
             class="grid grid-cols-1 gap-3 xl:grid-cols-3"

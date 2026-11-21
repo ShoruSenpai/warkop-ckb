@@ -61,7 +61,7 @@ return [
 
                 [
                     "label" => "Laporan Penjualan",
-                    "route" => "reports.sales",
+                    "route" => "reports.sales.index",
                     "active" => ["reports.sales*"],
                     "icon" => "fas fa-chart-line",
                 ],
@@ -73,12 +73,12 @@ return [
                     "icon" => "fas fa-wallet",
                 ],
 
-                //                [
-                //                    "label" => "Laporan Stok",
-                //                    "route" => "reports.stock",
-                //                    "active" => ["reports.stock*"],
-                //                    "icon" => "fas fa-file-invoice-dollar",
-                //                ],
+                [
+                    "label" => "Laporan Presensi",
+                    "route" => "reports.attendance.index",
+                    "active" => ["reports.attendance*"],
+                    "icon" => "fas fa-file-invoice-dollar",
+                ],
             ],
         ],
 

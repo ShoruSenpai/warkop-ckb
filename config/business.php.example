@@ -1,0 +1,8 @@
+<?php
+
+return [
+    // All business date/time calculations use WIB, regardless of device timezone.
+    'timezone' => env('BUSINESS_TIMEZONE', 'Asia/Jakarta'),
+    'timezone_label' => 'WIB',
+    'utc_offset' => '+07:00',
+];

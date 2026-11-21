@@ -12,12 +12,16 @@ class SupplierPurchaseItem extends Model
 
     protected $fillable = [
         "purchase_id",
+        "item_type",
 
         "raw_material_id",
         "raw_material_packaging_id",
 
         "product_id",
         "product_packaging_id",
+
+        "item_name_snapshot",
+        "packaging_name_snapshot",
 
         "purchase_unit",
         "quantity",

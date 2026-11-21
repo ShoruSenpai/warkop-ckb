@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PurchaseReportController;
 use App\Http\Controllers\Api\RawMaterialController;
+use App\Http\Controllers\Api\SalesReportController;
 use App\Http\Controllers\Api\SupplierPurchaseController;
 use App\Http\Middleware\ExtendTokenActivity;
 use Illuminate\Support\Facades\Route;
@@ -121,6 +122,14 @@ Route::middleware(["auth:sanctum", ExtendTokenActivity::class])->group(
                 SupplierPurchaseController::class,
                 "store",
             ]);
+            Route::put("/supplier-purchases/{purchase}/status", [
+                SupplierPurchaseController::class,
+                "updateStatus",
+            ])->whereNumber("purchase");
+            Route::delete("/supplier-purchases/{purchase}", [
+                SupplierPurchaseController::class,
+                "destroy",
+            ])->whereNumber("purchase");
             Route::get("/reports/purchases/summary", [
                 PurchaseReportController::class,
                 "summary",
@@ -133,6 +142,18 @@ Route::middleware(["auth:sanctum", ExtendTokenActivity::class])->group(
                 PurchaseReportController::class,
                 "show",
             ])->whereNumber("purchase");
+            Route::get("/reports/sales/summary", [
+                SalesReportController::class,
+                "summary",
+            ]);
+            Route::get("/reports/sales", [
+                SalesReportController::class,
+                "index",
+            ]);
+            Route::get("/reports/sales/{order}", [
+                SalesReportController::class,
+                "show",
+            ])->whereNumber("order");
         });
     },
 );

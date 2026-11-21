@@ -15,6 +15,12 @@
                 Detail Penjualan
             </h2>
             <p data-detail-invoice class="mt-1 text-xs text-ckb-on-surface-variant">—</p>
+            <button
+                type="button"
+                data-detail-error
+                hidden
+                class="mt-2 min-h-9 cursor-pointer rounded-lg border border-ckb-outline-variant px-3 text-xs font-semibold"
+            >Coba lagi</button>
         </div>
         <button
             type="button"
@@ -70,6 +76,13 @@
                 <dt class="text-xs text-ckb-on-surface-variant">
                     Status transaksi
                 </dt>
+                <dd
+                    data-detail-field="status"
+                    class="mt-1 text-xs font-semibold text-ckb-primary"
+                ></dd>
+            </div>
+            <div>
+                <dt class="text-xs text-ckb-on-surface-variant">Status pembayaran</dt>
                 <dd
                     data-detail-field="payment_status"
                     class="mt-1 text-xs font-semibold text-ckb-primary"

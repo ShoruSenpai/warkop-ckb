@@ -88,6 +88,9 @@
             class="mt-2 min-h-5 text-center text-xs text-ckb-on-surface-variant"
             role="status"
         >Belum ada data penjualan pada periode ini.</p>
-        <p class="sr-only" data-chart-error hidden>Grafik penjualan tidak dapat dimuat.</p>
+        <div class="flex items-center justify-center gap-2 text-xs text-ckb-on-error-container" data-chart-error hidden>
+            <span>Grafik penjualan tidak dapat dimuat.</span>
+            <button type="button" data-sales-retry="trend-chart" class="min-h-9 cursor-pointer rounded-lg border border-ckb-outline-variant px-3 font-semibold">Coba lagi</button>
+        </div>
     </div>
 </section>

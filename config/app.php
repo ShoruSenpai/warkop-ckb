@@ -65,7 +65,12 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Jakarta',
+
+    'schedule_timezone' => env(
+        'SCHEDULE_TIMEZONE',
+        'Asia/Jakarta'
+    ),
 
     /*
     |--------------------------------------------------------------------------

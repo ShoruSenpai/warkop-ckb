@@ -3,7 +3,7 @@
     aria-label="Daftar invoice pembelian"
 >
     <div class="overflow-x-auto">
-        <table class="w-full min-w-[760px] border-collapse text-left">
+        <table class="w-full min-w-[860px] border-collapse text-left">
             <thead
                 class="border-b border-ckb-outline-variant/50 bg-ckb-surface-container-low"
             >
@@ -17,6 +17,7 @@
                         Nama supplier
                     </th>
                     <th scope="col" class="px-3 py-2.5 font-medium">Tanggal</th>
+                    <th scope="col" class="px-3 py-2.5 font-medium">Status</th>
                     <th scope="col" class="px-3 py-2.5 font-medium">
                         Item dibeli
                     </th>
@@ -31,7 +32,7 @@
             <tbody data-invoice-list aria-live="polite">
                 <tr>
                     <td
-                        colspan="6"
+                        colspan="7"
                         class="px-3 py-6 text-center text-xs text-ckb-on-surface-variant"
                     >
                         Memuat invoice pembelian...

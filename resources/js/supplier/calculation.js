@@ -29,6 +29,10 @@ export function updateSummary() {
 
     $("grand-total").innerText = `Rp ${total.toLocaleString("id-ID")}`;
 
-    $("item-count").innerText =
-        `${rows.length} item · stok akan diperbarui otomatis`;
+    const status = $("status")?.value;
+    const stockNote = status === "received"
+        ? "stok akan diperbarui"
+        : "stok belum berubah";
+
+    $("item-count").innerText = `${rows.length} item · ${stockNote}`;
 }

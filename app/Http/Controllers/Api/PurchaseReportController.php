@@ -132,7 +132,7 @@ class PurchaseReportController extends Controller
 
     private function periodRange(string $period): array
     {
-        $today = Carbon::today();
+        $today = Carbon::today("Asia/Jakarta");
 
         $from = match ($period) {
             "week" => $today->copy()->subDays(6),
@@ -145,7 +145,7 @@ class PurchaseReportController extends Controller
 
     private function spendingChart(string $period): array
     {
-        $today = Carbon::today();
+        $today = Carbon::today("Asia/Jakarta");
         $from =
             $period === "year"
                 ? $today->copy()->startOfYear()

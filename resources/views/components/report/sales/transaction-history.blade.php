@@ -30,7 +30,7 @@
     </div>
 
     <div
-        class="grid grid-cols-1 gap-3 border-b border-ckb-outline-variant/50 bg-ckb-surface p-4 sm:grid-cols-2 xl:grid-cols-7"
+        class="grid grid-cols-1 gap-3 border-b border-ckb-outline-variant/50 bg-ckb-surface p-4 sm:grid-cols-2 xl:grid-cols-8"
     >
         <label
             class="flex min-w-0 flex-col gap-1 text-[10px] font-semibold text-ckb-on-surface-variant sm:col-span-2"
@@ -78,7 +78,17 @@
                 class="min-h-11 w-full cursor-pointer rounded-lg border border-ckb-outline-variant bg-ckb-surface-container-lowest px-2 text-xs text-ckb-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent"
             >
                 <option value="">Semua status</option>
-                <option value="paid">Lunas</option>
+            </select>
+        </label>
+        <label
+            class="flex min-w-0 flex-col gap-1 text-[10px] font-semibold text-ckb-on-surface-variant"
+        >
+            Status pembayaran
+            <select
+                data-filter-payment-status
+                class="min-h-11 w-full cursor-pointer rounded-lg border border-ckb-outline-variant bg-ckb-surface-container-lowest px-2 text-xs text-ckb-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent"
+            >
+                <option value="">Semua status pembayaran</option>
             </select>
         </label>
         <label
@@ -90,9 +100,6 @@
                 class="min-h-11 w-full cursor-pointer rounded-lg border border-ckb-outline-variant bg-ckb-surface-container-lowest px-2 text-xs text-ckb-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent"
             >
                 <option value="">Semua metode</option>
-                <option value="cash">Tunai</option>
-                <option value="qris">QRIS</option>
-                <option value="transfer">Transfer</option>
             </select>
         </label>
         <label
@@ -199,7 +206,12 @@
         class="hidden border-t border-ckb-outline-variant/50 bg-ckb-error-container px-4 py-4 text-xs text-ckb-on-error-container"
         role="alert"
     >
-        Riwayat penjualan tidak dapat dimuat.
+        <span data-transaction-error-message>Riwayat penjualan tidak dapat dimuat.</span>
+        <button
+            type="button"
+            data-sales-retry="transaction-history"
+            class="ml-2 min-h-9 cursor-pointer rounded-lg border border-ckb-on-error-container/30 px-3 font-semibold underline"
+        >Coba lagi</button>
     </div>
 
     <template id="sales-transaction-row-template">

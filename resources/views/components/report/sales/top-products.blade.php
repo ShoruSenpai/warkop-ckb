@@ -21,6 +21,7 @@
         />
     </div>
     <p data-product-list-summary class="mt-2 text-xs text-ckb-on-surface-variant">Maksimal lima produk</p>
+    <button type="button" data-sales-retry="top-products" hidden class="mt-2 min-h-9 cursor-pointer self-start rounded-lg border border-ckb-outline-variant px-3 text-xs font-semibold">Coba lagi</button>
     <ol
         data-top-products
         class="mt-2 flex flex-1 flex-col divide-y divide-ckb-outline-variant/40"
