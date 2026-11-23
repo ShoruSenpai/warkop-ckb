@@ -4,11 +4,15 @@ namespace Tests\Feature;
 
 use App\Http\Controllers\Api\SupplierPurchaseController;
 use App\Http\Controllers\Api\PurchaseReportController;
+use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Validation\ValidationException;
+use PHPUnit\Framework\Attributes\Group;
+use Spatie\LaravelPdf\Facades\Pdf;
+use Spatie\LaravelPdf\PdfBuilder;
 use Tests\TestCase;
 
 class SupplierPurchaseStoreTest extends TestCase
@@ -188,6 +192,92 @@ class SupplierPurchaseStoreTest extends TestCase
         $this->assertSame(["pending", "received"], $statuses);
     }
 
+    public function test_purchase_pdf_uses_existing_summary_and_history_rules(): void
+    {
+        Pdf::fake();
+        foreach (["pending", "received"] as $index => $status) {
+            DB::table("supplier_purchases")->insert([
+                "invoice_number" => "PDF-{$status}",
+                "supplier_name" => "Supplier",
+                "total_cost" => ($index + 1) * 10000,
+                "purchase_date" => now()->toDateString(),
+                "status" => $status,
+                "created_at" => now(),
+                "updated_at" => now(),
+            ]);
+        }
+
+        $this->actingAs($this->user("owner"))
+            ->get("/reports/purchases/pdf?period=month&chart_period=year")
+            ->assertOk();
+
+        Pdf::assertRespondedWithPdf(function (PdfBuilder $pdf): bool {
+            return preg_match('/^laporan-pembelian-\d{2}-\d{2}-\d{4}-\d{2}-\d{2}\.pdf$/', $pdf->downloadName) === 1
+                && $pdf->viewData["metrics"]["total_purchases"] === 30000
+                && $pdf->viewData["metrics"]["invoice_count"] === 2
+                && $pdf->viewData["metrics"]["received_count"] === 1
+                && $pdf->viewData["purchases"]->count() === 2;
+        });
+    }
+
+    public function test_purchase_pdf_validates_filters_and_restricts_roles(): void
+    {
+        Pdf::fake();
+
+        $this->actingAs($this->user("owner"))
+            ->getJson("/reports/purchases/pdf?period=decade")
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(["period", "chart_period"]);
+
+        $this->actingAs($this->user("cashier"))
+            ->getJson("/reports/purchases/pdf")
+            ->assertStatus(302);
+    }
+
+    #[Group("chromium")]
+    public function test_purchase_pdf_renders_with_real_chromium(): void
+    {
+        config()->set("laravel-pdf.driver", "browsershot");
+        DB::table("supplier_purchases")->insert([
+            "invoice_number" => "PDF-CHROMIUM",
+            "supplier_name" => "Supplier",
+            "total_cost" => 10000,
+            "purchase_date" => now()->toDateString(),
+            "status" => "received",
+            "created_at" => now(),
+            "updated_at" => now(),
+        ]);
+
+        $response = $this->actingAs($this->user("owner"))
+            ->get("/reports/purchases/pdf?period=month&chart_period=month");
+
+        $response->assertOk();
+        $response->assertHeader("content-type", "application/pdf");
+        $response->assertHeader("content-disposition");
+        $this->assertStringStartsWith("%PDF-", $response->getContent());
+    }
+
+    #[Group("chromium")]
+    public function test_medium_and_large_purchase_pdfs_paginate_with_real_chromium(): void
+    {
+        config()->set("laravel-pdf.driver", "browsershot");
+        $this->actingAs($this->user("owner"));
+
+        for ($index = 1; $index <= 40; $index++) {
+            $this->insertPdfPurchase($index);
+        }
+
+        $medium = $this->get("/reports/purchases/pdf?period=month&chart_period=month");
+        $this->assertPdfHasMultiplePages($medium->assertOk()->getContent());
+
+        for ($index = 41; $index <= 160; $index++) {
+            $this->insertPdfPurchase($index);
+        }
+
+        $large = $this->get("/reports/purchases/pdf?period=month&chart_period=month");
+        $this->assertPdfHasMultiplePages($large->assertOk()->getContent());
+    }
+
     public function test_pending_purchase_can_be_received_once(): void
     {
         $purchaseResponse = $this->storePurchase("pending");
@@ -309,5 +399,33 @@ class SupplierPurchaseStoreTest extends TestCase
         ]);
 
         return app(SupplierPurchaseController::class)->store($request);
+    }
+
+    private function user(string $role): User
+    {
+        $user = new User();
+        $user->forceFill(["id" => 1, "role" => $role]);
+
+        return $user;
+    }
+
+    private function insertPdfPurchase(int $index): void
+    {
+        DB::table("supplier_purchases")->insert([
+            "invoice_number" => "PDF-SIZE-{$index}",
+            "supplier_name" => "Supplier",
+            "total_cost" => 10000,
+            "purchase_date" => now()->toDateString(),
+            "status" => "received",
+            "created_at" => now(),
+            "updated_at" => now(),
+        ]);
+    }
+
+    private function assertPdfHasMultiplePages(string $content): void
+    {
+        $this->assertStringStartsWith("%PDF-", $content);
+        preg_match_all("~/Type\\s*/Page\\b~", $content, $matches);
+        $this->assertGreaterThanOrEqual(2, count($matches[0]));
     }
 }

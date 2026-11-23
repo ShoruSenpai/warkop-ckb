@@ -1,12 +1,29 @@
 import { Chart } from "@/utils/chart.js";
 import { ckbColor, ckbColorWithAlpha } from "@/utils/theme.js";
 import { apiFetch } from "@/utils/api.js";
+import { downloadReportPdf } from "@/utils/report-download.js";
 
 const root = document.querySelector("[data-sales-report]");
 
 if (root) {
+    const metricKeys = ["sales_total", "sales_count", "sales_average"];
+    const metricApiKeys = {
+        sales_total: "total_sales",
+        sales_count: "transaction_count",
+        sales_average: "average_ticket",
+    };
+    const metricFilters = {
+        "sales-total-period": "sales_total",
+        "sales-count-period": "sales_count",
+        "sales-average-period": "sales_average",
+    };
     const state = {
         period: "month",
+        metricPeriods: {
+            sales_total: "month",
+            sales_count: "month",
+            sales_average: "month",
+        },
         metric: "revenue",
         productMetric: "quantity",
         transactions: [],
@@ -14,11 +31,29 @@ if (root) {
         chartData: { labels: [], revenue: [], transactions: [] },
         page: 1,
         pageSize: 10,
+        draftPageSize: 10,
+        appliedFilters: {
+            start_date: "",
+            end_date: "",
+            status: "",
+            payment_status: "",
+            payment_method: "",
+            cashier_id: "",
+            search: "",
+        },
         transactionLoading: false,
+        pdfExporting: false,
         meta: { total: 0, last_page: 1, has_more: false, current_page: 1 },
     };
-    const requests = { metrics: 0, "trend-chart": 0, "top-products": 0, "transaction-history": 0, detail: 0 };
-    let searchTimer;
+    const requests = {
+        sales_total: 0,
+        sales_count: 0,
+        sales_average: 0,
+        "trend-chart": 0,
+        "top-products": 0,
+        "transaction-history": 0,
+        detail: 0,
+    };
     const chartCanvas = root.querySelector("[data-sales-chart]");
     const chartPanel = root.querySelector("[data-chart-panel]");
     const chartStatus = root.querySelector("[data-chart-status]");
@@ -114,18 +149,11 @@ if (root) {
     root.addEventListener("change", (event) => {
         const target = event.target;
 
-        if (
-            target.matches(
-                "[data-filter-start], [data-filter-end], [data-filter-status], [data-filter-payment-status], [data-filter-payment], [data-filter-cashier], [data-page-size]",
-            )
-        ) {
+        if (target.matches("[data-filter-control], [data-page-size]")) {
             if (target.matches("[data-page-size]")) {
-                state.pageSize = Number(target.value) || 10;
-                state.page = 1;
+                state.draftPageSize = Number(target.value) || 10;
             }
-
-            state.page = 1;
-            loadTransactions();
+            updateDraftFilterNotice();
         }
 
         if (target.matches("[data-period-start], [data-period-end]")) {
@@ -134,10 +162,8 @@ if (root) {
     });
 
     root.addEventListener("input", (event) => {
-        if (event.target.matches("[data-filter-search]")) {
-            state.page = 1;
-            clearTimeout(searchTimer);
-            searchTimer = setTimeout(loadTransactions, 250);
+        if (event.target.matches("[data-filter-control]")) {
+            updateDraftFilterNotice();
         }
     });
 
@@ -145,11 +171,58 @@ if (root) {
         const filterControl = event.target.closest("[data-filter-group]");
         const filterGroup = filterControl?.dataset.filterGroup;
         const resetButton = event.target.closest("[data-reset-filters]");
+        const applyFiltersButton = event.target.closest("[data-apply-filters]");
         const previousButton = event.target.closest("[data-page-previous]");
         const nextButton = event.target.closest("[data-page-next]");
         const detailButton = event.target.closest("[data-transaction-detail]");
         const retryButton = event.target.closest("[data-sales-retry]");
+        const exportButton = event.target.closest("[data-sales-export]");
         const closeButton = event.target.closest("[data-detail-close]");
+
+        if (exportButton && !state.pdfExporting) {
+            state.pdfExporting = true;
+            const params = new URLSearchParams({
+                sales_total_period: state.metricPeriods.sales_total,
+                sales_count_period: state.metricPeriods.sales_count,
+                sales_average_period: state.metricPeriods.sales_average,
+                chart_period: state.period,
+                chart_metric: state.metric,
+                ...state.appliedFilters,
+            });
+
+            if (state.period === "custom") {
+                params.set(
+                    "chart_start_date",
+                    root.querySelector("[data-period-start]").value,
+                );
+                params.set(
+                    "chart_end_date",
+                    root.querySelector("[data-period-end]").value,
+                );
+            }
+
+            downloadReportPdf(
+                exportButton,
+                `/reports/sales/pdf?${params}`,
+                "penjualan",
+            ).finally(() => {
+                state.pdfExporting = false;
+            });
+        }
+
+        if (metricFilters[filterGroup]) {
+            const metricKey = metricFilters[filterGroup];
+            state.metricPeriods[metricKey] = filterControl.dataset.filterValue;
+            setPressedState(
+                `[data-filter-group="${filterGroup}"]`,
+                filterControl,
+            );
+            loadSummarySection(
+                "metrics",
+                metricKey,
+                state.metricPeriods[metricKey],
+            );
+        }
 
         if (filterGroup === "sales-trend-period") {
             state.period = filterControl.dataset.filterValue;
@@ -180,8 +253,7 @@ if (root) {
             renderProducts();
         }
 
-        if (resetButton) {
-            clearTimeout(searchTimer);
+        if (resetButton && !state.transactionLoading) {
             root.querySelector("[data-filter-search]").value = "";
             root.querySelector("[data-filter-start]").value = "";
             root.querySelector("[data-filter-end]").value = "";
@@ -189,7 +261,20 @@ if (root) {
             root.querySelector("[data-filter-payment-status]").value = "";
             root.querySelector("[data-filter-payment]").value = "";
             root.querySelector("[data-filter-cashier]").value = "";
+            root.querySelector("[data-page-size]").value = "10";
+            state.draftPageSize = 10;
+            state.appliedFilters = readDraftFilters();
+            state.pageSize = 10;
             state.page = 1;
+            root.querySelector("[data-filter-draft-notice]").hidden = true;
+            loadTransactions();
+        }
+
+        if (applyFiltersButton && !state.transactionLoading) {
+            state.appliedFilters = readDraftFilters();
+            state.pageSize = state.draftPageSize;
+            state.page = 1;
+            root.querySelector("[data-filter-draft-notice]").hidden = true;
             loadTransactions();
         }
 
@@ -215,11 +300,20 @@ if (root) {
         if (retryButton) {
             const target = retryButton.dataset.salesRetry;
             if (target === "transaction-history") loadTransactions();
-            if (target === "metrics") loadSummarySection("metrics", "metrics", "month");
+            if (metricKeys.includes(target))
+                loadSummarySection(
+                    "metrics",
+                    target,
+                    state.metricPeriods[target],
+                );
             if (target === "trend-chart")
                 loadSummarySection("chart", "trend-chart", state.period);
             if (target === "top-products")
-                loadSummarySection("top-products", "top-products", state.period);
+                loadSummarySection(
+                    "top-products",
+                    "top-products",
+                    state.period,
+                );
         }
 
         if (closeButton) {
@@ -234,40 +328,30 @@ if (root) {
                 event.currentTarget.close();
         },
     );
-    root.querySelector("[data-transaction-dialog]")?.addEventListener("close", () => {
-        requests.detail += 1;
-    });
+    root.querySelector("[data-transaction-dialog]")?.addEventListener(
+        "close",
+        () => {
+            requests.detail += 1;
+        },
+    );
 
     root.addEventListener("sales-report:data", (event) => {
         const { target, data = {}, meta = {} } = event.detail ?? {};
         const card = findReportCard(target);
 
-        if (!card) return;
-
-        card.setAttribute("aria-busy", "false");
-
-        if (target === "metrics") {
-            root.querySelector("[data-metrics-error]").hidden = true;
-            const metrics = { ...(data.metrics ?? data) };
-
-            if (
-                !metrics.average_ticket &&
-                metrics.total_sales &&
-                metrics.transaction_count
-            ) {
-                metrics.average_ticket = {
-                    current:
-                        Number(metrics.total_sales.current) /
-                        Number(metrics.transaction_count.current),
-                    previous:
-                        Number(metrics.total_sales.previous) /
-                        Number(metrics.transaction_count.previous),
-                };
-            }
-
-            renderMetrics(metrics);
+        if (metricKeys.includes(target)) {
+            renderMetric(
+                target,
+                data.metrics?.[metricApiKeys[target]],
+                meta.periodRange,
+            );
+            const retry = card?.querySelector("[data-sales-retry]");
+            if (retry) retry.hidden = true;
             return;
         }
+
+        if (!card) return;
+        card.setAttribute("aria-busy", "false");
 
         if (target === "trend-chart") {
             state.chartData = {
@@ -295,7 +379,8 @@ if (root) {
         }
 
         if (target === "top-products") {
-            root.querySelector('[data-sales-retry="top-products"]').hidden = true;
+            root.querySelector('[data-sales-retry="top-products"]').hidden =
+                true;
             const summary = root.querySelector("[data-product-list-summary]");
             if (summary) summary.textContent = "Maksimal lima produk";
             state.products = Array.isArray(data.products)
@@ -316,17 +401,24 @@ if (root) {
             root.querySelector("[data-transaction-loading]").classList.add(
                 "hidden",
             );
-            root
-                .querySelector("[data-transaction-error]")
-                .classList.add("hidden");
+            root.querySelector("[data-transaction-error]").classList.add(
+                "hidden",
+            );
             renderTransactions();
         }
     });
 
     root.addEventListener("sales-report:loading", (event) => {
-        const card = findReportCard(event.detail?.target);
-        if (!card) return;
+        const { target, meta = {} } = event.detail ?? {};
+        const card = findReportCard(target);
 
+        if (metricKeys.includes(target)) {
+            setMetricBusy(target, true);
+            const retry = card?.querySelector("[data-sales-retry]");
+            if (retry) retry.hidden = true;
+            return;
+        }
+        if (!card) return;
         card.setAttribute("aria-busy", "true");
 
         if (event.detail.target === "trend-chart" && chartStatus) {
@@ -336,50 +428,51 @@ if (root) {
             root.querySelector("[data-chart-error]").hidden = true;
         }
 
-        if (event.detail.target === "metrics") root.querySelector("[data-metrics-error]").hidden = true;
-        if (event.detail.target === "metrics") {
-            root.querySelectorAll("[data-sales-kpi-note]").forEach((node) => {
-                node.textContent = "Memuat ringkasan penjualan...";
-            });
-        }
         if (event.detail.target === "top-products") {
-            root.querySelector('[data-sales-retry="top-products"]').hidden = true;
+            root.querySelector('[data-sales-retry="top-products"]').hidden =
+                true;
             const summary = root.querySelector("[data-product-list-summary]");
             if (summary) summary.textContent = "Memuat produk terlaris...";
         }
 
         if (event.detail.target === "transaction-history") {
             state.transactionLoading = true;
+            root.querySelector("[data-apply-filters]").disabled = true;
+            root.querySelector("[data-reset-filters]").disabled = true;
             root.querySelector("[data-transaction-panel]").hidden = true;
-            root
-                .querySelector("[data-transaction-loading]")
-                .classList.remove("hidden");
-            root
-                .querySelector("[data-transaction-error]")
-                .classList.add("hidden");
+            root.querySelector("[data-transaction-loading]").classList.remove(
+                "hidden",
+            );
+            root.querySelector("[data-transaction-error]").classList.add(
+                "hidden",
+            );
         }
     });
 
     root.addEventListener("sales-report:error", (event) => {
-        const target = event.detail?.target;
+        const { target, message: errorMessage, meta = {} } = event.detail ?? {};
         const card = findReportCard(target);
-        if (!card) return;
+        const message = errorMessage || "Data tidak dapat dimuat.";
 
-        const message = event.detail?.message || "Data tidak dapat dimuat.";
-        card.setAttribute("aria-busy", "false");
-
-        if (target === "metrics") {
-            resetMetrics();
-            root.querySelector("[data-metrics-error-message]").textContent = message;
-            root.querySelector("[data-metrics-error]").hidden = false;
+        if (metricKeys.includes(target)) {
+            card?.setAttribute("aria-busy", "false");
+            const note = card?.querySelector("[data-sales-kpi-note]");
+            const retry = card?.querySelector("[data-sales-retry]");
+            if (note) note.textContent = message;
+            if (retry) retry.hidden = false;
+            return;
         }
+
+        if (!card) return;
+        card.setAttribute("aria-busy", "false");
 
         if (target === "top-products") {
             state.products = [];
             renderProducts();
             const summary = root.querySelector("[data-product-list-summary]");
             if (summary) summary.textContent = message;
-            root.querySelector('[data-sales-retry="top-products"]').hidden = false;
+            root.querySelector('[data-sales-retry="top-products"]').hidden =
+                false;
         }
 
         if (target === "trend-chart") {
@@ -396,20 +489,23 @@ if (root) {
 
         if (target === "transaction-history") {
             root.querySelector("[data-transaction-panel]").hidden = true;
-            root
-                .querySelector("[data-transaction-loading]")
-                .classList.add("hidden");
-            root.querySelector("[data-transaction-error-message]").textContent = message;
-            root
-                .querySelector("[data-transaction-error]")
-                .classList.remove("hidden");
+            root.querySelector("[data-transaction-loading]").classList.add(
+                "hidden",
+            );
+            root.querySelector("[data-transaction-error-message]").textContent =
+                message;
+            root.querySelector("[data-transaction-error]").classList.remove(
+                "hidden",
+            );
         }
     });
 
     updateChartPeriod();
     renderProducts();
     renderTransactions();
-    loadSummarySection("metrics", "metrics", "month");
+    metricKeys.forEach((key) =>
+        loadSummarySection("metrics", key, state.metricPeriods[key]),
+    );
     loadSummarySection("chart", "trend-chart", state.period);
     loadSummarySection("top-products", "top-products", state.period);
     loadTransactions();
@@ -428,6 +524,17 @@ if (root) {
         const requestId = ++requests[target];
         const params = new URLSearchParams({ section, period });
 
+        if (section === "metrics" && period === "week") {
+            const range = rollingSevenDayRange();
+            params.set("period", "custom");
+            params.set("start_date", range.start);
+            params.set("end_date", range.end);
+        }
+
+        if (metricKeys.includes(target)) {
+            params.set("metric", metricApiKeys[target]);
+        }
+
         if (period === "custom") {
             const start = root.querySelector("[data-period-start]").value;
             const end = root.querySelector("[data-period-end]").value;
@@ -436,99 +543,151 @@ if (root) {
             params.set("end_date", end);
         }
 
-        root.dispatchEvent(new CustomEvent("sales-report:loading", { detail: { target } }));
+        root.dispatchEvent(
+            new CustomEvent("sales-report:loading", {
+                detail: { target, meta: { period } },
+            }),
+        );
 
         try {
-            const { response, data } = await apiFetch(`/api/reports/sales/summary?${params}`);
+            const { response, data } = await apiFetch(
+                `/api/reports/sales/summary?${params}`,
+            );
             if (requestId !== requests[target]) return;
             if (!response.ok || data.success !== true) {
-                throw new Error(data.message || "Data laporan tidak dapat dimuat.");
+                throw new Error(
+                    data.message || "Data laporan tidak dapat dimuat.",
+                );
             }
 
             const payload = data.data ?? {};
-            const result = section === "chart"
-                ? payload.chart ?? {}
-                : section === "top-products"
-                  ? { products: payload.products ?? [] }
-                  : payload.metrics ?? {};
-            root.dispatchEvent(new CustomEvent("sales-report:data", {
-                detail: { target, data: result },
-            }));
+            const result =
+                section === "metrics"
+                    ? payload
+                    : section === "chart"
+                    ? (payload.chart ?? {})
+                    : section === "top-products"
+                      ? { products: payload.products ?? [] }
+                      : (payload.metrics ?? {});
+            root.dispatchEvent(
+                new CustomEvent("sales-report:data", {
+                    detail: {
+                        target,
+                        data: result,
+                        meta: {
+                            period,
+                            periodRange: payload.period_range,
+                        },
+                    },
+                }),
+            );
         } catch (error) {
-            if (requestId !== requests[target] || error.message === "UNAUTHORIZED") return;
-            root.dispatchEvent(new CustomEvent("sales-report:error", {
-                detail: { target, message: apiErrorMessage(error) },
-            }));
+            if (
+                requestId !== requests[target] ||
+                error.message === "UNAUTHORIZED"
+            )
+                return;
+            root.dispatchEvent(
+                new CustomEvent("sales-report:error", {
+                    detail: {
+                        target,
+                        message: apiErrorMessage(error),
+                        meta: { period },
+                    },
+                }),
+            );
         }
     }
 
     async function loadTransactions() {
+        if (state.transactionLoading) return;
+
         const requestId = ++requests["transaction-history"];
         state.transactionLoading = true;
         const params = new URLSearchParams();
-        const filters = [
-            ["start_date", "[data-filter-start]"],
-            ["end_date", "[data-filter-end]"],
-            ["status", "[data-filter-status]"],
-            ["payment_status", "[data-filter-payment-status]"],
-            ["payment_method", "[data-filter-payment]"],
-            ["cashier_id", "[data-filter-cashier]"],
-            ["search", "[data-filter-search]"],
-        ];
-        filters.forEach(([key, selector]) => {
-            const value = root.querySelector(selector)?.value?.trim();
+        Object.entries(state.appliedFilters).forEach(([key, value]) => {
             if (value) params.set(key, value);
         });
         params.set("per_page", String(state.pageSize));
         params.set("page", String(state.page));
 
-        root.dispatchEvent(new CustomEvent("sales-report:loading", {
-            detail: { target: "transaction-history" },
-        }));
+        root.dispatchEvent(
+            new CustomEvent("sales-report:loading", {
+                detail: { target: "transaction-history" },
+            }),
+        );
 
         try {
-            const { response, data } = await apiFetch(`/api/reports/sales?${params}`);
+            const { response, data } = await apiFetch(
+                `/api/reports/sales?${params}`,
+            );
             if (requestId !== requests["transaction-history"]) return;
             if (!response.ok || data.success !== true) {
-                throw new Error(data.message || "Riwayat transaksi tidak dapat dimuat.");
+                throw new Error(
+                    data.message || "Riwayat transaksi tidak dapat dimuat.",
+                );
             }
             state.transactionLoading = false;
-            root.dispatchEvent(new CustomEvent("sales-report:data", {
-                detail: {
-                    target: "transaction-history",
-                    data: data.data ?? {},
-                    meta: data.meta ?? {},
-                },
-            }));
+            root.dispatchEvent(
+                new CustomEvent("sales-report:data", {
+                    detail: {
+                        target: "transaction-history",
+                        data: data.data ?? {},
+                        meta: data.meta ?? {},
+                    },
+                }),
+            );
         } catch (error) {
-            if (requestId !== requests["transaction-history"] || error.message === "UNAUTHORIZED") return;
-            state.transactionLoading = false;
-            root.dispatchEvent(new CustomEvent("sales-report:error", {
-                detail: {
-                    target: "transaction-history",
-                    message: apiErrorMessage(error),
-                },
-            }));
+            if (requestId !== requests["transaction-history"]) return;
+            if (error.message === "UNAUTHORIZED") return;
+            root.dispatchEvent(
+                new CustomEvent("sales-report:error", {
+                    detail: {
+                        target: "transaction-history",
+                        message: apiErrorMessage(error),
+                    },
+                }),
+            );
+        } finally {
+            if (requestId === requests["transaction-history"]) {
+                state.transactionLoading = false;
+                root.querySelector("[data-apply-filters]").disabled = false;
+                root.querySelector("[data-reset-filters]").disabled = false;
+                root.querySelector("[data-page-previous]").disabled =
+                    state.meta.current_page <= 1;
+                root.querySelector("[data-page-next]").disabled =
+                    !state.meta.has_more;
+            }
         }
     }
 
     async function loadTransactionDetail(orderId) {
         const requestId = ++requests.detail;
         const dialog = root.querySelector("[data-transaction-dialog]");
-        root.querySelector("[data-detail-invoice]").textContent = "Memuat detail transaksi...";
+        root.querySelector("[data-detail-invoice]").textContent =
+            "Memuat detail transaksi...";
         root.querySelector("[data-detail-error]").hidden = true;
         if (dialog && !dialog.open) dialog.showModal();
 
         try {
-            const { response, data } = await apiFetch(`/api/reports/sales/${encodeURIComponent(orderId)}`);
+            const { response, data } = await apiFetch(
+                `/api/reports/sales/${encodeURIComponent(orderId)}`,
+            );
             if (requestId !== requests.detail) return;
             if (!response.ok || data.success !== true || !data.data) {
-                throw new Error(data.message || "Detail transaksi tidak dapat dimuat.");
+                throw new Error(
+                    data.message || "Detail transaksi tidak dapat dimuat.",
+                );
             }
             openTransactionDetail(data.data);
         } catch (error) {
-            if (requestId !== requests.detail || error.message === "UNAUTHORIZED") return;
-            root.querySelector("[data-detail-invoice]").textContent = apiErrorMessage(error);
+            if (
+                requestId !== requests.detail ||
+                error.message === "UNAUTHORIZED"
+            )
+                return;
+            root.querySelector("[data-detail-invoice]").textContent =
+                apiErrorMessage(error);
             root.querySelector("[data-detail-items]").replaceChildren();
             const retry = root.querySelector("[data-detail-error]");
             retry.dataset.detailRetry = String(orderId);
@@ -537,7 +696,8 @@ if (root) {
     }
 
     function apiErrorMessage(error) {
-        if (error.message === "NETWORK_ERROR") return "Koneksi gagal. Periksa jaringan lalu coba lagi.";
+        if (error.message === "NETWORK_ERROR")
+            return "Koneksi gagal. Periksa jaringan lalu coba lagi.";
         return error.message || "Data tidak dapat dimuat. Silakan coba lagi.";
     }
 
@@ -638,67 +798,87 @@ if (root) {
         return reportCards.get(target);
     }
 
-    function resetMetrics() {
-        root.querySelectorAll("[data-sales-kpi-value]").forEach((node) => {
-            node.textContent = "—";
-        });
-        root.querySelectorAll("[data-sales-kpi-note]").forEach((node) => {
-            node.textContent = "Data periode ini belum tersedia.";
-        });
-        root.querySelectorAll("[data-sales-kpi-delta]").forEach((node) => {
-            node.textContent = "Perbandingan belum tersedia";
-            node.classList.remove("text-ckb-success", "text-ckb-error");
-            node.classList.add("text-ckb-on-surface-variant");
-        });
+    function readDraftFilters() {
+        return {
+            start_date: root.querySelector("[data-filter-start]").value,
+            end_date: root.querySelector("[data-filter-end]").value,
+            status: root.querySelector("[data-filter-status]").value,
+            payment_status: root.querySelector("[data-filter-payment-status]")
+                .value,
+            payment_method: root.querySelector("[data-filter-payment]").value,
+            cashier_id: root.querySelector("[data-filter-cashier]").value,
+            search: root.querySelector("[data-filter-search]").value.trim(),
+        };
     }
 
-    function renderMetrics(metrics) {
-        const entries = [
-            ["sales_total", metrics.total_sales],
-            ["sales_count", metrics.transaction_count],
-            ["sales_average", metrics.average_ticket],
-        ];
-
-        entries.forEach(([key, metric]) => {
-            if (
-                !metric ||
-                metric.current === null ||
-                metric.current === undefined ||
-                !Number.isFinite(Number(metric.current))
-            ) {
-                return;
-            }
-
-            const valueNode = root.querySelector(
-                `[data-sales-kpi-value="${key}"]`,
+    function updateDraftFilterNotice() {
+        const draft = readDraftFilters();
+        const changed =
+            state.draftPageSize !== state.pageSize ||
+            Object.entries(draft).some(
+                ([key, value]) => value !== state.appliedFilters[key],
             );
-            const noteNode = root.querySelector(
-                `[data-sales-kpi-note="${key}"]`,
-            );
-            const deltaNode = root.querySelector(
-                `[data-sales-kpi-delta="${key}"]`,
-            );
-            const isCurrency = key !== "sales_count";
+        root.querySelector("[data-filter-draft-notice]").hidden = !changed;
+    }
 
-            if (valueNode) {
-                valueNode.textContent = isCurrency
-                    ? formatRupiah(metric.current)
-                    : formatNumber(metric.current);
-            }
+    function rollingSevenDayRange() {
+        const parts = new Intl.DateTimeFormat("en-US", {
+            timeZone: "Asia/Jakarta",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+        }).formatToParts(new Date());
+        const values = Object.fromEntries(
+            parts.map(({ type, value }) => [type, value]),
+        );
+        const end = `${values.year}-${values.month}-${values.day}`;
+        const startDate = new Date(`${end}T00:00:00Z`);
+        startDate.setUTCDate(startDate.getUTCDate() - 6);
 
+        return {
+            start: `${startDate.getUTCFullYear()}-${String(startDate.getUTCMonth() + 1).padStart(2, "0")}-${String(startDate.getUTCDate()).padStart(2, "0")}`,
+            end,
+        };
+    }
+
+    function renderMetric(key, metric, periodRange) {
+        const card = findReportCard(key);
+        const valueNode = root.querySelector(`[data-sales-kpi-value="${key}"]`);
+        const noteNode = root.querySelector(`[data-sales-kpi-note="${key}"]`);
+        const deltaNode = root.querySelector(`[data-sales-kpi-delta="${key}"]`);
+        const periodNode = root.querySelector(
+            `[data-sales-kpi-period="${key}"]`,
+        );
+
+        if (periodNode) periodNode.textContent = formatPeriodRange(periodRange);
+
+        if (!metric || !Number.isFinite(Number(metric.current))) {
+            card?.setAttribute("aria-busy", "false");
+            if (valueNode) valueNode.textContent = "Tidak tersedia";
             if (noteNode)
-                noteNode.textContent = metric.note || "Pada periode terpilih";
+                noteNode.textContent = "Ringkasan penjualan tidak tersedia.";
+            return;
+        }
 
+        card?.setAttribute("aria-busy", "false");
+        if (valueNode) {
+            valueNode.textContent =
+                key === "sales_count"
+                    ? formatNumber(metric.current)
+                    : formatRupiah(metric.current);
+        }
+        if (noteNode)
+            noteNode.textContent = metric.note || "Pada periode terpilih";
+        if (deltaNode) {
             if (
-                deltaNode &&
                 metric.previous !== null &&
                 metric.previous !== undefined &&
                 Number.isFinite(Number(metric.previous))
             ) {
-                const change = Number(metric.previous)
-                    ? ((Number(metric.current) - Number(metric.previous)) /
-                          Number(metric.previous)) *
-                      100
+                const previous = Number(metric.previous);
+                const current = Number(metric.current);
+                const change = previous
+                    ? ((current - previous) / previous) * 100
                     : null;
 
                 deltaNode.textContent =
@@ -717,8 +897,51 @@ if (root) {
                     "text-ckb-on-surface-variant",
                     change === null,
                 );
+            } else {
+                deltaNode.textContent = "Perbandingan belum tersedia";
+                deltaNode.classList.remove(
+                    "text-ckb-success",
+                    "text-ckb-error",
+                );
+                deltaNode.classList.add("text-ckb-on-surface-variant");
             }
-        });
+        }
+    }
+
+    function setMetricBusy(key, isBusy) {
+        const card = findReportCard(key);
+        card?.setAttribute("aria-busy", String(isBusy));
+        if (isBusy) {
+            const note = card?.querySelector("[data-sales-kpi-note]");
+            if (note) note.textContent = "Memuat ringkasan...";
+            const period = card?.querySelector("[data-sales-kpi-period]");
+            if (period)
+                period.textContent = metricPeriodLabel(state.metricPeriods[key]);
+        }
+    }
+
+    function metricPeriodLabel(period) {
+        return {
+            week: "7 Hari Terakhir",
+            month: "Bulan Ini",
+            year: "Tahun Ini",
+        }[period] || "Periode tidak tersedia";
+    }
+
+    function formatPeriodRange(range) {
+        if (!range?.start_date || !range?.end_date) {
+            return "Periode tidak tersedia";
+        }
+
+        const formatDate = (date) =>
+            new Intl.DateTimeFormat("id-ID", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+                timeZone: "UTC",
+            }).format(new Date(`${date}T00:00:00Z`));
+
+        return `${formatDate(range.start_date)} – ${formatDate(range.end_date)}`;
     }
 
     function renderProducts() {
@@ -819,12 +1042,18 @@ if (root) {
                 if (node) node.textContent = value;
             });
 
-            const paymentStatusNode = row.querySelector('[data-transaction-field="payment_status"]');
+            const paymentStatusNode = row.querySelector(
+                '[data-transaction-field="payment_status"]',
+            );
             if (paymentStatusNode) {
-                paymentStatusNode.textContent = formatPaymentStatus(transaction.payment_status);
+                paymentStatusNode.textContent = formatPaymentStatus(
+                    transaction.payment_status,
+                );
             }
 
-            const statusNode = row.querySelector('[data-transaction-field="status"]');
+            const statusNode = row.querySelector(
+                '[data-transaction-field="status"]',
+            );
             if (statusNode) {
                 statusNode.textContent = formatOrderStatus(transaction.status);
                 statusNode.classList.toggle(
@@ -868,15 +1097,31 @@ if (root) {
                 ? `Menampilkan ${formatNumber(from)}–${formatNumber(to)} dari ${formatNumber(total)} transaksi`
                 : "0 transaksi";
         }
-        if (previousButton) previousButton.disabled = state.meta.current_page <= 1;
+        if (previousButton)
+            previousButton.disabled = state.meta.current_page <= 1;
         if (nextButton) nextButton.disabled = !state.meta.has_more;
         root.dataset.reportState = total ? "ready" : "empty";
     }
 
     function updateTransactionFilterOptions(filters) {
-        replaceSelectOptions("[data-filter-status]", "Semua status", filters.statuses ?? [], formatOrderStatus);
-        replaceSelectOptions("[data-filter-payment-status]", "Semua status pembayaran", filters.payment_statuses ?? [], formatPaymentStatus);
-        replaceSelectOptions("[data-filter-payment]", "Semua metode", filters.payment_methods ?? [], formatPaymentMethod);
+        replaceSelectOptions(
+            "[data-filter-status]",
+            "Semua status",
+            filters.statuses ?? [],
+            formatOrderStatus,
+        );
+        replaceSelectOptions(
+            "[data-filter-payment-status]",
+            "Semua status pembayaran",
+            filters.payment_statuses ?? [],
+            formatPaymentStatus,
+        );
+        replaceSelectOptions(
+            "[data-filter-payment]",
+            "Semua metode",
+            filters.payment_methods ?? [],
+            formatPaymentMethod,
+        );
 
         const select = root.querySelector("[data-filter-cashier]");
         if (!select) return;
@@ -885,7 +1130,11 @@ if (root) {
         (filters.cashiers ?? []).forEach((cashier) => {
             select.add(new Option(cashier.name || "Kasir", String(cashier.id)));
         });
-        select.value = [...select.options].some((option) => option.value === selected) ? selected : "";
+        select.value = [...select.options].some(
+            (option) => option.value === selected,
+        )
+            ? selected
+            : "";
     }
 
     function replaceSelectOptions(selector, firstLabel, values, formatLabel) {
@@ -893,7 +1142,9 @@ if (root) {
         if (!select) return;
         const selected = select.value;
         select.replaceChildren(new Option(firstLabel, ""));
-        values.forEach((value) => select.add(new Option(formatLabel(value), value)));
+        values.forEach((value) =>
+            select.add(new Option(formatLabel(value), value)),
+        );
         select.value = values.includes(selected) ? selected : "";
     }
 
@@ -930,16 +1181,27 @@ if (root) {
                     itemTemplate.content.firstElementChild.cloneNode(true);
                 const values = {
                     name: [
-                        item.product_name_snapshot || item.product_name || "Nama produk tidak tersedia",
+                        item.product_name_snapshot ||
+                            item.product_name ||
+                            "Nama produk tidak tersedia",
                         item.variant_summary_snapshot,
-                        (item.options ?? []).map((option) => `${option.option_group_name_snapshot}: ${option.option_name_snapshot}`).join(", "),
-                    ].filter(Boolean).join(" · "),
+                        (item.options ?? [])
+                            .map(
+                                (option) =>
+                                    `${option.option_group_name_snapshot}: ${option.option_name_snapshot}`,
+                            )
+                            .join(", "),
+                    ]
+                        .filter(Boolean)
+                        .join(" · "),
                     quantity: formatNumber(item.quantity),
                     unit_price: formatRupiah(
                         Number(item.unit_price || 0) +
                             Number(item.option_price || 0),
                     ),
-                    subtotal: formatRupiah(item.final_subtotal ?? item.subtotal),
+                    subtotal: formatRupiah(
+                        item.final_subtotal ?? item.subtotal,
+                    ),
                 };
 
                 Object.entries(values).forEach(([field, value]) => {
@@ -1140,7 +1402,9 @@ if (root) {
                 paid: "Lunas",
                 unpaid: "Belum dibayar",
                 cancelled: "Dibatalkan",
-            }[value] || value || "—"
+            }[value] ||
+            value ||
+            "—"
         );
     }
 
@@ -1149,7 +1413,9 @@ if (root) {
             {
                 completed: "Selesai",
                 cancelled: "Dibatalkan",
-            }[value] || value || "—"
+            }[value] ||
+            value ||
+            "—"
         );
     }
 }

@@ -9,10 +9,11 @@
             <button
                 type="button"
                 id="btn-get-materials"
-                class="flex size-11 shrink-0 items-center justify-center rounded-lg border border-ckb-outline-variant text-xs text-ckb-on-surface hover:bg-ckb-surface-container-low focus:ring-1 focus:ring-ckb-accent focus:outline-none transition"
-                title="Refresh Data"
+                aria-label="Muat ulang bahan baku"
+                title="Muat ulang bahan baku"
+                class="flex size-11 shrink-0 items-center justify-center rounded-lg border border-ckb-outline-variant text-xs text-ckb-on-surface transition hover:bg-ckb-surface-container-low focus:outline-none focus:ring-1 focus:ring-ckb-accent disabled:cursor-wait disabled:opacity-60 motion-reduce:transition-none"
             >
-                <i class="fas fa-sync-alt"></i>
+                <i class="fas fa-sync-alt" aria-hidden="true"></i>
             </button>
 
             <input

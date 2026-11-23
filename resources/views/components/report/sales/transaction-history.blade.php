@@ -20,13 +20,22 @@
                 role="status"
             >Data transaksi belum tersedia dari backend.</p>
         </div>
-        <button
-            type="button"
-            data-reset-filters
-            class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 self-start rounded-lg border border-ckb-outline-variant px-3 text-xs font-semibold text-ckb-primary transition hover:bg-ckb-surface-container-low focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent motion-reduce:transition-none sm:self-auto"
-        >
-            Reset filter
-        </button>
+        <div class="flex flex-wrap gap-2 self-start sm:self-auto">
+            <button
+                type="button"
+                data-reset-filters
+                class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg border border-ckb-outline-variant px-3 text-xs font-semibold text-ckb-primary transition hover:bg-ckb-surface-container-low focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent motion-reduce:transition-none"
+            >
+                Reset filter
+            </button>
+            <button
+                type="button"
+                data-apply-filters
+                class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg bg-ckb-primary px-3 text-xs font-semibold text-ckb-on-primary transition hover:bg-ckb-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent motion-reduce:transition-none"
+            >
+                Terapkan filter
+            </button>
+        </div>
     </div>
 
     <div
@@ -44,6 +53,7 @@
                 <input
                     type="search"
                     data-filter-search
+                    data-filter-control
                     placeholder="Nomor invoice atau nama kasir"
                     class="min-h-11 w-full rounded-lg border border-ckb-outline-variant bg-ckb-surface-container-lowest pl-9 pr-3 text-xs text-ckb-primary placeholder:text-ckb-on-surface-variant focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent"
                 />
@@ -56,6 +66,7 @@
             <input
                 type="date"
                 data-filter-start
+                data-filter-control
                 class="min-h-11 min-w-0 rounded-lg border border-ckb-outline-variant bg-ckb-surface-container-lowest px-2 text-xs text-ckb-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent"
             />
         </label>
@@ -66,6 +77,7 @@
             <input
                 type="date"
                 data-filter-end
+                data-filter-control
                 class="min-h-11 min-w-0 rounded-lg border border-ckb-outline-variant bg-ckb-surface-container-lowest px-2 text-xs text-ckb-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent"
             />
         </label>
@@ -75,6 +87,7 @@
             Status transaksi
             <select
                 data-filter-status
+                data-filter-control
                 class="min-h-11 w-full cursor-pointer rounded-lg border border-ckb-outline-variant bg-ckb-surface-container-lowest px-2 text-xs text-ckb-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent"
             >
                 <option value="">Semua status</option>
@@ -86,6 +99,7 @@
             Status pembayaran
             <select
                 data-filter-payment-status
+                data-filter-control
                 class="min-h-11 w-full cursor-pointer rounded-lg border border-ckb-outline-variant bg-ckb-surface-container-lowest px-2 text-xs text-ckb-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent"
             >
                 <option value="">Semua status pembayaran</option>
@@ -97,6 +111,7 @@
             Metode pembayaran
             <select
                 data-filter-payment
+                data-filter-control
                 class="min-h-11 w-full cursor-pointer rounded-lg border border-ckb-outline-variant bg-ckb-surface-container-lowest px-2 text-xs text-ckb-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent"
             >
                 <option value="">Semua metode</option>
@@ -108,12 +123,20 @@
             Kasir
             <select
                 data-filter-cashier
+                data-filter-control
                 class="min-h-11 w-full cursor-pointer rounded-lg border border-ckb-outline-variant bg-ckb-surface-container-lowest px-2 text-xs text-ckb-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent"
             >
                 <option value="">Semua kasir</option>
             </select>
         </label>
     </div>
+
+    <p
+        data-filter-draft-notice
+        hidden
+        class="border-b border-ckb-outline-variant/50 bg-ckb-secondary-container/50 px-4 py-2 text-xs text-ckb-on-surface-variant"
+        role="status"
+    >Filter berubah dan belum diterapkan. Klik “Terapkan filter” untuk memuat riwayat.</p>
 
     <div
         data-transaction-panel
@@ -165,6 +188,7 @@
                     Baris per halaman
                     <select
                         data-page-size
+                        data-filter-control
                         class="min-h-9 cursor-pointer rounded-lg border border-ckb-outline-variant bg-ckb-surface px-2 text-xs font-semibold text-ckb-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent"
                     >
                         <option value="10" selected>10</option>
@@ -206,12 +230,16 @@
         class="hidden border-t border-ckb-outline-variant/50 bg-ckb-error-container px-4 py-4 text-xs text-ckb-on-error-container"
         role="alert"
     >
-        <span data-transaction-error-message>Riwayat penjualan tidak dapat dimuat.</span>
+        <span data-transaction-error-message
+            >Riwayat penjualan tidak dapat dimuat.</span
+        >
         <button
             type="button"
             data-sales-retry="transaction-history"
             class="ml-2 min-h-9 cursor-pointer rounded-lg border border-ckb-on-error-container/30 px-3 font-semibold underline"
-        >Coba lagi</button>
+        >
+            Coba lagi
+        </button>
     </div>
 
     <template id="sales-transaction-row-template">

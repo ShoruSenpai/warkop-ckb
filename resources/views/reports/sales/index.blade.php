@@ -16,12 +16,32 @@
                 </h1>
                 <p class="mt-1 text-xs text-ckb-on-surface-variant">Analisis performa penjualan, transaksi, dan produk terlaris.</p>
             </div>
+            <button
+                type="button"
+                data-sales-export
+                class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 self-start rounded-lg bg-ckb-primary px-4 text-xs font-semibold text-ckb-on-primary transition hover:bg-ckb-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none sm:self-auto"
+            >
+                <span class="inline-flex items-center justify-center">
+                    <i
+                        data-export-idle
+                        class="fas fa-file-pdf"
+                        aria-hidden="true"
+                    ></i>
+
+                    <i
+                        data-export-loading
+                        class="fas fa-spinner fa-spin hidden"
+                        aria-hidden="true"
+                    ></i>
+                </span>
+
+                <span data-export-label>Unduh PDF</span>
+            </button>
         </header>
 
         <section
             class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3"
             aria-label="Ringkasan penjualan"
-            data-sales-report-card="metrics"
         >
             <x-report.sales.metric-card
                 label="Total penjualan"
@@ -30,6 +50,7 @@
                 delta="Perbandingan belum tersedia"
                 icon="fa-file-invoice-dollar"
                 data-key="sales_total"
+                period-group="sales-total-period"
             />
             <x-report.sales.metric-card
                 label="Jumlah transaksi"
@@ -38,6 +59,7 @@
                 delta="Perbandingan belum tersedia"
                 icon="fa-cash-register"
                 data-key="sales_count"
+                period-group="sales-count-period"
             />
             <x-report.sales.metric-card
                 label="Rata-rata nota"
@@ -46,13 +68,9 @@
                 delta="Perbandingan belum tersedia"
                 icon="fa-chart-line"
                 data-key="sales_average"
+                period-group="sales-average-period"
             />
         </section>
-        <div data-metrics-error hidden class="flex items-center justify-end gap-2 text-xs text-ckb-on-error-container">
-            <span data-metrics-error-message>Ringkasan penjualan tidak dapat dimuat.</span>
-            <button type="button" data-sales-retry="metrics" class="min-h-9 cursor-pointer rounded-lg border border-ckb-outline-variant px-3 font-semibold">Coba lagi</button>
-        </div>
-
         <section
             class="grid grid-cols-1 gap-3 xl:grid-cols-3"
             aria-label="Analisis penjualan"

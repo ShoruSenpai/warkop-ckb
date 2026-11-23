@@ -1,10 +1,11 @@
 import { apiFetch } from "@/utils/api.js";
 import { Chart, ckbChartColors } from "@/utils/chart.js";
+import { downloadReportPdf } from "@/utils/report-download.js";
 
 const root = document.querySelector("[data-purchase-overview]");
 
 if (root) {
-    const state = { period: "month", chartPeriod: "month" };
+    const state = { period: "month", chartPeriod: "month", pdfExporting: false };
     let spendingChart;
     let overviewRequest = 0;
     let metricsRequest = 0;
@@ -23,6 +24,24 @@ if (root) {
     );
 
     root.addEventListener("click", (event) => {
+        const exportButton = event.target.closest("[data-purchase-export]");
+        if (exportButton && !state.pdfExporting) {
+            state.pdfExporting = true;
+            const query = new URLSearchParams({
+                period: state.period,
+                chart_period: state.chartPeriod,
+            });
+
+            downloadReportPdf(
+                exportButton,
+                `/reports/purchases/pdf?${query}`,
+                "pembelian",
+            ).finally(() => {
+                state.pdfExporting = false;
+            });
+            return;
+        }
+
         const control = event.target.closest("[data-filter-group]");
 
         if (!control) return;

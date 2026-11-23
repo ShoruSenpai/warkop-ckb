@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Services\Reports\PdfReportRenderer;
 use App\Models\SupplierPurchase;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
 class PurchaseReportController extends Controller
@@ -67,38 +69,16 @@ class PurchaseReportController extends Controller
             $period = $filters["period"] ?? "month";
             [$from, $to] = $this->periodRange($period);
 
-            $purchases = SupplierPurchase::query()->whereBetween(
-                "purchase_date",
-                [$from, $to],
-            );
-
-            $total = (clone $purchases)->sum("total_cost");
-            $invoiceCount = (clone $purchases)->count();
-            $receivedCount = (clone $purchases)
-                ->where("status", "received")
-                ->count();
+            $purchases = $this->purchasesForPeriod($from, $to);
+            $metrics = $this->purchaseMetrics($purchases);
 
             $data = [
                 "period" => $period,
-                "metrics" => [
-                    "total_purchases" => (int) $total,
-                    "invoice_count" => $invoiceCount,
-                    "received_count" => $receivedCount,
-                    "average_purchase" => $invoiceCount
-                        ? (int) round($total / $invoiceCount)
-                        : 0,
-                ],
+                "metrics" => $metrics,
             ];
 
             if (in_array($section, ["all", "overview"], true)) {
-                $data["top_suppliers"] = (clone $purchases)
-                    ->selectRaw(
-                        "supplier_name, SUM(total_cost) as total_cost, COUNT(*) as invoice_count",
-                    )
-                    ->groupBy("supplier_name")
-                    ->orderByDesc("total_cost")
-                    ->limit(5)
-                    ->get();
+                $data["top_suppliers"] = $this->topSuppliers($purchases);
             }
         }
 
@@ -112,6 +92,49 @@ class PurchaseReportController extends Controller
             "message" => "Get Purchase Report Summary",
             "data" => $data,
         ]);
+    }
+
+    public function pdf(Request $request, PdfReportRenderer $renderer)
+    {
+        $filters = $request->validate([
+            "period" => "required|in:week,month,year",
+            "chart_period" => "required|in:month,year",
+        ]);
+
+        [$from, $to] = $this->periodRange($filters["period"]);
+        $query = $this->purchasesForPeriod($from, $to);
+        $metrics = $this->purchaseMetrics($query);
+        $chartPeriod = $filters["chart_period"];
+        $chart = $this->spendingChart($chartPeriod);
+        $purchases = (clone $query)
+            ->select([
+                "id",
+                "invoice_number",
+                "supplier_name",
+                "purchase_date",
+                "total_cost",
+                "status",
+            ])
+            ->withCount("items")
+            ->orderByDesc("purchase_date")
+            ->orderByDesc("id")
+            ->get();
+
+        return $renderer->download("pdf.reports.purchase", [
+            "reportTitle" => "Laporan Pembelian",
+            "reportingPeriod" => $this->formatPeriodRange($from, $to),
+            "metrics" => $metrics,
+            "topSuppliers" => $this->topSuppliers($query),
+            "chartPeriodLabel" => $chartPeriod === "year" ? "Tahun Ini" : "6 Bulan",
+            "chartConfiguration" => [
+                "type" => "line",
+                "label" => "Pengeluaran pembelian",
+                "metric" => "revenue",
+                "labels" => $chart["labels"],
+                "values" => $chart["values"],
+            ],
+            "purchases" => $purchases,
+        ], "laporan-pembelian");
     }
 
     public function show(SupplierPurchase $purchase)
@@ -141,6 +164,41 @@ class PurchaseReportController extends Controller
         };
 
         return [$from->toDateString(), $today->toDateString()];
+    }
+
+    private function purchasesForPeriod(string $from, string $to): Builder
+    {
+        return SupplierPurchase::query()->whereBetween("purchase_date", [$from, $to]);
+    }
+
+    private function purchaseMetrics(Builder $purchases): array
+    {
+        $total = (clone $purchases)->sum("total_cost");
+        $invoiceCount = (clone $purchases)->count();
+
+        return [
+            "total_purchases" => (int) $total,
+            "invoice_count" => $invoiceCount,
+            "received_count" => (clone $purchases)->where("status", "received")->count(),
+            "average_purchase" => $invoiceCount ? (int) round($total / $invoiceCount) : 0,
+        ];
+    }
+
+    private function topSuppliers(Builder $purchases)
+    {
+        return (clone $purchases)
+            ->selectRaw("supplier_name, SUM(total_cost) as total_cost, COUNT(*) as invoice_count")
+            ->groupBy("supplier_name")
+            ->orderByDesc("total_cost")
+            ->limit(5)
+            ->get();
+    }
+
+    private function formatPeriodRange(string $from, string $to): string
+    {
+        return Carbon::parse($from)->locale("id")->translatedFormat("j M Y")
+            ." – "
+            .Carbon::parse($to)->locale("id")->translatedFormat("j M Y");
     }
 
     private function spendingChart(string $period): array

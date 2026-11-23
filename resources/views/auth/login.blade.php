@@ -219,17 +219,14 @@
                                 type="button"
                                 onclick="togglePasswordVisibility()"
                                 class="absolute right-3.5 top-1/2 -translate-y-1/2 text-ckb-on-surface-variant hover:text-ckb-on-surface transition"
-                                aria-label="Tampilkan Password"
+                                aria-label="Tampilkan kata sandi"
                                 aria-controls="password"
                                 aria-pressed="false"
                             >
                                 <i
-                                    id="eye-open"
-                                    class="fa-solid fa-eye text-sm"
-                                ></i>
-                                <i
-                                    id="eye-closed"
-                                    class="fa-solid fa-eye-slash text-sm hidden"
+                                    id="password-eye"
+                                    class="fa-solid fa-eye-slash text-sm"
+                                    aria-hidden="true"
                                 ></i>
                             </button>
                         </div>
@@ -290,8 +287,7 @@
     <script>
         function togglePasswordVisibility() {
             const password = document.getElementById("password");
-            const eyeOpen = document.getElementById("eye-open");
-            const eyeClosed = document.getElementById("eye-closed");
+            const eye = document.getElementById("password-eye");
 
             const showPassword = password.type === "password";
             const toggle = document.querySelector('[aria-controls="password"]');
@@ -303,8 +299,8 @@
                 showPassword ? "Sembunyikan kata sandi" : "Tampilkan kata sandi",
             );
 
-            eyeOpen.classList.toggle("hidden", showPassword);
-            eyeClosed.classList.toggle("hidden", !showPassword);
+            eye.classList.toggle("fa-eye", showPassword);
+            eye.classList.toggle("fa-eye-slash", !showPassword);
         }
     </script>
 </body>

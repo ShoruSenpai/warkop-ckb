@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Api\PurchaseReportController;
+use App\Http\Controllers\Api\SalesReportController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -61,6 +63,8 @@ Route::middleware(["auth", "role:owner,admin"])->group(function () {
 
     // Reports.
 //    Route::get("/reports/transactions", fn() => redirect()->route("reports.sales"))->name("reports.transactions");
+    Route::get("/reports/sales/pdf", [SalesReportController::class, "pdf"])->name("reports.sales.pdf");
+    Route::get("/reports/purchases/pdf", [PurchaseReportController::class, "pdf"])->name("reports.purchases.pdf");
     Route::get("/reports/sales", fn() => view("reports.sales.index"))->name("reports.sales.index",);
     Route::get("/reports/purchases", fn() => view("reports.purchases.index"),)->name("reports.purchases.index");
     Route::get("/reports/purchases/invoices", fn() => view("reports.purchases.invoices"),)->name("reports.purchases.invoices");

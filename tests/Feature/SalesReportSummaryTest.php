@@ -6,6 +6,9 @@ use App\Models\User;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use PHPUnit\Framework\Attributes\Group;
+use Spatie\LaravelPdf\Facades\Pdf;
+use Spatie\LaravelPdf\PdfBuilder;
 use Tests\TestCase;
 
 class SalesReportSummaryTest extends TestCase
@@ -141,6 +144,121 @@ class SalesReportSummaryTest extends TestCase
             ->assertOk()
             ->assertJsonPath("data.metrics.total_sales.current", 10000)
             ->assertJsonPath("data.metrics.transaction_count.current", 1);
+    }
+
+    public function test_summary_can_return_only_the_requested_metric_and_its_period(): void
+    {
+        $this->insertOrder(1, "completed", "paid", 10000, "2026-11-20 10:00:00");
+        $this->insertOrder(2, "cancelled", "cancelled", 20000, "2026-11-20 11:00:00");
+
+        $this->actingAs($this->user("owner"), "sanctum")
+            ->getJson("/api/reports/sales/summary?period=custom&start_date=2026-11-20&end_date=2026-11-20&section=metrics&metric=total_sales")
+            ->assertOk()
+            ->assertJsonPath("data.metrics.total_sales.current", 10000)
+            ->assertJsonMissingPath("data.metrics.transaction_count")
+            ->assertJsonMissingPath("data.metrics.average_ticket")
+            ->assertJsonPath("data.period_range.start_date", "2026-11-20")
+            ->assertJsonPath("data.period_range.end_date", "2026-11-20");
+    }
+
+    public function test_summary_rejects_unknown_metric_keys(): void
+    {
+        $this->actingAs($this->user("owner"), "sanctum")
+            ->getJson("/api/reports/sales/summary?section=metrics&metric=profit")
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(["metric"]);
+    }
+
+    public function test_sales_pdf_uses_backend_totals_chart_filter_and_applied_table_filters(): void
+    {
+        Pdf::fake();
+        $this->insertOrder(1, "completed", "paid", 10000, "2026-11-20 10:00:00");
+        $this->insertOrder(2, "cancelled", "cancelled", 20000, "2026-11-20 11:00:00");
+
+        $this->actingAs($this->user("owner"))
+            ->get("/reports/sales/pdf?" . http_build_query([
+                "sales_total_period" => "week",
+                "sales_count_period" => "month",
+                "sales_average_period" => "year",
+                "chart_period" => "custom",
+                "chart_start_date" => "2026-11-20",
+                "chart_end_date" => "2026-11-20",
+                "chart_metric" => "transactions",
+                "start_date" => "2026-11-20",
+                "end_date" => "2026-11-20",
+                "status" => "completed",
+            ]))
+            ->assertOk();
+
+        Pdf::assertRespondedWithPdf(function (PdfBuilder $pdf): bool {
+            return preg_match('/^laporan-penjualan-\d{2}-\d{2}-\d{4}-\d{2}-\d{2}\.pdf$/', $pdf->downloadName) === 1
+                && $pdf->isDownload()
+                && $pdf->viewData["metrics"]["sales_total"]["value"] === 10000
+                && $pdf->viewData["metrics"]["sales_count"]["value"] === 1
+                && $pdf->viewData["transactions"]->count() === 1
+                && $pdf->viewData["chart"]["labels"] === ["20 Nov"];
+        });
+    }
+
+    public function test_sales_pdf_rejects_invalid_filters_and_requires_report_authorization(): void
+    {
+        Pdf::fake();
+
+        $this->actingAs($this->user("owner"))
+            ->getJson("/reports/sales/pdf?chart_period=custom")
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors([
+                "sales_total_period",
+                "sales_count_period",
+                "sales_average_period",
+                "chart_start_date",
+                "chart_end_date",
+            ]);
+
+        $this->actingAs($this->user("cashier"))
+            ->getJson("/reports/sales/pdf")
+            ->assertStatus(302);
+    }
+
+    #[Group("chromium")]
+    public function test_sales_pdf_renders_with_real_chromium(): void
+    {
+        config()->set("laravel-pdf.driver", "browsershot");
+        $this->insertOrder(1, "completed", "paid", 10000, now()->format("Y-m-d H:i:s"));
+
+        $response = $this->actingAs($this->user("owner"))
+            ->get("/reports/sales/pdf?" . http_build_query([
+                "sales_total_period" => "month",
+                "sales_count_period" => "month",
+                "sales_average_period" => "month",
+                "chart_period" => "month",
+            ]));
+
+        $response->assertOk();
+        $response->assertHeader("content-type", "application/pdf");
+        $response->assertHeader("content-disposition");
+        $this->assertStringStartsWith("%PDF-", $response->getContent());
+    }
+
+    #[Group("chromium")]
+    public function test_medium_and_large_sales_pdfs_paginate_with_real_chromium(): void
+    {
+        config()->set("laravel-pdf.driver", "browsershot");
+        $filters = "sales_total_period=month&sales_count_period=month&sales_average_period=month&chart_period=month";
+
+        for ($id = 1; $id <= 40; $id++) {
+            $this->insertOrder($id, "completed", "paid", 10000, now()->format("Y-m-d H:i:s"));
+        }
+
+        $medium = $this->actingAs($this->user("owner"))->get("/reports/sales/pdf?{$filters}");
+        $this->assertPdfHasMultiplePages($medium->assertOk()->getContent());
+
+        for ($id = 41; $id <= 160; $id++) {
+            $this->insertOrder($id, "completed", "paid", 10000, now()->format("Y-m-d H:i:s"));
+        }
+
+        $large = $this->actingAs($this->user("owner"))->get("/reports/sales/pdf?{$filters}");
+        $this->assertPdfHasMultiplePages($large->assertOk()->getContent());
     }
 
     public function test_empty_period_returns_zero_metrics_and_empty_top_products(): void
@@ -314,5 +432,12 @@ class SalesReportSummaryTest extends TestCase
             "created_at" => $time,
             "updated_at" => $time,
         ]);
+    }
+
+    private function assertPdfHasMultiplePages(string $content): void
+    {
+        $this->assertStringStartsWith("%PDF-", $content);
+        preg_match_all("~/Type\\s*/Page\\b~", $content, $matches);
+        $this->assertGreaterThanOrEqual(2, count($matches[0]));
     }
 }

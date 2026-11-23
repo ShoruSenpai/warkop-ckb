@@ -53,6 +53,7 @@ import {
     faChartLine,
     faBell,
     faRoadBarrier,
+    faFilePdf,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -105,6 +106,7 @@ library.add(
     faChartLine,
     faBell,
     faRoadBarrier,
+    faFilePdf,
 );
 
 function initializeFontAwesome() {

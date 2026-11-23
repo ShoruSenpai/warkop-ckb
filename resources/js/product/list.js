@@ -4,6 +4,7 @@ import { $, escapeHtml } from "@/utils/dom.js";
 import Swal from "@/utils/alert.js";
 import { showApiError } from "@/utils/ui.js";
 import { ckbColor } from "@/utils/theme.js";
+import { runRefreshAction } from "@/utils/refresh.js";
 
 const pendingProductDeletes = new Set();
 const initializedProductLists = new WeakSet();
@@ -469,22 +470,7 @@ export function initProductListEvents() {
     $("search-input")?.addEventListener("input", applyFilters);
 
     $("btn-refresh-products")?.addEventListener("click", async (event) => {
-        const button = event.currentTarget;
-        const icon = button.querySelector("i");
-
-        if (button.disabled) return;
-
-        button.disabled = true;
-        button.setAttribute("aria-busy", "true");
-        icon?.classList.add("fa-spin");
-
-        try {
-            await fetchProducts();
-        } finally {
-            button.disabled = false;
-            button.removeAttribute("aria-busy");
-            icon?.classList.remove("fa-spin");
-        }
+        await runRefreshAction(event.currentTarget, fetchProducts);
     });
 
     $("category-filter")?.addEventListener("change", applyFilters);
