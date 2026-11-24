@@ -23,6 +23,7 @@
 /vendor
 /task
 /analisis
+/docs
 CLAUDE.md
 AGENTS.md
 _ide_helper.php

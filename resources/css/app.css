@@ -5,7 +5,7 @@
 @source "../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php";
 @source "../../storage/framework/views/*.php";
 
-@theme {
+@theme static {
     --font-sans:
         "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
         "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
@@ -111,6 +111,18 @@
     --color-ckb-error-container: #f9e5e4;
     --color-ckb-on-error-container: #873238;
 
+    /* =========================
+   WARNING
+   Muted Amber
+   ========================= */
+
+    --color-ckb-warning: #8b5a16;
+    --color-ckb-on-warning: #fffdf4;
+
+    --color-ckb-warning-hover: #754a11;
+
+    --color-ckb-warning-container: #f6ebd1;
+    --color-ckb-on-warning-container: #63400e;
 
     /* =========================
        SUCCESS
@@ -124,21 +136,6 @@
 
     --color-ckb-success-container: #e4f1e8;
     --color-ckb-on-success-container: #194c35;
-
-
-    /* =========================
-       WARNING
-       Muted Amber
-       ========================= */
-
-    --color-ckb-warning: #8b5a16;
-    --color-ckb-on-warning: #fffdf4;
-
-    --color-ckb-warning-hover: #754a11;
-
-    --color-ckb-warning-container: #f6ebd1;
-    --color-ckb-on-warning-container: #63400e;
-
 
     /* =========================
        PRIMARY FIXED

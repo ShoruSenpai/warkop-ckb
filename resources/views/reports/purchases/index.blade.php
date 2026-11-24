@@ -12,22 +12,46 @@
                 </h1>
                 <p class="mt-1 text-xs text-ckb-on-surface-variant">Pantau pengeluaran dan invoice pembelian bahan baku.</p>
             </div>
-            <x-report.purchase.period-filter
-                name="overview"
-                label="Periode laporan"
-                :options="[
-                    'week' => '7 Hari Terakhir',
-                    'month' => 'Bulan Ini',
-                    'year' => 'Tahun Ini',
-                ]"
-                selected="month"
-            />
+            <button
+                type="button"
+                data-purchase-export
+                class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 self-start rounded-lg bg-ckb-primary px-4 text-xs font-semibold text-ckb-on-primary transition hover:bg-ckb-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none sm:self-auto"
+            >
+                <span class="inline-flex items-center justify-center">
+                    <i
+                        data-export-idle
+                        class="fas fa-file-pdf"
+                        aria-hidden="true"
+                    ></i>
+
+                    <i
+                        data-export-loading
+                        class="fas fa-spinner fa-spin hidden"
+                        aria-hidden="true"
+                    ></i>
+                </span>
+
+                <span data-export-label>Unduh PDF</span>
+            </button>
         </header>
 
         <section
             class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3"
             aria-label="Ringkasan pembelian"
+            data-purchase-report-card="overview-metrics"
         >
+            <div class="col-span-full flex justify-end">
+                <x-report.segmented-filter
+                    group="purchase-metrics-period"
+                    label="Periode metrik pembelian"
+                    :options="[
+                        'week' => '7 Hari Terakhir',
+                        'month' => 'Bulan Ini',
+                        'year' => 'Tahun Ini',
+                    ]"
+                    selected="month"
+                />
+            </div>
             <x-report.purchase.metric-card
                 label="Total pembelian"
                 value="Memuat..."

@@ -11,6 +11,9 @@
             >
                 Pembelian tertinggi
             </h3>
+            <p class="mt-1 text-[10px] text-ckb-on-surface-variant">
+                Periode bulan ini
+            </p>
         </div>
         <a
             href="{{ route('reports.purchases.invoices') }}"

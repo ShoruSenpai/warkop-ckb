@@ -3,7 +3,7 @@
 >
     <div>
         <p class="text-sm font-semibold text-ckb-primary">Total Nilai Pembelian</p>
-        <p class="text-xs text-ckb-on-surface-variant" id="item-count">0 item valid · stok akan diperbarui otomatis</p>
+        <p class="text-xs text-ckb-on-surface-variant" id="item-count">0 item valid · stok mengikuti status pembelian</p>
     </div>
     <div class="flex items-center justify-between gap-3 sm:gap-4">
         <p class="text-lg font-bold text-ckb-primary sm:text-xl" id="grand-total">Rp 0</p>

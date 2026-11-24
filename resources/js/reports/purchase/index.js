@@ -1,4 +1,5 @@
 import { apiFetch } from "@/utils/api.js";
+import { showApiError } from "@/utils/ui.js";
 
 const root = document.querySelector("[data-purchase-invoices]");
 
@@ -23,6 +24,8 @@ if (root) {
         previousCursor = null;
         loadInvoices();
     });
+
+    list?.addEventListener("click", handleInvoiceAction);
 
     previousButton?.addEventListener("click", () => {
         if (!previousCursor || cursorIndex === 0) return;
@@ -99,6 +102,14 @@ if (root) {
                 invoice.supplier_name || "Nama supplier tidak tersedia",
             );
             setField(row, "purchase_date", formatDate(invoice.purchase_date));
+            const status = row.querySelector('[data-field="status"]');
+            if (status) {
+                status.textContent = formatStatus(invoice.status);
+                status.classList.toggle("bg-ckb-secondary-container", invoice.status === "received");
+                status.classList.toggle("text-ckb-on-secondary-container", invoice.status === "received");
+                status.classList.toggle("bg-ckb-surface-container-low", invoice.status === "pending");
+                status.classList.toggle("text-ckb-on-surface-variant", invoice.status === "pending");
+            }
             setField(
                 row,
                 "items_count",
@@ -112,6 +123,12 @@ if (root) {
                     "__PURCHASE__",
                     encodeURIComponent(invoice.id),
                 );
+            }
+
+            const deleteButton = row.querySelector("[data-delete-invoice]");
+            if (deleteButton) {
+                deleteButton.dataset.purchaseId = invoice.id;
+                deleteButton.hidden = invoice.status !== "pending";
             }
 
             list.append(row);
@@ -135,13 +152,55 @@ if (root) {
     function renderMessage(message) {
         if (!list) return;
         const cell = document.createElement("td");
-        cell.colSpan = 6;
+        cell.colSpan = 7;
         cell.className =
             "px-3 py-6 text-center text-xs text-ckb-on-surface-variant";
         cell.textContent = message;
         const row = document.createElement("tr");
         row.append(cell);
         list.replaceChildren(row);
+    }
+
+    async function handleInvoiceAction(event) {
+        const button = event.target.closest("[data-delete-invoice]");
+        if (!button || button.hidden) return;
+
+        const confirmation = await Swal.fire({
+            icon: "warning",
+            title: "Hapus invoice menunggu?",
+            text: "Invoice dan rincian itemnya akan dihapus. Stok tidak berubah.",
+            showCancelButton: true,
+            confirmButtonText: "Hapus invoice",
+            cancelButtonText: "Batal",
+            confirmButtonColor: "#b3261e",
+        });
+        if (!confirmation.isConfirmed) return;
+
+        button.disabled = true;
+        try {
+            const { response, data } = await apiFetch(
+                `/api/supplier-purchases/${encodeURIComponent(button.dataset.purchaseId)}`,
+                { method: "DELETE" },
+            );
+            if (!response.ok || !data?.success) {
+                await showApiError(data, "Invoice Tidak Dihapus");
+                return;
+            }
+
+            await Swal.fire({
+                icon: "success",
+                title: "Invoice dihapus",
+                text: "Invoice pembelian berhasil dihapus.",
+                confirmButtonText: "Selesai",
+            });
+            window.location.reload();
+        } catch (error) {
+            if (error.message === "UNAUTHORIZED") return;
+            console.error(error);
+            await showApiError({ message: "Invoice pembelian tidak dapat dihapus." });
+        } finally {
+            button.disabled = false;
+        }
     }
 
     function setField(row, name, value) {
@@ -171,5 +230,9 @@ if (root) {
                   month: "short",
                   year: "numeric",
               });
+    }
+
+    function formatStatus(value) {
+        return { pending: "Menunggu", received: "Diterima" }[value] || "Tidak diketahui";
     }
 }

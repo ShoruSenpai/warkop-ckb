@@ -1,9 +1,16 @@
 import { apiFetch } from "@/utils/api.js";
+import { showApiError } from "@/utils/ui.js";
 
 const root = document.querySelector("[data-purchase-detail]");
 
 if (root) {
     const purchaseId = root.dataset.purchaseId;
+    const statusControls = root.querySelector("[data-status-controls]");
+    const statusSelect = root.querySelector("[data-status-select]");
+    const statusSave = root.querySelector("[data-status-save]");
+    let currentStatus = null;
+
+    statusSave?.addEventListener("click", saveStatus);
 
     loadPurchase();
 
@@ -27,6 +34,9 @@ if (root) {
     }
 
     function renderPurchase(purchase) {
+        currentStatus = purchase.status;
+        if (statusControls) statusControls.hidden = currentStatus !== "pending";
+        if (statusSelect) statusSelect.value = currentStatus;
         root.querySelectorAll("[data-purchase-field]").forEach((field) => {
             const key = field.dataset.purchaseField;
             field.textContent =
@@ -35,6 +45,14 @@ if (root) {
                     : key === "status"
                       ? formatStatus(purchase[key])
                       : purchase[key] || "-";
+
+            if (key === "status") {
+                field.classList.add("inline-flex", "min-h-7", "items-center", "rounded-md", "px-2.5");
+                field.classList.toggle("bg-ckb-secondary-container", purchase.status === "received");
+                field.classList.toggle("text-ckb-on-secondary-container", purchase.status === "received");
+                field.classList.toggle("bg-ckb-surface-container-low", purchase.status === "pending");
+                field.classList.toggle("text-ckb-on-surface-variant", purchase.status === "pending");
+            }
         });
 
         root.querySelector("[data-purchase-total]").textContent = formatRupiah(
@@ -62,10 +80,12 @@ if (root) {
                 const row =
                     itemTemplate.content.firstElementChild.cloneNode(true);
                 const name =
+                    item.item_name_snapshot ||
                     item.raw_material?.name ||
                     item.product?.name ||
                     "Barang tidak tersedia";
                 const unit =
+                    item.packaging_name_snapshot ||
                     item.purchase_unit ||
                     item.raw_material_packaging?.purchase_unit ||
                     item.product_packaging?.purchase_unit ||
@@ -90,6 +110,50 @@ if (root) {
         setState(
             `${formatNumber(items.length)} item pada invoice ${purchase.invoice_number || ""}.`,
         );
+    }
+
+    async function saveStatus() {
+        const nextStatus = statusSelect?.value;
+        if (!nextStatus || nextStatus === currentStatus) return;
+
+        const confirmation = await Swal.fire({
+            icon: "question",
+            title: "Ubah status pembelian?",
+            text: nextStatus === "received"
+                ? "Stok akan ditambahkan sesuai isi invoice."
+                : "Status pembelian akan diubah.",
+            showCancelButton: true,
+            confirmButtonText: "Ya, ubah status",
+            cancelButtonText: "Batal",
+        });
+        if (!confirmation.isConfirmed) return;
+
+        statusSave.disabled = true;
+        try {
+            const { response, data } = await apiFetch(
+                `/api/supplier-purchases/${encodeURIComponent(purchaseId)}/status`,
+                { method: "PUT", body: { status: nextStatus } },
+            );
+            if (!response.ok || !data?.success) {
+                await showApiError(data, "Status Tidak Berubah");
+                statusSelect.value = currentStatus;
+                return;
+            }
+
+            renderPurchase(data.data);
+            await Swal.fire({
+                icon: "success",
+                title: "Status diperbarui",
+                text: "Status invoice pembelian berhasil diperbarui.",
+                confirmButtonText: "Selesai",
+            });
+        } catch (error) {
+            if (error.message === "UNAUTHORIZED") return;
+            console.error(error);
+            await showApiError({ message: "Status pembelian tidak dapat diperbarui." });
+        } finally {
+            statusSave.disabled = false;
+        }
     }
 
     function setItemField(row, name, value) {

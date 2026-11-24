@@ -2,32 +2,47 @@ import { state } from "./state.js";
 import { apiFetch } from "../utils/api.js";
 import { $, escapeHtml } from "@/utils/dom.js";
 import { showApiError } from "@/utils/ui.js";
+import { runRefreshAction } from "@/utils/refresh.js";
 
-export async function fetchRawMaterials() {
-    try {
-        const { response, data } = await apiFetch("/api/raw-materials");
+let pendingRawMaterialRequest = null;
 
-        if (!response.ok) {
-            await showApiError(data, "Gagal Memuat Bahan Baku");
+export function fetchRawMaterials() {
+    if (pendingRawMaterialRequest) return pendingRawMaterialRequest;
 
-            return;
+    pendingRawMaterialRequest = (async () => {
+        try {
+            const { response, data } = await apiFetch("/api/raw-materials");
+
+            if (!response.ok) {
+                await showApiError(data, "Gagal Memuat Bahan Baku");
+
+                return false;
+            }
+
+            state.rawMaterialData = Array.isArray(data.data) ? data.data : [];
+
+            renderTable(state.rawMaterialData);
+
+            return true;
+        } catch (error) {
+            if (error.message === "UNAUTHORIZED") {
+                return false;
+            }
+
+            console.error(error);
+
+            await showApiError({
+                message:
+                    "Bahan baku tidak dapat dimuat. Periksa koneksi lalu coba lagi.",
+            });
+
+            return false;
         }
+    })().finally(() => {
+        pendingRawMaterialRequest = null;
+    });
 
-        state.rawMaterialData = Array.isArray(data.data) ? data.data : [];
-
-        renderTable(state.rawMaterialData);
-    } catch (error) {
-        if (error.message === "UNAUTHORIZED") {
-            return;
-        }
-
-        console.error(error);
-
-        await showApiError({
-            message:
-                "Bahan baku tidak dapat dimuat. Periksa koneksi lalu coba lagi.",
-        });
-    }
+    return pendingRawMaterialRequest;
 }
 
 export function renderTable(items) {
@@ -177,7 +192,11 @@ export function filterTable() {
 }
 
 export function initTableEvents({ onEdit, onDelete }) {
-    $("btn-get-materials")?.addEventListener("click", fetchRawMaterials);
+    $("btn-get-materials")?.addEventListener("click", (event) => {
+        const button = event.currentTarget;
+
+        runRefreshAction(button, fetchRawMaterials);
+    });
 
     $("search-input")?.addEventListener("input", filterTable);
 

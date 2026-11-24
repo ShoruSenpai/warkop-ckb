@@ -120,8 +120,8 @@ class SupplierPurchaseController extends Controller
     {
         $validated = $request->validate([
             "invoice_number" =>
-                "required|string|max:20|unique:supplier_purchases,invoice_number",
-            "supplier_name" => "required|string|max:50",
+                "required|string|max:50|unique:supplier_purchases,invoice_number",
+            "supplier_name" => "required|string|max:100",
             "purchase_date" => "required|date|before_or_equal:today",
             "status" => "required|in:pending,received",
 
@@ -162,6 +162,7 @@ class SupplierPurchaseController extends Controller
                 }
 
                 $packaging = null;
+                $product = null;
 
                 if ($hasRawMaterial) {
                     if (!$hasRawPackaging || $hasProductPackaging) {
@@ -228,7 +229,7 @@ class SupplierPurchaseController extends Controller
                 }
 
                 $purchaseUnit = $packaging->purchase_unit;
-                $conversionFactor = (float) $packaging->conversion_factor;
+                $conversionFactor = (int) $packaging->conversion_factor;
 
                 if ($conversionFactor <= 0) {
                     throw new \Exception(
@@ -238,12 +239,15 @@ class SupplierPurchaseController extends Controller
                     );
                 }
 
-                $quantity = (float) $item["quantity"];
-                $unitPrice = (float) $item["unit_price"];
+                $quantity = (int) $item["quantity"];
+                $unitPrice = (int) $item["unit_price"];
+                $subtotal = $quantity * $unitPrice;
 
-                $subtotal = round($quantity * $unitPrice, 2);
+                if ($subtotal > 99999999999999 || $totalCost > 99999999999999 - $subtotal) {
+                    throw new \Exception("Total pembelian melebihi batas yang didukung.");
+                }
 
-                $totalCost = round($totalCost + $subtotal, 2);
+                $totalCost += $subtotal;
 
                 $preparedItems[] = [
                     "raw_material_id" => $item["raw_material_id"] ?? null,
@@ -253,6 +257,10 @@ class SupplierPurchaseController extends Controller
                     "product_id" => $item["product_id"] ?? null,
                     "product_packaging_id" =>
                         $item["product_packaging_id"] ?? null,
+
+                    "item_type" => $hasRawMaterial ? "raw_material" : "product",
+                    "item_name_snapshot" => $hasRawMaterial ? $packaging->rawMaterial->name : $product->name,
+                    "packaging_name_snapshot" => $purchaseUnit,
 
                     "purchase_unit" => $purchaseUnit,
                     "quantity" => $quantity,
@@ -281,6 +289,10 @@ class SupplierPurchaseController extends Controller
                     "product_id" => $item["product_id"],
                     "product_packaging_id" => $item["product_packaging_id"],
 
+                    "item_type" => $item["item_type"],
+                    "item_name_snapshot" => $item["item_name_snapshot"],
+                    "packaging_name_snapshot" => $item["packaging_name_snapshot"],
+
                     "purchase_unit" => $item["purchase_unit"],
                     "quantity" => $item["quantity"],
                     "conversion_factor" => $item["conversion_factor"],
@@ -290,8 +302,7 @@ class SupplierPurchaseController extends Controller
                 ]);
 
                 if ($purchase->status === "received") {
-                    $stockToAdd =
-                        $item["quantity"] * $item["conversion_factor"];
+                    $stockToAdd = $item["quantity"] * $item["conversion_factor"];
 
                     if ($item["raw_material_id"]) {
                         RawMaterial::where(
@@ -331,6 +342,107 @@ class SupplierPurchaseController extends Controller
                 ],
                 400,
             );
+        }
+    }
+
+    public function updateStatus(Request $request, SupplierPurchase $purchase)
+    {
+        $validated = $request->validate([
+            "status" => "required|in:pending,received",
+        ]);
+
+        try {
+            $updatedPurchase = DB::transaction(function () use ($purchase, $validated) {
+                $lockedPurchase = SupplierPurchase::query()
+                    ->whereKey($purchase->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                if ($lockedPurchase->status === "received" && $validated["status"] === "pending") {
+                    return null;
+                }
+
+                if ($lockedPurchase->status === "pending" && $validated["status"] === "received") {
+                    $items = $lockedPurchase->items()->lockForUpdate()->get();
+
+                    foreach ($items as $item) {
+                        $stockToAdd = (int) $item->quantity * (int) $item->conversion_factor;
+
+                        if ($item->item_type === "raw_material") {
+                            RawMaterial::query()->whereKey($item->raw_material_id)->lockForUpdate()->firstOrFail();
+                            RawMaterial::whereKey($item->raw_material_id)->increment("current_stock", $stockToAdd);
+                        } else {
+                            Product::query()->whereKey($item->product_id)->lockForUpdate()->firstOrFail();
+                            Product::whereKey($item->product_id)->increment("stock", $stockToAdd);
+                        }
+                    }
+                }
+
+                $lockedPurchase->status = $validated["status"];
+                $lockedPurchase->save();
+
+                return $lockedPurchase;
+            });
+
+            if (!$updatedPurchase) {
+                return response()->json([
+                    "success" => false,
+                    "message" => "Pembelian yang sudah diterima tidak dapat dikembalikan ke status menunggu.",
+                ], 422);
+            }
+
+            return response()->json([
+                "success" => true,
+                "message" => "Status pembelian berhasil diperbarui.",
+                "data" => $updatedPurchase->load("items"),
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                "success" => false,
+                "message" => "Status pembelian tidak dapat diperbarui.",
+            ], 500);
+        }
+    }
+
+    public function destroy(SupplierPurchase $purchase)
+    {
+        try {
+            $deleted = DB::transaction(function () use ($purchase) {
+                $lockedPurchase = SupplierPurchase::query()
+                    ->whereKey($purchase->id)
+                    ->lockForUpdate()
+                    ->firstOrFail();
+
+                if ($lockedPurchase->status !== "pending") {
+                    return false;
+                }
+
+                $lockedPurchase->items()->delete();
+                $lockedPurchase->delete();
+
+                return true;
+            });
+
+            if (!$deleted) {
+                return response()->json([
+                    "success" => false,
+                    "message" => "Invoice yang sudah diterima tidak dapat dihapus langsung.",
+                ], 422);
+            }
+
+            return response()->json([
+                "success" => true,
+                "message" => "Invoice pembelian berhasil dihapus.",
+            ]);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json([
+                "success" => false,
+                "message" => "Invoice pembelian tidak dapat dihapus.",
+            ], 500);
         }
     }
 }

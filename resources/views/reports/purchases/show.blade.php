@@ -12,6 +12,18 @@
                 <i class="fas fa-arrow-left" aria-hidden="true"></i>
                 Kembali ke rekap invoice
             </a>
+            <div class="mt-3 flex flex-wrap items-end gap-2" data-status-controls hidden>
+                <label class="flex min-h-11 flex-col gap-1 text-[10px] font-semibold text-ckb-on-surface-variant">
+                    Ubah status
+                    <select data-status-select class="min-h-11 cursor-pointer rounded-lg border border-ckb-outline-variant bg-ckb-surface px-3 text-xs text-ckb-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent">
+                        <option value="pending">Menunggu</option>
+                        <option value="received">Diterima</option>
+                    </select>
+                </label>
+                <button type="button" data-status-save class="inline-flex min-h-11 cursor-pointer items-center rounded-lg bg-ckb-primary px-4 text-xs font-semibold text-ckb-on-primary transition hover:bg-ckb-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none">
+                    Simpan status
+                </button>
+            </div>
             <p class="mt-4 text-[10px] font-bold uppercase tracking-[0.14em] text-ckb-on-surface-variant">Rincian pembelian</p>
             <h1
                 class="text-xl font-bold leading-tight text-ckb-primary sm:text-2xl"

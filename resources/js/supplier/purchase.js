@@ -1,6 +1,7 @@
 import { apiFetch } from "../utils/api.js";
 import { $ } from "@/utils/dom.js";
 import { showApiError } from "@/utils/ui.js";
+import { updateSummary } from "./calculation.js";
 
 export async function submitPurchase(event) {
     event.preventDefault();
@@ -110,7 +111,7 @@ export async function submitPurchase(event) {
 
         purchase_date: $("purchase_date").value,
 
-        status: "received",
+        status: $("status").value,
 
         items,
     };
@@ -118,7 +119,10 @@ export async function submitPurchase(event) {
     const result = await Swal.fire({
         icon: "question",
         title: "Simpan Pembelian?",
-        text: "Pembelian akan dicatat dan stok akan langsung diperbarui.",
+        text:
+            payload.status === "received"
+                ? "Pembelian akan dicatat dan stok akan diperbarui."
+                : "Pembelian akan dicatat sebagai menunggu dan stok tidak berubah.",
 
         showCancelButton: true,
 
@@ -159,7 +163,10 @@ export async function submitPurchase(event) {
         await Swal.fire({
             icon: "success",
             title: "Pembelian Berhasil",
-            text: "Pembelian telah dicatat dan stok berhasil diperbarui.",
+            text:
+                payload.status === "received"
+                    ? "Pembelian telah dicatat dan stok berhasil diperbarui."
+                    : "Pembelian telah dicatat sebagai menunggu. Stok belum berubah.",
             confirmButtonText: "Selesai",
         });
 
@@ -178,10 +185,11 @@ export async function submitPurchase(event) {
         button.disabled = false;
 
         button.innerHTML =
-            '<i class="fas fa-check-circle mr-2"></i> Simpan & Update Stok';
+            '<i class="fas fa-check-circle mr-2"></i> Simpan Pembelian';
     }
 }
 
 export function initPurchaseEvents() {
     $("form-purchase")?.addEventListener("submit", submitPurchase);
+    $("status")?.addEventListener("change", updateSummary);
 }

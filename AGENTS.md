@@ -3,6 +3,14 @@
 
 This repository contains a Laravel application. Complete the following setup before working on the user's request.
 
+## RULES
+
+Read rules in directory:
+
+```sh
+D:\AI-HUB\rules
+```
+
 ## Prerequisites
 
 Verify that PHP and Composer are available:

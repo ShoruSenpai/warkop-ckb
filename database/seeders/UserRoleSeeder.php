@@ -2,101 +2,179 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\User;
-use App\Models\Employee;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use RuntimeException;
 
 class UserRoleSeeder extends Seeder
 {
+    /**
+     * Create predictable development accounts and their employee profiles.
+     * The seeder is idempotent and never resets an existing password.
+     */
     public function run(): void
     {
-        $owner = User::create([
-            "username" => "ShoruSenpai",
-            "email" => "shorusenpai@gmail.com",
-            "password" => Hash::make("@ShoruKun01"),
-            "role" => "owner",
-        ]);
+        if (app()->environment("production")) {
+            throw new RuntimeException(
+                "UserRoleSeeder is for development/testing only.",
+            );
+        }
 
-        Employee::create([
-            "user_id" => $owner->id,
-            "employee_code" => "dev_001",
-            "full_name" => "Shoru Senpai",
-            "position" => "Developer",
-            "phone_number" => "08123456789",
-            "is_active" => 1,
-        ]);
+        $accounts = [
+            [
+                "key" => "developer",
+                "username" => "ShoruSenpai",
+                "email" => "shorusenpai@gmail.com",
+                "role" => "owner",
+                "employee_code" => "dev_001",
+                "full_name" => "Shoru Senpai",
+                "position" => "Developer",
+                "phone_number" => "08123456789",
+            ],
+            [
+                "key" => "owner",
+                "username" => "owner cihuy",
+                "email" => "owner@gmail.com",
+                "role" => "owner",
+                "employee_code" => "owner_001",
+                "full_name" => "Owner Cihuy",
+                "position" => "Owner",
+                "phone_number" => "08123456789",
+            ],
+            [
+                "key" => "admin",
+                "username" => "Cici",
+                "email" => "cici@gmail.com",
+                "role" => "admin",
+                "employee_code" => "adm_001",
+                "full_name" => "Cici Admin",
+                "position" => "Admin",
+                "phone_number" => "08123456789",
+            ],
+            [
+                "key" => "barista",
+                "username" => "Pricil",
+                "email" => "pricil@gmail.com",
+                "role" => "employee",
+                "employee_code" => "brs_001",
+                "full_name" => "Pricil",
+                "position" => "Barista",
+                "phone_number" => "08123456789",
+            ],
+            [
+                "key" => "cashier_main",
+                "username" => "Cashier Account",
+                "email" => "cashierckb01@gmail.com",
+                "role" => "cashier",
+                "employee_code" => "csh_002",
+                "full_name" => "Kasir Akun Utama",
+                "position" => "Cashier",
+                "phone_number" => "08123456789",
+            ],
+            [
+                "key" => "cashier_cece",
+                "username" => "Cece Kasir",
+                "email" => "caca01@gmail.com",
+                "role" => "cashier",
+                "employee_code" => "csh_001",
+                "full_name" => "Cece Gemini",
+                "position" => "Cashier",
+                "phone_number" => "08123456789",
+            ],
+        ];
 
-        $owner2 = User::create([
-            "username" => "owner cihuy",
-            "email" => "owner@gmail.com",
-            "password" => Hash::make("admin123"),
-            "role" => "owner",
-        ]);
+        DB::transaction(function () use ($accounts): void {
+            foreach ($accounts as $account) {
+                $userId = $this->upsertUser($account);
+                $this->upsertEmployee($userId, $account);
+            }
+        });
+    }
 
-        Employee::create([
-            "user_id" => $owner2->id,
-            "employee_code" => "owner_001",
-            "full_name" => "Shoru Senpai",
-            "position" => "Owner",
-            "phone_number" => "08123456789",
-            "is_active" => 1,
-        ]);
+    private function upsertUser(array $account): int
+    {
+        $now = now();
+        $user = DB::table("users")->where("email", $account["email"])->first();
 
-        $admin = User::create([
-            "username" => "Cici",
-            "email" => "cici@gmail.com",
-            "password" => Hash::make("admin123"),
-            "role" => "admin",
-        ]);
+        if ($user) {
+            DB::table("users")
+                ->where("id", $user->id)
+                ->update([
+                    "username" => $account["username"],
+                    "role" => $account["role"],
+                    "updated_at" => $now,
+                ]);
 
-        Employee::create([
-            "user_id" => $admin->id,
-            "employee_code" => "adm_001",
-            "full_name" => "Cici Admin",
-            "position" => "Admin",
-            "phone_number" => "08123456789",
-            "is_active" => 1,
-        ]);
+            // Deliberately preserve an existing password on repeated seeding.
+            return (int) $user->id;
+        }
 
-        $barista = User::create([
-            "username" => "Pricil",
-            "email" => "pricil@gmail.com",
-            "password" => Hash::make("admin123"),
-            "role" => "employee",
-        ]);
+        $password =
+            config("seeding.accounts.{$account["key"]}") ?:
+            config("seeding.default_password");
 
-        Employee::create([
-            "user_id" => $barista->id,
-            "employee_code" => "brs_001",
-            "full_name" => "Pricil",
-            "position" => "Barista",
-            "phone_number" => "08123456789",
-            "is_active" => 1,
-        ]);
+        if (!is_string($password) || $password === "") {
+            throw new RuntimeException(
+                "Set SEED_DEFAULT_PASSWORD or the account-specific seed password before creating demo users.",
+            );
+        }
 
-        User::create([
-            "username" => "Cashier Account",
-            "email" => "cashierckb01@gmail.com",
-            "password" => Hash::make("admin123"),
-            "role" => "cashier",
+        return (int) DB::table("users")->insertGetId([
+            "username" => $account["username"],
+            "email" => $account["email"],
+            "password" => Hash::make($password),
+            "role" => $account["role"],
+            "created_at" => $now,
+            "updated_at" => $now,
         ]);
+    }
 
-        $cashierCece = User::create([
-            "username" => "Cece Kasir",
-            "email" => "caca01@gmail.com",
-            "password" => Hash::make("admin123"),
-            "role" => "cashier",
-        ]);
+    private function upsertEmployee(int $userId, array $account): void
+    {
+        $now = now();
+        $employeeByUser = DB::table("employees")
+            ->where("user_id", $userId)
+            ->first();
+        $employeeByCode = DB::table("employees")
+            ->where("employee_code", $account["employee_code"])
+            ->first();
 
-        Employee::create([
-            "user_id" => $cashierCece->id,
-            "employee_code" => "csh_001",
-            "full_name" => "Cece Gemini",
-            "position" => "Cashier",
-            "phone_number" => "08123456789",
-            "is_active" => 1,
-        ]);
+        if (
+            $employeeByCode &&
+            (!$employeeByUser ||
+                (int) $employeeByCode->id !== (int) $employeeByUser->id)
+        ) {
+            throw new RuntimeException(
+                "Employee code {$account["employee_code"]} is already assigned to another employee.",
+            );
+        }
+
+        $employeeData = [
+            "user_id" => $userId,
+            "employee_code" => $account["employee_code"],
+            "full_name" => $account["full_name"],
+            "position" => $account["position"],
+            "phone_number" => $account["phone_number"],
+            "is_active" => true,
+            "updated_at" => $now,
+        ];
+
+        if ($employeeByUser) {
+            DB::table("employees")
+                ->where("id", $employeeByUser->id)
+                ->update($employeeData);
+            return;
+        }
+
+        if ($employeeByCode) {
+            DB::table("employees")
+                ->where("id", $employeeByCode->id)
+                ->update($employeeData);
+            return;
+        }
+
+        $employeeData["created_at"] = $now;
+        DB::table("employees")->insert($employeeData);
     }
 }

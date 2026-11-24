@@ -88,6 +88,23 @@ return Application::configure(basePath: dirname(__DIR__))
 
         /*
         |--------------------------------------------------------------------------
+        | Missing View Detection
+        |--------------------------------------------------------------------------
+        */
+
+        $isMissingView = static function (Throwable $exception): bool {
+            if (!($exception instanceof \InvalidArgumentException)) {
+                return false;
+            }
+
+            $message = $exception->getMessage();
+
+            return str_starts_with($message, "View [") &&
+                str_ends_with($message, "] not found.");
+        };
+
+        /*
+        |--------------------------------------------------------------------------
         | HTTP Error Messages
         |--------------------------------------------------------------------------
         */
@@ -152,32 +169,33 @@ return Application::configure(basePath: dirname(__DIR__))
         ) use (
             $isApiRequest,
             $isDatabaseConnectionError,
+            $isMissingView,
             $httpErrorTitle,
             $httpErrorMessage,
         ) {
             /*
-                |--------------------------------------------------------------------------
-                | Determine Response Type
-                |--------------------------------------------------------------------------
-                */
+            |--------------------------------------------------------------------------
+            | Determine Response Type
+            |--------------------------------------------------------------------------
+            */
 
             $wantsJson = $isApiRequest($request) || $request->expectsJson();
 
             /*
-                |--------------------------------------------------------------------------
-                | Preserve Explicit HTTP Responses
-                |--------------------------------------------------------------------------
-                */
+            |--------------------------------------------------------------------------
+            | Preserve Explicit HTTP Responses
+            |--------------------------------------------------------------------------
+            */
 
             if ($exception instanceof HttpResponseException) {
                 return $exception->getResponse();
             }
 
             /*
-                |--------------------------------------------------------------------------
-                | JSON Exception Handling
-                |--------------------------------------------------------------------------
-                */
+            |--------------------------------------------------------------------------
+            | JSON Exception Handling
+            |--------------------------------------------------------------------------
+            */
 
             if ($wantsJson) {
                 // Validation error.
@@ -242,10 +260,10 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             /*
-                |--------------------------------------------------------------------------
-                | Preserve Laravel's Default Form Handling
-                |--------------------------------------------------------------------------
-                */
+            |--------------------------------------------------------------------------
+            | Preserve Laravel's Default Form Handling
+            |--------------------------------------------------------------------------
+            */
 
             if (
                 $exception instanceof ValidationException ||
@@ -255,10 +273,29 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             /*
-                |--------------------------------------------------------------------------
-                | Web HTTP Exception Handling
-                |--------------------------------------------------------------------------
-                */
+            |--------------------------------------------------------------------------
+            | Missing View Handling
+            |--------------------------------------------------------------------------
+            */
+
+            if ($isMissingView($exception)) {
+                return response()->view(
+                    "errors.error",
+                    [
+                        "code" => 503,
+                        "title" => "Dalam Pembangunan",
+                        "message" =>
+                            "Halaman ini sedang dalam tahap pembangunan. Silakan kembali lagi nanti.",
+                    ],
+                    503,
+                );
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Web HTTP Exception Handling
+            |--------------------------------------------------------------------------
+            */
 
             if ($exception instanceof HttpExceptionInterface) {
                 $status = $exception->getStatusCode();
@@ -276,20 +313,20 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             /*
-                |--------------------------------------------------------------------------
-                | Preserve Detailed Development Errors
-                |--------------------------------------------------------------------------
-                */
+            |--------------------------------------------------------------------------
+            | Preserve Detailed Development Errors
+            |--------------------------------------------------------------------------
+            */
 
             if (config("app.debug")) {
                 return null;
             }
 
             /*
-                |--------------------------------------------------------------------------
-                | Production Database Connection Error
-                |--------------------------------------------------------------------------
-                */
+            |--------------------------------------------------------------------------
+            | Production Database Connection Error
+            |--------------------------------------------------------------------------
+            */
 
             if ($isDatabaseConnectionError($exception)) {
                 return response()->view(
@@ -305,10 +342,10 @@ return Application::configure(basePath: dirname(__DIR__))
             }
 
             /*
-                |--------------------------------------------------------------------------
-                | Production Unexpected Error
-                |--------------------------------------------------------------------------
-                */
+            |--------------------------------------------------------------------------
+            | Production Unexpected Error
+            |--------------------------------------------------------------------------
+            */
 
             return response()->view(
                 "errors.error",
