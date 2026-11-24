@@ -54,6 +54,8 @@ import {
     faBell,
     faRoadBarrier,
     faFilePdf,
+    faCalendar,
+    faFilter,
 } from "@fortawesome/free-solid-svg-icons";
 
 library.add(
@@ -107,6 +109,8 @@ library.add(
     faBell,
     faRoadBarrier,
     faFilePdf,
+    faCalendar,
+    faFilter,
 );
 
 function initializeFontAwesome() {

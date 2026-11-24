@@ -21,6 +21,7 @@ export default defineConfig({
                 "resources/js/reports/purchase/overview.js",
                 "resources/js/reports/purchase/show.js",
                 "resources/js/reports/sales/index.js",
+                "resources/js/schedule/index.js",
             ],
             refresh: true,
             fonts: [

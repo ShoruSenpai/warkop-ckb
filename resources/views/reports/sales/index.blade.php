@@ -22,17 +22,15 @@
                 class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 self-start rounded-lg bg-ckb-primary px-4 text-xs font-semibold text-ckb-on-primary transition hover:bg-ckb-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none sm:self-auto"
             >
                 <span class="inline-flex items-center justify-center">
-                    <i
-                        data-export-idle
-                        class="fas fa-file-pdf"
-                        aria-hidden="true"
-                    ></i>
-
-                    <i
-                        data-export-loading
-                        class="fas fa-spinner fa-spin hidden"
-                        aria-hidden="true"
-                    ></i>
+                    <span data-export-idle>
+                        <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                    </span>
+                    <span data-export-loading hidden>
+                        <i
+                            class="fas fa-spinner fa-spin hidden"
+                            aria-hidden="true"
+                        ></i>
+                    </span>
                 </span>
 
                 <span data-export-label>Unduh PDF</span>
@@ -43,6 +41,18 @@
             class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3"
             aria-label="Ringkasan penjualan"
         >
+            <div class="col-span-full flex justify-end">
+                <x-report.segmented-filter
+                    group="sales-metrics-period"
+                    label="Periode metrik penjualan"
+                    :options="[
+                        'week' => '7 Hari Terakhir',
+                        'month' => 'Bulan Ini',
+                        'year' => 'Tahun Ini',
+                    ]"
+                    selected="month"
+                />
+            </div>
             <x-report.sales.metric-card
                 label="Total penjualan"
                 value="—"
@@ -50,7 +60,6 @@
                 delta="Perbandingan belum tersedia"
                 icon="fa-file-invoice-dollar"
                 data-key="sales_total"
-                period-group="sales-total-period"
             />
             <x-report.sales.metric-card
                 label="Jumlah transaksi"
@@ -59,7 +68,6 @@
                 delta="Perbandingan belum tersedia"
                 icon="fa-cash-register"
                 data-key="sales_count"
-                period-group="sales-count-period"
             />
             <x-report.sales.metric-card
                 label="Rata-rata nota"
@@ -68,7 +76,6 @@
                 delta="Perbandingan belum tersedia"
                 icon="fa-chart-line"
                 data-key="sales_average"
-                period-group="sales-average-period"
             />
         </section>
         <section

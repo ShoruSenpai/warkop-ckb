@@ -6,9 +6,13 @@ export async function downloadReportPdf(button, url, reportLabel) {
     const originalLabel = label?.textContent ?? "Unduh PDF";
 
     const setLoading = (loading) => {
-        idleIcon?.classList.toggle("hidden", loading);
-        loadingIcon?.classList.toggle("hidden", !loading);
+        if (idleIcon) {
+            idleIcon.hidden = loading;
+        }
 
+        if (loadingIcon) {
+            loadingIcon.hidden = !loading;
+        }
         button.disabled = loading;
 
         if (loading) {
@@ -69,6 +73,7 @@ export async function downloadReportPdf(button, url, reportLabel) {
 
         await Swal.fire({
             toast: true,
+            backdrop: false,
             position: "top-end",
             icon: "success",
             title: "PDF laporan berhasil diunduh",

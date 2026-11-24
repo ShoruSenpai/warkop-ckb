@@ -15,6 +15,14 @@ return [
                 ],
 
                 [
+                    "label" => "Manajemen Jadwal",
+                    "route" => "schedule.index",
+                    "active" => ["schedule.index"],
+                    "icon" => "fas fa-calendar",
+                    "roles" => ["owner", "admin"],
+                ],
+
+                [
                     "label" => "Manajemen Produk",
                     "route" => "products.index",
                     "active" => ["products.*"],

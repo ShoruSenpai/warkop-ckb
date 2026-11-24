@@ -143,7 +143,10 @@ class SalesReportSummaryTest extends TestCase
             ->getJson("/api/reports/sales/summary?period=custom&start_date=2026-11-20&end_date=2026-11-20&section=metrics")
             ->assertOk()
             ->assertJsonPath("data.metrics.total_sales.current", 10000)
-            ->assertJsonPath("data.metrics.transaction_count.current", 1);
+            ->assertJsonPath("data.metrics.transaction_count.current", 1)
+            ->assertJsonPath("data.metrics.average_ticket.current", 10000)
+            ->assertJsonPath("data.period_range.start_date", "2026-11-20")
+            ->assertJsonPath("data.period_range.end_date", "2026-11-20");
     }
 
     public function test_summary_can_return_only_the_requested_metric_and_its_period(): void

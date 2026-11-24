@@ -12,18 +12,9 @@ if (root) {
         sales_count: "transaction_count",
         sales_average: "average_ticket",
     };
-    const metricFilters = {
-        "sales-total-period": "sales_total",
-        "sales-count-period": "sales_count",
-        "sales-average-period": "sales_average",
-    };
     const state = {
         period: "month",
-        metricPeriods: {
-            sales_total: "month",
-            sales_count: "month",
-            sales_average: "month",
-        },
+        metricPeriod: "month",
         metric: "revenue",
         productMetric: "quantity",
         transactions: [],
@@ -46,9 +37,7 @@ if (root) {
         meta: { total: 0, last_page: 1, has_more: false, current_page: 1 },
     };
     const requests = {
-        sales_total: 0,
-        sales_count: 0,
-        sales_average: 0,
+        metrics: 0,
         "trend-chart": 0,
         "top-products": 0,
         "transaction-history": 0,
@@ -182,9 +171,9 @@ if (root) {
         if (exportButton && !state.pdfExporting) {
             state.pdfExporting = true;
             const params = new URLSearchParams({
-                sales_total_period: state.metricPeriods.sales_total,
-                sales_count_period: state.metricPeriods.sales_count,
-                sales_average_period: state.metricPeriods.sales_average,
+                sales_total_period: state.metricPeriod,
+                sales_count_period: state.metricPeriod,
+                sales_average_period: state.metricPeriod,
                 chart_period: state.period,
                 chart_metric: state.metric,
                 ...state.appliedFilters,
@@ -210,18 +199,13 @@ if (root) {
             });
         }
 
-        if (metricFilters[filterGroup]) {
-            const metricKey = metricFilters[filterGroup];
-            state.metricPeriods[metricKey] = filterControl.dataset.filterValue;
+        if (filterGroup === "sales-metrics-period") {
+            state.metricPeriod = filterControl.dataset.filterValue;
             setPressedState(
                 `[data-filter-group="${filterGroup}"]`,
                 filterControl,
             );
-            loadSummarySection(
-                "metrics",
-                metricKey,
-                state.metricPeriods[metricKey],
-            );
+            loadSummarySection("metrics", "metrics", state.metricPeriod);
         }
 
         if (filterGroup === "sales-trend-period") {
@@ -301,11 +285,7 @@ if (root) {
             const target = retryButton.dataset.salesRetry;
             if (target === "transaction-history") loadTransactions();
             if (metricKeys.includes(target))
-                loadSummarySection(
-                    "metrics",
-                    target,
-                    state.metricPeriods[target],
-                );
+                loadSummarySection("metrics", "metrics", state.metricPeriod);
             if (target === "trend-chart")
                 loadSummarySection("chart", "trend-chart", state.period);
             if (target === "top-products")
@@ -347,6 +327,21 @@ if (root) {
             );
             const retry = card?.querySelector("[data-sales-retry]");
             if (retry) retry.hidden = true;
+            return;
+        }
+
+        if (target === "metrics") {
+            metricKeys.forEach((key) => {
+                renderMetric(
+                    key,
+                    data.metrics?.[metricApiKeys[key]],
+                    meta.periodRange,
+                );
+                const retry = root.querySelector(
+                    `[data-sales-retry="${key}"]`,
+                );
+                if (retry) retry.hidden = true;
+            });
             return;
         }
 
@@ -418,6 +413,16 @@ if (root) {
             if (retry) retry.hidden = true;
             return;
         }
+        if (target === "metrics") {
+            metricKeys.forEach((key) => {
+                setMetricBusy(key, true);
+                const retry = root.querySelector(
+                    `[data-sales-retry="${key}"]`,
+                );
+                if (retry) retry.hidden = true;
+            });
+            return;
+        }
         if (!card) return;
         card.setAttribute("aria-busy", "true");
 
@@ -462,6 +467,17 @@ if (root) {
             if (retry) retry.hidden = false;
             return;
         }
+        if (target === "metrics") {
+            metricKeys.forEach((key) => {
+                const card = findReportCard(key);
+                card?.setAttribute("aria-busy", "false");
+                const note = card?.querySelector("[data-sales-kpi-note]");
+                const retry = card?.querySelector("[data-sales-retry]");
+                if (note) note.textContent = message;
+                if (retry) retry.hidden = false;
+            });
+            return;
+        }
 
         if (!card) return;
         card.setAttribute("aria-busy", "false");
@@ -503,9 +519,7 @@ if (root) {
     updateChartPeriod();
     renderProducts();
     renderTransactions();
-    metricKeys.forEach((key) =>
-        loadSummarySection("metrics", key, state.metricPeriods[key]),
-    );
+    loadSummarySection("metrics", "metrics", state.metricPeriod);
     loadSummarySection("chart", "trend-chart", state.period);
     loadSummarySection("top-products", "top-products", state.period);
     loadTransactions();
@@ -915,8 +929,7 @@ if (root) {
             const note = card?.querySelector("[data-sales-kpi-note]");
             if (note) note.textContent = "Memuat ringkasan...";
             const period = card?.querySelector("[data-sales-kpi-period]");
-            if (period)
-                period.textContent = metricPeriodLabel(state.metricPeriods[key]);
+            if (period) period.textContent = metricPeriodLabel(state.metricPeriod);
         }
     }
 

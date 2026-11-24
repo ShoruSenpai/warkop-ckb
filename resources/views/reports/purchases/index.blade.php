@@ -18,17 +18,15 @@
                 class="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 self-start rounded-lg bg-ckb-primary px-4 text-xs font-semibold text-ckb-on-primary transition hover:bg-ckb-primary/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ckb-accent disabled:cursor-not-allowed disabled:opacity-60 motion-reduce:transition-none sm:self-auto"
             >
                 <span class="inline-flex items-center justify-center">
-                    <i
-                        data-export-idle
-                        class="fas fa-file-pdf"
-                        aria-hidden="true"
-                    ></i>
-
-                    <i
-                        data-export-loading
-                        class="fas fa-spinner fa-spin hidden"
-                        aria-hidden="true"
-                    ></i>
+                    <span data-export-idle>
+                        <i class="fas fa-file-pdf" aria-hidden="true"></i>
+                    </span>
+                    <span data-export-loading hidden>
+                        <i
+                            class="fas fa-spinner fa-spin hidden"
+                            aria-hidden="true"
+                        ></i>
+                    </span>
                 </span>
 
                 <span data-export-label>Unduh PDF</span>

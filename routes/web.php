@@ -37,32 +37,21 @@ Route::get("/", function () {
 Route::middleware(["auth", "role:owner,admin"])->group(function () {
     Route::post("/logout", [AuthController::class, "logout"])->name("logout");
 
-    Route::get("/dashboard", fn() => view("dashboard.index"))->name(
-        "dashboard.index",
-    );
+    Route::get("/dashboard", fn() => view("dashboard.index"))->name("dashboard.index",);
+
+    // Employee Schedule
+    Route::get('/schedule', fn() => view("schedule.index"))->name("schedule.index");
 
     // Product pages.
-    Route::get("/products", fn() => view("products.index"))->name(
-        "products.index",
-    );
-    Route::get("/products/create", fn() => view("products.create"))->name(
-        "products.create",
-    );
-    Route::get(
-        "/products/{product}/edit",
-        fn($product) => view("products.edit", ["productId" => $product]),
-    )->name("products.edit");
+    Route::get("/products", fn() => view("products.index"))->name("products.index",);
+    Route::get("/products/create", fn() => view("products.create"))->name("products.create",);
+    Route::get("/products/{product}/edit", fn($product) => view("products.edit", ["productId" => $product]),)->name("products.edit");
 
     // Inventory and supplier pages.
-    Route::get("/raw-materials", fn() => view("raw-materials.index"))->name(
-        "raw-material.index",
-    );
-    Route::get("/suppliers", fn() => view("suppliers.index"))->name(
-        "supplier.index",
-    );
+    Route::get("/raw-materials", fn() => view("raw-materials.index"))->name("raw-material.index",);
+    Route::get("/suppliers", fn() => view("suppliers.index"))->name("supplier.index",);
 
     // Reports.
-//    Route::get("/reports/transactions", fn() => redirect()->route("reports.sales"))->name("reports.transactions");
     Route::get("/reports/sales/pdf", [SalesReportController::class, "pdf"])->name("reports.sales.pdf");
     Route::get("/reports/purchases/pdf", [PurchaseReportController::class, "pdf"])->name("reports.purchases.pdf");
     Route::get("/reports/sales", fn() => view("reports.sales.index"))->name("reports.sales.index",);
@@ -71,11 +60,12 @@ Route::middleware(["auth", "role:owner,admin"])->group(function () {
     Route::get("/reports/purchases/invoices/{purchase}", fn($purchase) => view("reports.purchases.show", ["purchaseId" => $purchase]))->whereNumber("purchase")->name("reports.purchases.show");
     Route::get("/reports/attendance", fn() => view("reports.attendance.index"),)->name("reports.attendance.index");
 
-
+    // System route
     Route::get("/users", fn() => view("users.index"))->name("users.index");
     Route::get("/notification", fn() => view("notification.index"))->name("notification.index",);
     Route::get("/settings", fn() => view("settings.index"))->name("settings.index");
 
+    // Testing route
     Route::get('/testing-503', fn() => view("testing.503"))->name("testing.index");
     // Add owner-only pages in a nested role:owner group when needed.
 });

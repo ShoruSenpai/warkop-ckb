@@ -5,7 +5,6 @@
     "delta" => "Perbandingan belum tersedia",
     "icon",
     "dataKey",
-    "periodGroup",
 ])
 
 <article
@@ -31,16 +30,6 @@
         </span>
     </div>
     <div class="mt-3 flex flex-wrap items-center justify-between gap-2">
-        <x-report.segmented-filter
-            :group="$periodGroup"
-            :label="'Periode ' . strtolower($label)"
-            :options="[
-                'week' => '7 Hari',
-                'month' => 'Bulan Ini',
-                'year' => 'Tahun Ini',
-            ]"
-            selected="month"
-        />
         <p
             data-sales-kpi-period="{{ $dataKey }}"
             class="text-[10px] text-ckb-on-surface-variant"
